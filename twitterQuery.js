@@ -69,7 +69,7 @@ this.makeQuery = function(data, response){
 
  	});
 
-	client.connect('ws://localhost:8080/', 'echo-protocol');
+	client.connect('ws://localhost:8080/', 'echo-protocol', 'twitterQuery');
 
 
 };

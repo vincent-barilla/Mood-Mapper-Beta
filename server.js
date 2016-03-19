@@ -88,7 +88,11 @@ var dispatcher = require('./dispatcher.js');
 
 
 	function originIsAllowed(origin){
-	    return true;
+		if (origin == "twitterQuery" || 
+			origin == "userStop"){
+	   	 	return true;
+	   	}
+		return false;
 	}
 
 
