@@ -1,0 +1,159 @@
+<html>
+<head>  
+   <link rel="stylesheet" type="text/css" href="resource/css/style.css">
+   <meta charset="ISO-8859-1">
+   <title>Insert title here</title>
+</head>
+
+<body>
+
+<div>
+   
+   <div class="intro central" id="intro-central">
+      View 4: Welcome to Pulse. This app answers question like this by analyzing all tweets about the topic you choose, over the time period that interests you, and presents you with a map of geo-tagged results that are color-coded according to the content of the tweets. 
+   </div>   
+<br>
+<br>
+<br>
+<br>   
+<textarea name="text" id="text1" cols="150" rows="20">
+Add multiple lines of text here and watch the scrollbars grow...
+</textarea>
+</div>
+<br>
+<br>
+<br>
+<br>
+
+<!-- Note the use of a button rather than input to submit form; prevents
+page refresh, to preserve utility of ajax-->
+<div class="form central" id="form-input">
+   <form>
+     <fieldset>
+       <legend>Your guidelines:</legend>
+
+            What subject do you want to follow?<br>
+       <input type="text" id="subject" value=""><br>
+
+         When do you want your viewing to start? <br>
+       <input type="text" id="startdate" ><br>
+
+         When do you want your viewing to end? <br>
+       <input type="text" id="enddate" ><br>
+
+         What time step would you like to set between data points? <br>
+       <input type="text" id="timestep" ><br>
+           Select units for the time step.
+      
+       <select name="timeUnits" form="form-input" id="timeunits">
+         <option value="seconds">Seconds</option>
+         <option value="minutes">Minutes</option>
+         <option value="hours">Hours</option>
+          <option value="days">Days</option>
+      </select>
+       <br>
+
+         What theme are you interested in? For example, enter "Violence." <br>
+       <input type="text" id="theme" ><br>
+
+       <br>
+       <button type="button" id="submit-btn2" onclick="ajax()" 
+         method="post">Submit</button>
+     </fieldset>
+   </form>
+</div>   
+
+<br>
+<br>
+<br>
+<br>
+
+
+<div class="trans central" id="trans-querying">
+   Querying twitter for these parameters... please be patient, as there are potentially millions of tweets of interest.
+</div>
+
+<br>
+<br>
+<br>
+<br>
+
+
+<div class="map view central" id="view-map">
+   <span id = "map">
+   Map goes here.
+</span>
+</div>
+
+<script type="text/javascript">
+
+   function ajax(){
+
+      var json = jsonifyForm();
+      var data = serializeJson(json);
+      sendData(data);
+
+   }
+
+   // Hard-coded to fit this form. Convert the values from user input to JSON and return an object.
+   function jsonifyForm(){
+      var data = { subject: document.getElementById("subject").value,
+                   start : document.getElementById("startdate").value,
+                   end : document.getElementById("enddate").value,
+                   step : document.getElementById("timestep").value,
+                   units : document.getElementById("timeunits").value,
+                   theme : document.getElementById("theme").value }
+      return data;
+   }
+
+   // Take a json object and serialize it, return a URL-encoded string.
+   function serializeJson(json){
+      var urlEncodedData = "";
+      var urlEncodedDataPairs = [];
+      var name; 
+
+      // First, put each json key pair into the format "keyName=keyValue", and push to an array.
+      for (name in json){
+         urlEncodedDataPairs.push(encodeURIComponent(name) + '=' + encodeURIComponent(json[name]));
+      }
+
+      // Next, convert the array into one URL-encoded string in the format 
+      // "name1=value1&name2=value2" and return it.
+      return urlEncodedDataPairs.join('&').replace(/%20/g, '+');
+   }
+
+   // Manually build the request to send data in the AJAX call. 
+   function sendData(data){
+
+      var XHR = new XMLHttpRequest();
+      var response = {};
+
+      function alertContents(){
+         if (this.readyState === XMLHttpRequest.LOADING ||
+             this.readyState === XMLHttpRequest.DONE){
+            if (this.status === 200) {
+               //response = JSON.parse(this.responseText);
+               document.getElementById("text1").value = this.responseText;
+            } else {
+               alert('There was a problem with the request.')
+            }
+         }
+      }         
+
+      XHR.onreadystatechange = alertContents;
+
+      // Set the request
+      XHR.open('POST','../twitterQuery', true);
+
+      // Needed for the POST form data request
+      XHR.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+      // Send the data
+      XHR.send(data);
+   }
+</script>
+</body>
+</html>
+
+
+
