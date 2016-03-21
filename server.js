@@ -3,14 +3,17 @@ var util = require('util');
 var http = require('http');
 var url = require ('url');
 var WebSocketServer = require('websocket').server;
-var Twitter = require('twitter');
+var Twitter = require('ntwitter');
 
 // Environment variables (twitter keys)
 require('./env.js');
 
 // Custom-built dispatcher
-var dispatcher = require('./dispatcher.js');
+var Dispatcher = require('./dispatcher.js');
+var TweetAnalyzer = require('./tweetAnalyzer.js');
 
+var globalStream = null;
+var globalConnection = null;
 
 
 /* ================================================================================
@@ -31,9 +34,8 @@ var dispatcher = require('./dispatcher.js');
 	console.log('Starting server @ localhost:3000/')
 
 	var mainServer = http.createServer(function (request, response){
-		// Wrapping server functionality in try/catch
 		try {
-			dispatcher.dispatch(request, response);
+			Dispatcher.dispatch(request, response, globalConnection, globalStream);
 		} catch (err) {
 			util.puts(err);
 			response.writeHead(500);
@@ -44,9 +46,6 @@ var dispatcher = require('./dispatcher.js');
 	mainServer.listen(process.env.PORT || 3000 , function(){
 		console.log('Server running at ' + process.env.PORT || 3000);
 	});
-
-
-
 
 /* ==================================================================================
 
@@ -68,7 +67,6 @@ var dispatcher = require('./dispatcher.js');
 	//console.log("Checking twitter client : ");
 	//console.log(twitterClient);
 
-
 	var handShakeServer = http.createServer(function(request, response) {
 	    console.log((new Date()) + ' Received request for ' + request.url);
 	    response.writeHead(404);
@@ -88,13 +86,11 @@ var dispatcher = require('./dispatcher.js');
 
 
 	function originIsAllowed(origin){
-		if (origin == "twitterQuery" || 
-			origin == "userStop"){
+		if (origin == "twitterQuery"){
 	   	 	return true;
 	   	}
 		return false;
 	}
-
 
 	socketServer.on('request', function(request){
 
@@ -106,10 +102,11 @@ var dispatcher = require('./dispatcher.js');
 
 	    var connection = request.accept('echo-protocol', request.origin);
 
+	    globalConnection = connection;
+
 	    console.log((new Date()) + ' Connection accepted.');
 	    
 	    connection.on('message', function(message){
-
 
 	        var params = JSON.parse(message.utf8Data);
 	       
@@ -117,12 +114,36 @@ var dispatcher = require('./dispatcher.js');
 			console.log(params);
 			console.log("\n");   
 
+			// subject filter.
 		    twitterClient.stream('statuses/filter', {track: params["subject"]}, function(stream){
-				
+			
+			//location filter, bounding box around all of continental US.	
+		    //twitterClient.stream('statuses/filter', {'locations' : '-124.47,24.0,-66.56,49.3843'}, function(stream){
+
+				globalStream = stream;
+
 				stream.on('data', function(tweet) {
-			        connection.sendUTF(tweet.text);
+
+						//console.log(stream);
+						//console.log(tweet.place.bounding_box["coordinates"]);
+					//	console.log("\n");
+						//console.log(connection);
+						//console.log("\n");
+
+						var result = TweetAnalyzer.analyze(tweet);
+						
+						console.log(result);
+
+						connection.sendUTF(JSON.stringify(result));
+
+				        //var mood = InferMood.infer(tweet.text);
+				        //connection.sendUTF(mood);
 
 				});
+
+				stream.on('destroy', function(event){
+					console.log("Stream destroyed.");
+				})
 
 				stream.on('error', function(error){
 					console.log("oops! Error.")
@@ -134,38 +155,9 @@ var dispatcher = require('./dispatcher.js');
 	    });
 
 	    connection.on('close', function(reasonCode, description) {
+	    	globalStream.destroy();
 	        console.log((new Date()) + ' Peer ' + connection.remoteAddress + " disconnected.");
  			console.log("\n");        
 	    });
 	});
-
-/* ==================================================================================
-
-	TWITTER PUBLIC STREAMING API CONNECTIVITY: 
-
-	- This server handles requests from the HTTP dispatcher to the twitter streaming 
-	  API. 
-
-   ================================================================================== */
-
-/*
-   var twitterClient = new Twitter({
-   	consumer_key : process.env.TWITTER_CONSUMER_KEY,
-   	consumer_secret : process.env.TWITTEr_CONSUMER_SECRET,
-   	access_token_key : process.env.TWITTER_ACCESS_TOKEN_KEY,
-   	access_toke_secret : process.env.TWITTER_ACCESS_TOKEN_SECRET
-   });
-
-   twitterClient.stream('statuses/filter', {track: 'DonaldTrump'}, function(data){
-		
-		stream.on('data',function(tweet) {
-			console.log(tweet.text);
-		});
-
-		stream.on('error', function(error){
-			console.log("oops! Error.")
-			throw error;
-		});		
-   });
-*/
 

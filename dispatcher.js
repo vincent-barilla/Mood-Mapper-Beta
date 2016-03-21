@@ -2,37 +2,47 @@ var fs = require('fs');
 var path = require ('path');
 var mime = require ('mime');
 var util = require ('util');
-
 var twitterQuery = require('./twitterQuery.js');
 
-var actions = {
-	'twitterQuery' : twitterQuery.makeQuery
-};
+this.dispatch = function(request, response, connection, stream) {
 
+	if (request.url == "/" || request.url == "/home") {
+		sendFile('./public/index.html');
+	} else {
 
-function jsonifyRequest(request){
-	var json = {};
-	request.split("&").forEach(function(pair){
-		pair = pair.split("=");
-		json[pair[0]] = pair[1];
-	});
-	return json;
-}
+		var parts = request.url.split('/');
+		var action = parts[1];
+		var argument = parts.slice(2, parts.length).join("/");
+		console.log(parts + " " + action);
 
+		switch(action){
+			case 'resource':
+				sendFile('./public/' + argument);
+				break;
+			case 'twitterQuery':
+				request.on('data', function(data){
+					twitterQuery.makeQuery(jsonifyRequest(data.toString()), response);
+				});
+				break;
+			case 'pauseStream':
+				pauseStream(response,connection,stream);
+				break;	
+			default:
+				serverError(404, '404 Error: Resource not found.');
+		}
+	}
 
-this.dispatch = function(request, response) {
-
-	var serverError = function(code, content) {
+	function serverError(code, content) {
 		response.writeHead(code,{'Content-Type': 'text/plain'});
 		response.end(content);
-	};
+	}
 
-	var sendPage = function(filePath, fileContents) {
+	function sendPage(filePath, fileContents) {
 		response.writeHead(200, {'Content-Type': mime.lookup(path.basename(filePath))});
 		response.end(fileContents);
-	};
+	}
 
-	var sendFile = function(filePath) {
+	function sendFile(filePath) {
 		fs.exists(filePath, function(exists){
 			if (exists){
 				fs.readFile(filePath, function(err, data){
@@ -46,43 +56,24 @@ this.dispatch = function(request, response) {
 				serverError(404, "Resource not found.")
 			}
 		})
-	};
+	}
 
-	if (request.url == "/" || request.url == "/home") {
+	function jsonifyRequest(request){
+		var json = {};
+		request.split("&").forEach(function(pair){
+			pair = pair.split("=");
+			json[pair[0]] = pair[1];
+		});
+		return json;
+	}
 
-		sendFile('./public/index.html');
-
-	} else {
-
-		var parts = request.url.split('/');
-		var action = parts[1];
-		var argument = parts.slice(2, parts.length).join("/");
-
-		if (action == "resource"){
-
-			sendFile('./public/' + argument);
-
-		} else if (typeof actions[action] == 'function') {
-
-			var body = '';
-
-			request.on('data', function(data){
-
-				body += data;
-				var newBody = jsonifyRequest(body);
-				var content = actions[action](newBody,response);
-				
-				//response.writeHead(200,{'Content-Type': 'application/json'});
-				//response.end(JSON.stringify(newBody));
-				console.log("Flag2: The asynch response has executed.");
-
-			});
-
-			//verifyFile(content);
-		} else {
-
-			serverError(404, '404 Error: Resource not found.');
-
+	function pauseStream (response,connection,stream){
+		if (connection != null && stream != null){
+			stream.destroy();
+			connection.close();
+			response.writeHead(200,{'Content-Type': 'text/plain; charset=UTF-8'});
+			response.end("All connections closed.");
+			console.log("Streaming paused.")
 		}
 	}
 }

@@ -14,7 +14,9 @@
 var WebSocketClient = require('websocket').client;
 var util = require('util');
 
-this.makeQuery = function(data, response){
+this.makeQuery = function(data, response, server){
+
+	response.writeHead(200,{'Content-Type': 'application/octet-stream'});
 
 	console.log("The processing has successfully reached the twitterQuery.js function")
 	console.log(data);
@@ -24,11 +26,8 @@ this.makeQuery = function(data, response){
 	// The response was passed from the dispatcher. It comes from the asynchronous call
 	// from the user -- Note that the websocket connection is nested inside this 
 	// client-server relationship. 
-	response.writeHead(200,{'Content-Type': 'text/plain; charset=UTF-8'});
-
 
 	var client = new WebSocketClient();
-
 
  	client.on('connectFailed', function(error){
  		console.log('Connect error: ' + error.toString());
@@ -40,14 +39,12 @@ this.makeQuery = function(data, response){
 
  		connection.on('message', function(message) {
 
- 			console.log("From server: '" + message.utf8Data + "'");
+ 			console.log("From server: '"); 
+ 			console.log(message.utf8Data + "'");
  			console.log("\n");
 
-			//response.writeHead(200,{'Content-Type': 'application/json'});
-			//response.end(JSON.stringify(data));
-
 			response.write(message.utf8Data);
- 			
+
  		});
 
  		connection.on('close',function(){
