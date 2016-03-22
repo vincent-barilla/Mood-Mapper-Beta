@@ -6,11 +6,10 @@ var util = require('util');
 	
 		// Make sure the tweet has text. If not, return null, as the analysis can't be done.
 		if (tweet.text != null){
-
 			result["text"] = tweet.text;
 			result["mood"] = analyzeMood(tweet)
-
-			// Check to see if the user is geo-enabled, and thus able to have tweet info mapped.
+			// Check to see if there is any location data attached to the tweet, with first preference on the tweet's place, 
+			// then checking the location listed on the user's profile. 
 			if (tweet.place != null){
 				result["location"] = tweet.place.full_name + ", " + tweet.place.country;
 			} else {
@@ -20,6 +19,10 @@ var util = require('util');
 		 			result["location"] = null;
 		 		}
 			}
+		} else {
+			result["text"] = null;
+			result["mood"] = null;
+			result["location"] = null;
 		}
 
 		return result;

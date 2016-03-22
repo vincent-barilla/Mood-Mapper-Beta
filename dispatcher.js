@@ -13,7 +13,6 @@ this.dispatch = function(request, response, connection, stream) {
 		var parts = request.url.split('/');
 		var action = parts[1];
 		var argument = parts.slice(2, parts.length).join("/");
-		console.log(parts + " " + action);
 
 		switch(action){
 			case 'resource':
@@ -21,7 +20,7 @@ this.dispatch = function(request, response, connection, stream) {
 				break;
 			case 'twitterQuery':
 				request.on('data', function(data){
-					twitterQuery.makeQuery(jsonifyRequest(data.toString()), response);
+					twitterQuery.makeQuery(jsonifyRequest(data.toString()), response, request);
 				});
 				break;
 			case 'pauseStream':

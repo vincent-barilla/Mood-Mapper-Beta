@@ -14,7 +14,7 @@
 var WebSocketClient = require('websocket').client;
 var util = require('util');
 
-this.makeQuery = function(data, response, server){
+this.makeQuery = function(data, response, request){
 
 	response.writeHead(200,{'Content-Type': 'application/octet-stream'});
 
@@ -51,6 +51,11 @@ this.makeQuery = function(data, response, server){
  			response.end();
  			console.log("The connection closed.")
  		})
+
+		request.on('abort', function(){
+			console.log('The user aborted its request.')
+			connection.close();
+		});
 
  		function sendParameters(){
  			if (connection.connected){

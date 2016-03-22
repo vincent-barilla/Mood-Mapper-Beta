@@ -41,6 +41,11 @@ var globalConnection = null;
 			response.writeHead(500);
 			response.end('Internal Server Error');
 		}
+		request.on('close', function(){
+			console.log('Client requested the streaming stop.')
+			globalStream.destroy();
+			globalConnection.close();
+		})
 	});
 
 	mainServer.listen(process.env.PORT || 3000 , function(){
@@ -101,9 +106,7 @@ var globalConnection = null;
 	    }
 
 	    var connection = request.accept('echo-protocol', request.origin);
-
 	    globalConnection = connection;
-
 	    console.log((new Date()) + ' Connection accepted.');
 	    
 	    connection.on('message', function(message){
@@ -121,6 +124,11 @@ var globalConnection = null;
 		    //twitterClient.stream('statuses/filter', {'locations' : '-124.47,24.0,-66.56,49.3843'}, function(stream){
 
 				globalStream = stream;
+
+				connection.on('close', function(){
+					console.log('The connection was closed. Destroying twitter stream.')
+					stream.destroy();
+				})
 
 				stream.on('data', function(tweet) {
 
