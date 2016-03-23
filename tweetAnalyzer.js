@@ -37,65 +37,87 @@ var util = require('util');
 
 			function anon(tweetText){
 
-				mood = [];
+				mood = [0,0,0];
 				multiplier = 1;
 				tweetWords = tweetText.split(" ");
 
 				tweetWords.forEach(function(word){
 
-					// Make sure the word isn't a username, hyperlink, or newline character.
-					if (word[0] != '@' && word.indexOf('http') == -1 && word.indexOf('@') == -1 && word != "\n") {
+					// Make sure the word isn't a username, hyperlink, or newline character. Also discount 2 letter words
+					// as well as three letter hashtags (state name acroynyms, in all caps, which were throwing off mood detection)
+					if (word.length > 2 && word[0] != '@' && word.indexOf('http') == -1 
+						&& word.indexOf('@') == -1 && word != "\n") {
 						
+						console.log("Word pre-norm is: " + word);
+
 						// The word bank presumes lower case and unpunctuated words. If it doesn't already 
 						// satisfy these conditions, then the word must be normalized.
-						if (!/^[a-z]+$/i.test(word)){
+						if (!/^[a-z]+$/.test(word)){
 							word = normalizeWord(word);
 						}	
 
-						// After normalization, the word can be checked against the database.
-						if (word != null && wordBank[word] != undefined){
-							console.log(word);
+						console.log("Word post-norm is: " + word);
+						// After normalization, the word can be checked against the database. 
+						if (wordBank[word] != undefined){
+							console.log("Word post-dbCheck is: " + word);
 							scoreWord(word);
 						}
 
 					}	
 				})
-				console.log(multiplier);
-				console.log(mood);
+
+				console.log("Multiplier is now: " + multiplier);
+
+				mood.forEach(function (score){
+					score *= multiplier;
+				})
  						
+ 				console.log("Mood is now: " + mood);	
+
  				function normalizeWord(word){
- 					scoreCasing(word);
- 					scorePunctuation(word)
+ 					// Only score punctuation for non-letter characters.
+ 					scorePunctuation(word.replace(/[a-z]/gi,"")); 
  					word = word.match(/[a-z]+/gi);
- 					if (word != null && wordBank[word[0].toLowerCase()] != undefined){
- 						scoreWord(word[0].toLowerCase());
+ 					if (word!=null){
+ 						word = word.join("")
+ 						console.log("Word post-match and join is: " + word + " and it is of type: " + typeof word)								
+ 						scoreCasing(word);
+ 						word = word.toLowerCase();
  					} else {
- 						word = null;
+ 						word = "SKIP NULL."
  					}
+
+ 					return word;
 
  					// Each all-cap word (or with 2 letters of being all caps) augment the multiplier.
  					function scoreCasing(word){
  						var caps = word.match(/[A-Z]/g);
- 						if (caps != null && word.length > 2 && caps.length >= word.split('').length - 2 ){
+ 						console.log("caps is: " + caps)
+ 						if (caps != null && caps.length == word.length){
  							multiplier += .2;
  						}
  					}
 
  					// Each '!' augments the multiplier; each basic smiley face augments a mood.
- 					function scorePunctuation(word){
- 						var exclam = word.match(/!/g);
- 						if (exclam != null){
- 							multiplier += exclam.length * .2;
- 						}
+ 					function scorePunctuation(punc){
+ 						console.log("punc is: " + punc)
+ 						if (punc != null){
+	 						var exclam = punc.match(/!/g);
+	 						if (exclam != null){
+	 							multiplier += exclam.length * .2;
+	 						}
 
- 						var happyFace = word.match(/[:)]/g);
- 						if (happyFace != null){
- 							mood[2] += 35 * happyFace.length;
- 						}
- 						var sadFace = word.match(/[:(]/g);
- 						if (sadFace != null){
- 							mood[0] += 35 * sadFace.length;
- 						}
+	 						var happyFace = word.match(/[:)]/g);
+	 						if (happyFace != null){
+	 							console.log("Happy face found.")
+	 							mood[2] += 35 * happyFace.length;
+	 						}
+	 						var sadFace = word.match(/[:(]/g);
+	 						if (sadFace != null){
+	 							console.log("Sad face found.")
+	 							mood[0] += 35 * sadFace.length;
+	 						}
+	 					}	
  					}
  				}
 
@@ -103,6 +125,7 @@ var util = require('util');
 				// by the multipliers I (also arbitrarily) assigned. It came out to roughly 10 pixels * a word's score 
 				// per hit against the database, then times the multiplier.
 				function scoreWord(word){
+					console.log("Word: " + word +" is being scored.")
 					if (wordBank[word] > 0){
 						mood[2] += wordBank[word] * 10;
 					}
