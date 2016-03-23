@@ -7,7 +7,7 @@ var twitterQuery = require('./twitterQuery.js');
 this.dispatch = function(request, response, connection, stream) {
 
 	if (request.url == "/" || request.url == "/home") {
-		sendFile('./public/index.html');
+		viewPage('./public/index.html');
 	} else {
 
 		var parts = request.url.split('/');
@@ -16,7 +16,7 @@ this.dispatch = function(request, response, connection, stream) {
 
 		switch(action){
 			case 'resource':
-				sendFile('./public/' + argument);
+				viewPage('./public/' + argument);
 				break;
 			case 'twitterQuery':
 				request.on('data', function(data){
@@ -36,25 +36,24 @@ this.dispatch = function(request, response, connection, stream) {
 		response.end(content);
 	}
 
-	function sendPage(filePath, fileContents) {
-		response.writeHead(200, {'Content-Type': mime.lookup(path.basename(filePath))});
-		response.end(fileContents);
-	}
-
-	function sendFile(filePath) {
+	function viewPage(filePath) {
 		fs.exists(filePath, function(exists){
 			if (exists){
 				fs.readFile(filePath, function(err, data){
 					if (err){
 						serverError(404, "Resource not found.")
 					} else {
-						sendPage(filePath, data);
+						renderView(filePath, data);
 					}
 				}); 
 			} else {
 				serverError(404, "Resource not found.")
 			}
 		})
+		function renderView(filePath, fileContents) {
+			response.writeHead(200, {'Content-Type': mime.lookup(path.basename(filePath))});
+			response.end(fileContents);
+		}
 	}
 
 	function jsonifyRequest(request){

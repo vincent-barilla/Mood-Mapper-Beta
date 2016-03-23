@@ -2,6 +2,8 @@
 var util = require('util');
 var http = require('http');
 var url = require ('url');
+var fs = require('fs');
+
 var WebSocketServer = require('websocket').server;
 var Twitter = require('ntwitter');
 
@@ -14,7 +16,7 @@ var TweetAnalyzer = require('./tweetAnalyzer.js');
 
 var globalStream = null;
 var globalConnection = null;
-
+var wordBank;
 
 /* ================================================================================
 	
@@ -51,6 +53,22 @@ var globalConnection = null;
 	mainServer.listen(process.env.PORT || 3000 , function(){
 		console.log('Server running at ' + process.env.PORT || 3000);
 	});
+
+	// Load the wordbank the moment the user arrives at the home page and is presumably entering parameters, 
+	// doing so now to avoid blocking the event loop when the user requests tweet processing, as that will 
+	// already be CPU intensive.		
+	mainServer.on('listening', function(){		
+		fs.readFile('./public/AFINN/JSON/MasterList.json','utf-8', function(err,data){
+			if (err){
+				throw err;
+			}
+			fileContents = JSON.parse(data);
+			wordBank = {};
+			fileContents.forEach(function(wordJson){
+				wordBank[wordJson["word"]] = wordJson["score"];
+			})	
+		})
+	})
 
 /* ==================================================================================
 
@@ -138,7 +156,7 @@ var globalConnection = null;
 						//console.log(connection);
 						//console.log("\n");
 
-						var result = TweetAnalyzer.analyze(tweet);
+						var result = TweetAnalyzer.analyze(tweet, wordBank);
 						
 						console.log(result);
 
