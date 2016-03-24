@@ -528,6 +528,22 @@
     "score": -2
   },
   {
+    "word": "annul",
+    "score": -1
+  },
+  {
+    "word": "annuls",
+    "score": -1
+  },  
+  {
+    "word": "annulled",
+    "score": -1
+  }, 
+  {
+    "word": "annulment",
+    "score": -1
+  },           
+  {
     "word": "antagonistic",
     "score": -2
   },
@@ -932,6 +948,18 @@
     "score": -3
   },
   {
+    "word": "bankrupts",
+    "score": -3
+  },  
+  {
+    "word": "bankruptcies",
+    "score": -3
+  },
+  {
+    "word": "bankrupted",
+    "score": -3
+  },    
+  {
     "word": "bankster",
     "score": -3
   },
@@ -1084,6 +1112,14 @@
     "score": -5
   },
   {
+    "word": "bitchy",
+    "score": -5
+  },
+  {
+    "word": "bitching",
+    "score": -5
+  },    
+  {
     "word": "bitter",
     "score": -2
   },
@@ -1092,9 +1128,17 @@
     "score": -2
   },
   {
-    "word": "bizarre",
+    "word": "bitterness",
     "score": -2
+  },  
+  {
+    "word": "bizarre",
+    "score": -3
   },
+  {
+    "word": "bizarrely",
+    "score": -3
+  },  
   {
     "word": "blah",
     "score": -2
@@ -1968,9 +2012,17 @@
     "score": -2
   },
   {
+    "word": "contest",
+    "score": -1
+  },  
+  {
     "word": "contestable",
     "score": -2
   },
+  {
+    "word": "contested",
+    "score": -1
+  },  
   {
     "word": "controversial",
     "score": -2
@@ -2444,6 +2496,34 @@
     "score": -1
   },
   {
+    "word": "demon",
+    "score": -3
+  },
+  {
+    "word": "demonize",
+    "score": -4
+  },
+  {
+    "word": "demons",
+    "score": -3
+  },  
+  {
+    "word": "demonic",
+    "score": -3
+  },  
+  {
+    "word": "demonically",
+    "score": -3
+  },   
+  {
+    "word": "demonio",
+    "score": -3
+  },
+  {
+    "word": "demonios",
+    "score": -3
+  },                  
+  {
     "word": "demonstration",
     "score": -1
   },
@@ -2744,6 +2824,10 @@
     "score": -3
   },
   {
+    "word": "disband",
+    "score": -1
+  },  
+  {
     "word": "disbelieve",
     "score": -2
   },
@@ -2859,6 +2943,10 @@
     "word": "dismal",
     "score": -2
   },
+  {
+    "word": "dismantle",
+    "score": -2
+  },  
   {
     "word": "dismayed",
     "score": -2
@@ -3040,6 +3128,22 @@
     "score": -1
   },
   {
+    "word": "dodge",
+    "score": -2
+  },  
+  {
+    "word": "dodges",
+    "score": -2
+  },  
+  {
+    "word": "dodger",
+    "score": -2
+  }, 
+  {
+    "word": "dodgers",
+    "score": -2
+  },   
+  {
     "word": "dodging",
     "score": -2
   },
@@ -3092,9 +3196,17 @@
     "score": -3
   },
   {
+    "word": "douchey",
+    "score": -3
+  },  
+  {
     "word": "douchebag",
     "score": -3
   },
+  {
+    "word": "douchebags",
+    "score": -3
+  },  
   {
     "word": "downcast",
     "score": -2
@@ -3239,6 +3351,18 @@
     "word": "ecstatic",
     "score": 4
   },
+  {
+    "word": "educate",
+    "score": 1
+  },  
+  {
+    "word": "educated",
+    "score": 2
+  },   
+  {
+    "word": "educates",
+    "score": 2
+  },   
   {
     "word": "eerie",
     "score": -2
@@ -3487,6 +3611,26 @@
     "word": "envying",
     "score": -1
   },
+  {
+    "word": "epic",
+    "score": 3
+  },  
+  {
+    "word": "epically",
+    "score": 3
+  },  
+  {
+    "word": "epitome",
+    "score": 3
+  },  
+  {
+    "word": "epitomizes",
+    "score": 3
+  },
+  {
+    "word": "epitomized",
+    "score": 3
+  },    
   {
     "word": "erroneous",
     "score": -2
@@ -4496,9 +4640,17 @@
     "score": -2
   },
   {
+    "word": "grow",
+    "score": 2
+  },
+  {
+    "word": "grown",
+    "score": 1
+  },   
+  {
     "word": "growing",
     "score": 1
-  },
+  },   
   {
     "word": "growth",
     "score": 2
@@ -4662,6 +4814,26 @@
   {
     "word": "havoc",
     "score": -2
+  },
+  {
+    "word": "health",
+    "score": 2
+  },
+  {
+    "word": "heal",
+    "score": 2
+  },
+  {
+    "word": "heals",
+    "score": 2
+  },
+  {
+    "word": "healer",
+    "score": 3
+  },
+  {
+    "word": "healed",
+    "score": 3
   },
   {
     "word": "healthy",
@@ -4923,6 +5095,14 @@
     "word": "hurts",
     "score": -2
   },
+  {
+    "word": "hypocrisy",
+    "score": -2
+  },  
+  {
+    "word": "hypocrites",
+    "score": -2
+  },  
   {
     "word": "hypocritical",
     "score": -2
@@ -5696,6 +5876,10 @@
     "score": -1
   },
   {
+    "word": "lead",
+    "score": 1
+  },  
+  {
     "word": "leak",
     "score": -1
   },
@@ -5740,9 +5924,17 @@
     "score": -2
   },
   {
+    "word": "lie",
+    "score": -2
+  },  
+  {
     "word": "lied",
     "score": -2
   },
+  {
+    "word": "lies",
+    "score": -2
+  },  
   {
     "word": "lifesaver",
     "score": 4
@@ -5881,11 +6073,11 @@
   },
   {
     "word": "love",
-    "score": 3
+    "score": 4
   },
   {
     "word": "loved",
-    "score": 3
+    "score": 4
   },
   {
     "word": "lovelies",
@@ -5897,7 +6089,7 @@
   },
   {
     "word": "loving",
-    "score": 2
+    "score": 3
   },
   {
     "word": "lowest",
@@ -5947,6 +6139,26 @@
     "word": "lurks",
     "score": -1
   },
+  {
+    "word": "lying",
+    "score": -3
+  },
+  {
+    "word": "jackass",
+    "score": -4
+  },
+  {
+    "word": "jackasses",
+    "score": -4
+  },  
+  {
+    "word": "jaja",
+    "score": 2
+  },   
+  {
+    "word": "jajaja",
+    "score": 3
+  },      
   {
     "word": "mad",
     "score": -3
@@ -6252,6 +6464,10 @@
     "score": -2
   },
   {
+    "word": "monster",
+    "score": -2
+  },  
+  {
     "word": "moody",
     "score": -1
   },
@@ -6360,6 +6576,18 @@
     "score": -2
   },
   {
+    "word": "nazi",
+    "score": -5
+  },
+  {
+    "word": "nazis",
+    "score": -5
+  }, 
+  {
+    "word": "nazism",
+    "score": -5
+  },     
+  {
     "word": "needy",
     "score": -2
   },
@@ -6408,13 +6636,13 @@
     "score": 2
   },
   {
-    "word": "niggas",
-    "score": -5
-  },
-  {
     "word": "nigger",
     "score": -5
   },
+  {
+    "word": "niggers",
+    "score": -5
+  },  
   {
     "word": "no",
     "score": -1
@@ -6467,6 +6695,10 @@
     "word": "nuts",
     "score": -3
   },
+  {
+    "word": "obey",
+    "score": -1
+  },  
   {
     "word": "obliterate",
     "score": -2
@@ -6570,7 +6802,15 @@
   {
     "word": "optionless",
     "score": -2
+  },  
+  {
+    "word": "oops",
+    "score": -1
   },
+  {
+    "word": "owns",
+    "score": 1
+  },  
   {
     "word": "outcry",
     "score": -2
@@ -6670,6 +6910,26 @@
   {
     "word": "pain",
     "score": -2
+  },  
+  {
+    "word": "pacify",
+    "score": 3
+  },  
+  {
+    "word": "pacified",
+    "score": 3
+  },  
+  {
+    "word": "pacifist",
+    "score": 3
+  },  
+  {
+    "word": "pacifists",
+    "score": 3
+  },  
+  {
+    "word": "pacifism",
+    "score": 3
   },
   {
     "word": "pained",
@@ -6871,6 +7131,10 @@
     "word": "pity",
     "score": -2
   },
+  {
+    "word": "plan",
+    "score": 1
+  },  
   {
     "word": "playful",
     "score": 2
@@ -7139,6 +7403,14 @@
     "word": "propaganda",
     "score": -2
   },
+  {
+    "word": "proper",
+    "score": 1
+  },
+  {
+    "word": "properly",
+    "score": 2
+  },    
   {
     "word": "prosecute",
     "score": -1
@@ -7696,6 +7968,10 @@
     "score": 3
   },
   {
+    "word": "rino",
+    "score": -2
+  },  
+  {
     "word": "riot",
     "score": -2
   },
@@ -7992,6 +8268,18 @@
     "score": 3
   },
   {
+    "word": "sellout",
+    "score": -3
+  },  
+  {
+    "word": "sellsout",
+    "score": -3
+  },
+  {
+    "word": "sellouts",
+    "score": 3
+  },        
+  {
     "word": "shaky",
     "score": -2
   },
@@ -8072,6 +8360,22 @@
     "score": -2
   },
   {
+    "word": "shove",
+    "score": -1
+  },  
+  {
+    "word": "shoved",
+    "score": -1
+  }, 
+  {
+    "word": "shoves",
+    "score": -1
+  }, 
+  {
+    "word": "shoving",
+    "score": -1
+  },       
+  {
     "word": "shrew",
     "score": -4
   },
@@ -8118,6 +8422,22 @@
   {
     "word": "sincerity",
     "score": 2
+  },
+  {
+    "word": "sank",
+    "score": -2
+  },    
+  {
+    "word": "sink",
+    "score": -2
+  },  
+  {
+    "word": "sinks",
+    "score": -2
+  },  
+  {
+    "word": "sinking",
+    "score": -2
   },
   {
     "word": "sinful",
@@ -8191,6 +8511,26 @@
     "word": "slut",
     "score": -5
   },
+  {
+    "word": "sluts",
+    "score": -5
+  },  
+  {
+    "word": "slutty",
+    "score": -5
+  },
+  {
+    "word": "sluttier",
+    "score": -5
+  },
+  {
+    "word": "sluttiest",
+    "score": -5
+  },
+  {
+    "word": "sluttiness",
+    "score": -5
+  },        
   {
     "word": "smart",
     "score": 1
@@ -8708,6 +9048,10 @@
     "score": -2
   },
   {
+    "word": "sunk",
+    "score": -3
+  },  
+  {
     "word": "sunshine",
     "score": 2
   },
@@ -8792,6 +9136,14 @@
     "score": -2
   },
   {
+    "word": "swastika",
+    "score": -5
+  },
+  {
+    "word": "swastikas",
+    "score": -5
+  },    
+  {
     "word": "swear",
     "score": -2
   },
@@ -8856,6 +9208,10 @@
     "score": -1
   },
   {
+    "word": "tensions",
+    "score": -1
+  },  
+  {
     "word": "terrible",
     "score": -3
   },
@@ -8876,6 +9232,10 @@
     "score": -3
   },
   {
+    "word": "terrors",
+    "score": -3
+  },
+  {
     "word": "terrorize",
     "score": -3
   },
@@ -8887,6 +9247,10 @@
     "word": "terrorizes",
     "score": -3
   },
+  {
+    "word": "terrorizing",
+    "score": -3
+  },  
   {
     "word": "thank",
     "score": 2
@@ -9316,6 +9680,10 @@
     "score": -2
   },
   {
+    "word": "unprepared",
+    "score": -2
+  },  
+  {
     "word": "unprofessional",
     "score": -2
   },
@@ -9567,6 +9935,10 @@
     "word": "vociferous",
     "score": -1
   },
+  {
+    "word": "vow",
+    "score": 2
+  },  
   {
     "word": "vulnerability",
     "score": -2

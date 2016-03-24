@@ -46,7 +46,7 @@ var util = require('util');
 					// Make sure the word isn't a username, hyperlink, or newline character. Also discount 2 letter words
 					// as well as three letter hashtags (state name acroynyms, in all caps, which were throwing off mood detection)
 					if (word.length > 2 && word[0] != '@' && word.indexOf('http') == -1 
-						&& word.indexOf('@') == -1 && word != "\n") {
+						&& word.indexOf('@') == -1 && word != "\n" && !(word.length == 3 && word[0] =='#')){
 						
 						console.log("Word pre-norm is: " + word);
 
@@ -68,17 +68,13 @@ var util = require('util');
 
 				console.log("Multiplier is now: " + multiplier);
 
-				mood.forEach(function (score){
-					score *= multiplier;
-				})
+				return setMood();
  						
- 				console.log("Mood is now: " + mood);	
-
  				function normalizeWord(word){
  					// Only score punctuation for non-letter characters.
  					scorePunctuation(word.replace(/[a-z]/gi,"")); 
  					word = word.match(/[a-z]+/gi);
- 					if (word!=null){
+ 					if (word != null){
  						word = word.join("")
  						console.log("Word post-match and join is: " + word + " and it is of type: " + typeof word)								
  						scoreCasing(word);
@@ -94,7 +90,7 @@ var util = require('util');
  						var caps = word.match(/[A-Z]/g);
  						console.log("caps is: " + caps)
  						if (caps != null && caps.length == word.length){
- 							multiplier += .2;
+ 							multiplier += .4;
  						}
  					}
 
@@ -104,18 +100,18 @@ var util = require('util');
  						if (punc != null){
 	 						var exclam = punc.match(/!/g);
 	 						if (exclam != null){
-	 							multiplier += exclam.length * .2;
+	 							multiplier += exclam.length * .4;
 	 						}
 
-	 						var happyFace = word.match(/[:)]/g);
+	 						var happyFace = word.match(/\:\)|\=\)|\:,|\:\D/g);
 	 						if (happyFace != null){
 	 							console.log("Happy face found.")
-	 							mood[2] += 35 * happyFace.length;
+	 							mood[2] += 50 * happyFace.length;
 	 						}
-	 						var sadFace = word.match(/[:(]/g);
+	 						var sadFace = word.match(/\:\(|\=\(/g);
 	 						if (sadFace != null){
 	 							console.log("Sad face found.")
-	 							mood[0] += 35 * sadFace.length;
+	 							mood[0] += 50 * sadFace.length;
 	 						}
 	 					}	
  					}
@@ -125,14 +121,25 @@ var util = require('util');
 				// by the multipliers I (also arbitrarily) assigned. It came out to roughly 10 pixels * a word's score 
 				// per hit against the database, then times the multiplier.
 				function scoreWord(word){
-					console.log("Word: " + word +" is being scored.")
+					console.log("**ALERT**, Word: " + word +" is being scored.")
 					if (wordBank[word] > 0){
-						mood[2] += wordBank[word] * 10;
+						mood[2] += wordBank[word] * 30;
 					}
 					if (wordBank[word] < 0){
-						mood[0] += wordBank[word] * -10;
-					}	
+						mood[0] += wordBank[word] * -30;
+					}
 				}
+
+				function setMood(){
+					for (var i = 0; i < mood.length; i ++){
+						mood[i] = (mood[i] * multiplier).toFixed(0);
+						if (mood[i] > 255){
+							mood[i] = 255;
+						}
+					}
+					console.log("Mood is now: " + mood);	
+					return mood;
+				}	
 			}
 		}
 	}
