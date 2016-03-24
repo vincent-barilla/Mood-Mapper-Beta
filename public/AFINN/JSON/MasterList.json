@@ -1384,6 +1384,30 @@
     "score": -2
   },
   {
+    "word": "burn",
+    "score": -1
+  },
+  {
+    "word": "burns",
+    "score": -2
+  }, 
+  {
+    "word": "burned",
+    "score": -2
+  },        
+  {
+    "word": "burner",
+    "score": -2
+  }, 
+  {
+    "word": "burners",
+    "score": -2
+  },  
+  {
+    "word": "burning",
+    "score": -2
+  },  
+  {
     "word": "calm",
     "score": 2
   },
@@ -1519,6 +1543,22 @@
     "word": "challenge",
     "score": -1
   },
+  {
+    "word": "challenged",
+    "score": -1
+  },  
+  {
+    "word": "challenges",
+    "score": -1
+  },
+  {
+    "word": "challenger",
+    "score": -1
+  }, 
+  {
+    "word": "challenging",
+    "score": -1
+  },     
   {
     "word": "chance",
     "score": 2
@@ -1711,6 +1751,14 @@
     "word": "clouded",
     "score": -1
   },
+  {
+    "word": "closet",
+    "score": -1
+  },
+  {
+    "word": "closeted",
+    "score": -2
+  },    
   {
     "word": "clueless",
     "score": -2
@@ -2292,6 +2340,10 @@
     "score": 2
   },
   {
+    "word": "dark",
+    "score": -2
+  },  
+  {
     "word": "darkest",
     "score": -2
   },
@@ -2308,9 +2360,29 @@
     "score": -3
   },
   {
+    "word": "deadass",
+    "score": -3
+  },  
+  {
     "word": "deadlock",
     "score": -2
   },
+  {
+    "word": "deadly",
+    "score": -3
+  },
+  {
+    "word": "deadliness",
+    "score": -2
+  },
+  {
+    "word": "deadlier",
+    "score": -4
+  },    
+  {
+    "word": "deadliest",
+    "score": -4
+  },      
   {
     "word": "deafening",
     "score": -1
@@ -2327,6 +2399,14 @@
     "word": "death",
     "score": -2
   },
+  {
+    "word": "deaths",
+    "score": -2
+  },
+  {
+    "word": "deathfully",
+    "score": -2
+  },    
   {
     "word": "debonair",
     "score": 2
@@ -3877,11 +3957,11 @@
   },
   {
     "word": "faggot",
-    "score": -3
+    "score": -5
   },
   {
     "word": "faggots",
-    "score": -3
+    "score": -5
   },
   {
     "word": "fail",
@@ -3935,6 +4015,22 @@
     "word": "faking",
     "score": -3
   },
+  {
+    "word": "fallacy",
+    "score": -2
+  },  
+  {
+    "word": "fallacies",
+    "score": -2
+  },  
+  {
+    "word": "fall",
+    "score": -1
+  },  
+  {
+    "word": "falls",
+    "score": -2
+  },  
   {
     "word": "fallen",
     "score": -2
@@ -4203,6 +4299,10 @@
     "word": "forgiving",
     "score": 1
   },
+  {
+    "word": "forgot",
+    "score": -1
+  },  
   {
     "word": "forgotten",
     "score": -1
@@ -4684,9 +4784,21 @@
     "score": 2
   },
   {
+    "word": "hack",
+    "score": -2
+  },
+  {
+    "word": "hacking",
+    "score": -2
+  },      
+  {
     "word": "hacked",
     "score": -1
   },
+  {
+    "word": "hacker",
+    "score": -2
+  },    
   {
     "word": "haha",
     "score": 3
@@ -4773,27 +4885,35 @@
   },
   {
     "word": "harshest",
-    "score": -2
+    "score": -3
   },
   {
     "word": "hate",
-    "score": -3
+    "score": -4
   },
   {
     "word": "hated",
-    "score": -3
+    "score": -4
   },
   {
-    "word": "haters",
+    "word": "hateful",
+    "score": -4
+  },
+  {
+    "word": "hatefully",
     "score": -3
+  },    
+  {
+    "word": "haters",
+    "score": -4
   },
   {
     "word": "hates",
-    "score": -3
+    "score": -4
   },
   {
     "word": "hating",
-    "score": -3
+    "score": -4
   },
   {
     "word": "haunt",
@@ -4923,6 +5043,14 @@
     "word": "hiding",
     "score": -1
   },
+  {
+    "word": "hideous",
+    "score": -3
+  },
+  {
+    "word": "hideously",
+    "score": -3
+  },    
   {
     "word": "highlight",
     "score": 2
@@ -6484,6 +6612,10 @@
     "score": -3
   },
   {
+    "word": "morons",
+    "score": -3
+  },  
+  {
     "word": "motherfucker",
     "score": -5
   },
@@ -7284,6 +7416,10 @@
     "score": -2
   },
   {
+    "word": "precious",
+    "score": 1
+  },  
+  {
     "word": "prepared",
     "score": 1
   },
@@ -7624,7 +7760,23 @@
     "score": 1
   },
   {
-    "word": "reassure",
+    "word": "real",
+    "score": 1
+  },
+  {
+    "word": "reality",
+    "score": 1
+  },
+  {
+    "word": "realism",
+    "score": 1
+  },      
+  {
+    "word": "realist",
+    "score": 1
+  },
+  {
+    "word": "realists",
     "score": 1
   },
   {
@@ -8380,6 +8532,10 @@
     "score": -4
   },
   {
+    "word": "shut",
+    "score": -1
+  },  
+  {
     "word": "shy",
     "score": -1
   },
@@ -8468,7 +8624,59 @@
     "score": -2
   },
   {
-    "word": "slash",
+    "word": "slams",
+    "score": -2
+  },
+  {
+    "word": "slammed",
+    "score": -2
+  },
+  {
+    "word": "slammer",
+    "score": -2
+  },
+  {
+    "word": "slamming",
+    "score": -2
+  },
+  {
+    "word": "slander",
+    "score": -2
+  },
+  {
+    "word": "slanders",
+    "score": -2
+  },
+  {
+    "word": "slandering",
+    "score": -2
+  },   
+  {
+    "word": "slandered",
+    "score": -2
+  },   
+  {
+    "word": "slap",
+    "score": -2
+  }, 
+  {
+    "word": "slaphappy",
+    "score": -2
+  },  
+  {
+    "word": "slaps",
+    "score": -2
+  },  
+  {
+    "word": "slapped",
+    "score": -2
+  }, 
+  {
+    "word": "slapper",
+    "score": -2
+  },              
+  {
+    "word": "slapping",
     "score": -2
   },
   {
@@ -8707,6 +8915,18 @@
     "word": "speculative",
     "score": -2
   },
+  {
+    "word": "spy",
+    "score": -1
+  },
+  {
+    "word": "spied",
+    "score": -1
+  },
+  {
+    "word": "spying",
+    "score": -2
+  },      
   {
     "word": "spirit",
     "score": 1
@@ -10099,6 +10319,22 @@
     "word": "wins",
     "score": 4
   },
+  {
+    "word": "wipe",
+    "score": -2
+  },
+  {
+    "word": "wipes",
+    "score": -2
+  },
+  {
+    "word": "wiped",
+    "score": -2
+  },  
+  {
+    "word": "wiping",
+    "score": -3
+  },      
   {
     "word": "winwin",
     "score": 3

@@ -42,6 +42,8 @@ this.makeQuery = function(data, response, request){
  			console.log("From server: '"); 
  			console.log(message.utf8Data + "'");
  			console.log("\n");
+ 			console.log("Trying parse:");
+ 			console.log(JSON.parse(message.utf8Data));
 
 			response.write(message.utf8Data);
 

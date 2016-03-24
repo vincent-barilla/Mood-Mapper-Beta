@@ -68,9 +68,15 @@ page refresh, to preserve utility of ajax-->
     
     // Abort should be sufficient. The request below is a fail safe measure to ensure twitter streaming stops.
     xhr.abort();
-    
+        
     var pauseXhr = new XMLHttpRequest();
     var response = {};
+
+    pauseXhr.open('POST','../pauseStream', true);
+     // Needed for the POST form data request
+    pauseXhr.setRequestHeader('Content-Type','text/plain');
+      // Send the request
+    pauseXhr.send();
 
     pauseXhr.onreadystatechange = function(){
       if (this.readyState === XMLHttpRequest.DONE){
@@ -82,13 +88,7 @@ page refresh, to preserve utility of ajax-->
       }
     };         
 
-    pauseXhr.open('POST','../pauseStream', true);
-     // Needed for the POST form data request
-    pauseXhr.setRequestHeader('Content-Type','text/plain');
-      // Send the data
-    pauseXhr.send();
   }
-
 
   function ajaxFormSubmit(){
     
@@ -119,19 +119,35 @@ page refresh, to preserve utility of ajax-->
 
     function sendData(data){
 
+      // Set the request
+      xhr.open('POST','../twitterQuery', true);
+
+      // Needed for the POST form data request
+      xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+      // Send the data
+      xhr.send(data);
+
       xhr.onreadystatechange = function (){
 
         if (this.readyState === XMLHttpRequest.LOADING ||
             this.readyState === XMLHttpRequest.DONE){
             if (this.status === 200) {
+              //alert(this.responseText);
               var responseJSON = parseResponse(this.responseText);
             } else {
-               alert('There was a problem with the request.')
+              // alert('There was a problem with the request.')
             }
         }
 
         function parseResponse(response){
-          
+
+          var jsonTweet = JSON.parse(response.substring(response.lastIndexOf('{"text":"'), response.length));
+          displayResponse(document.getElementById("text1"));
+          updateMoodColor(document.getElementById("mood-div"), jsonTweet["mood"]);
+          updateAverageMood(jsonTweet["mood"]);
+          return jsonTweet;
+
           function displayResponse(html){
             html.value = (html.value + '\n\n' + jsonTweet["text"] + '\n\n' + ' . .  .   .  . .  .   .  . .');
           }
@@ -154,30 +170,13 @@ page refresh, to preserve utility of ajax-->
               }) 
 
             } else {
-              
               alert("Error: This tweet's color array is incorrectly formatted.")
             }
             updateMoodColor(document.getElementById("globalMood-div"), RGB);
             globalMood["count"]++;
-          }
-
-          var jsonTweet = JSON.parse(response.substring(response.lastIndexOf("{"), response.length));
-          displayResponse(document.getElementById("text1"));
-          updateMoodColor(document.getElementById("mood-div"), jsonTweet["mood"]);
-          updateAverageMood(jsonTweet["mood"]);
-          return jsonTweet;
-
+          }          
         }
       }         
-
-      // Set the request
-      xhr.open('POST','../twitterQuery', true);
-
-      // Needed for the POST form data request
-      xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-
-      // Send the data
-      xhr.send(data);
     }
   }
 
