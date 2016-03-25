@@ -1204,7 +1204,7 @@
     "score": -1
   },
   {
-    "word": "blocks",
+    "word": "blocked",
     "score": -1
   },
   {
@@ -1291,6 +1291,10 @@
     "word": "boycotts",
     "score": -2
   },
+  {
+    "word": "brag",
+    "score": -1
+  },  
   {
     "word": "brainwashing",
     "score": -3
@@ -1424,9 +1428,13 @@
     "score": 2
   },
   {
-    "word": "can't stand",
+    "word": "cant stand",
     "score": -3
   },
+  {
+    "word": "cant",
+    "score": -1
+  },  
   {
     "word": "cancel",
     "score": -1
@@ -1447,6 +1455,10 @@
     "word": "cancer",
     "score": -1
   },
+  {
+    "word": "cancerous",
+    "score": -2
+  },  
   {
     "word": "capable",
     "score": 1
@@ -2144,6 +2156,14 @@
     "score": -2
   },
   {
+    "word": "cowards",
+    "score": -2
+  },  
+  {
+    "word": "cowardice",
+    "score": -2
+  },  
+  {
     "word": "cowardly",
     "score": -2
   },
@@ -2151,6 +2171,14 @@
     "word": "coziness",
     "score": 2
   },
+  {
+    "word": "crack",
+    "score": -1
+  },
+  {
+    "word": "cracked",
+    "score": -1
+  },    
   {
     "word": "cramp",
     "score": -1
@@ -2415,6 +2443,10 @@
     "word": "debt",
     "score": -2
   },
+  {
+    "word": "decay",
+    "score": -2
+  },  
   {
     "word": "deceit",
     "score": -3
@@ -3232,15 +3264,7 @@
     "score": -2
   },
   {
-    "word": "does not work",
-    "score": -3
-  },
-  {
     "word": "dolorous",
-    "score": -2
-  },
-  {
-    "word": "dont like",
     "score": -2
   },
   {
@@ -4168,6 +4192,10 @@
     "score": 1
   },
   {
+    "word": "feelthebern",
+    "score": 2
+  },  
+  {
     "word": "felonies",
     "score": -3
   },
@@ -4780,6 +4808,22 @@
     "score": -1
   },
   {
+    "word": "gut",
+    "score": -1
+  },
+  {
+    "word": "gutted",
+    "score": -1
+  },
+  {
+    "word": "gutter",
+    "score": -1
+  },
+  {
+    "word": "gutting",
+    "score": -1
+  },        
+  {
     "word": "ha",
     "score": 2
   },
@@ -4808,9 +4852,17 @@
     "score": 3
   },
   {
-    "word": "hahahah",
+    "word": "hahaha",
     "score": 3
   },
+  {
+    "word": "hahahaha",
+    "score": 4
+  },
+  {
+    "word": "hahahahaha",
+    "score": 4
+  },      
   {
     "word": "hail",
     "score": 2
@@ -4934,10 +4986,6 @@
   {
     "word": "havoc",
     "score": -2
-  },
-  {
-    "word": "health",
-    "score": 2
   },
   {
     "word": "heal",
@@ -6268,6 +6316,10 @@
     "score": -1
   },
   {
+    "word": "lyin",
+    "score": -3
+  },  
+  {
     "word": "lying",
     "score": -3
   },
@@ -6760,6 +6812,14 @@
     "score": -2
   },
   {
+    "word": "never",
+    "score": -1
+  },
+  {
+    "word": "nevertrump",
+    "score": -2
+  },    
+  {
     "word": "nice",
     "score": 3
   },
@@ -7164,9 +7224,25 @@
     "score": 2
   },
   {
+    "word": "perfection",
+    "score": 3
+  },  
+  {
     "word": "peril",
     "score": -2
   },
+  {
+    "word": "perjure",
+    "score": -3
+  }, 
+  {
+    "word": "perjured",
+    "score": -3
+  },
+  {
+    "word": "perjures",
+    "score": -3
+  },       
   {
     "word": "perjury",
     "score": -3
@@ -8192,6 +8268,10 @@
     "score": 4
   },
   {
+    "word": "rotten",
+    "score": -2
+  },  
+  {
     "word": "ruin",
     "score": -2
   },
@@ -8780,6 +8860,10 @@
     "score": -1
   },
   {
+    "word": "sniveling",
+    "score": -3
+  },  
+  {
     "word": "snub",
     "score": -2
   },
@@ -8940,9 +9024,13 @@
     "score": -2
   },
   {
+    "word": "spit",
+    "score": -1
+  },   
+  {
     "word": "spiteful",
     "score": -2
-  },
+  }, 
   {
     "word": "splendid",
     "score": 3
@@ -10367,6 +10455,10 @@
     "word": "won",
     "score": 3
   },
+  {
+    "word": "wont",
+    "score": -1
+  },  
   {
     "word": "wonderful",
     "score": 4

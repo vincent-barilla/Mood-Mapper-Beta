@@ -3,24 +3,28 @@
    <link rel="stylesheet" type="text/css" href="resource/css/style.css">
    <meta charset="ISO-8859-1">
    <title>Insert title here</title>
+   <script src="https://maps.googleapis.com/maps/api/js?callback=initMap&key=AIzaSyC_IEs6_W9MDGagKWO6ABTzAqJm0O5AyNQ" 
+              async defer></script>   
 </head>
 <body>
-
 <div>
   <div class="intro central" id="intro-central">
       View 4: Welcome to Pulse. This app answers question like this by analyzing all tweets about the topic you choose, over the time period that interests you, and presents you with a map of geo-tagged results that are color-coded according to the content of the tweets. 
   </div>   
     <br><br><br><br>  
-  <textarea name="text" id="text1" cols="150" rows="20">
+  <textarea name="text" id="text1" cols="150" rows="10">
       Live streaming tweets...
   </textarea>
+  <div class="map" id="map">
+   map goes here.
+  </div>
   <div class="div-color">
-      <div class="color-box" id="mood-div" style="background-color: RGB(127,127,127)">Current Text Mood</div>
+      <div class="color-box" id="mood-div" style="background-color: RGB(127,127,127)">Current Tweet Mood</div>
   </div>
 
   <div class="div-color">
-      <div class="color-box2" id="globalMood-div" style="background-color: RGB(127,127,127)">Average Text Mood</div>
-  </div>
+      <div class="color-box2" id="globalMood-div" style="background-color: RGB(127,127,127)">Average Tweet Mood</div>
+  </div>  
 </div>
   <br><br><br><br>
 
@@ -63,6 +67,8 @@ page refresh, to preserve utility of ajax-->
   var xhr = new XMLHttpRequest();
   var globalMood = {"mood" : [0,0,0],
                     "count" : 1 };
+  var geo = new google.maps.Geocoder();
+  var map;                  
 
   function ajaxPauseStream(){
     
@@ -133,7 +139,6 @@ page refresh, to preserve utility of ajax-->
         if (this.readyState === XMLHttpRequest.LOADING ||
             this.readyState === XMLHttpRequest.DONE){
             if (this.status === 200) {
-              //alert(this.responseText);
               var responseJSON = parseResponse(this.responseText);
             } else {
               // alert('There was a problem with the request.')
@@ -143,41 +148,157 @@ page refresh, to preserve utility of ajax-->
         function parseResponse(response){
 
           var jsonTweet = JSON.parse(response.substring(response.lastIndexOf('{"text":"'), response.length));
-          displayResponse(document.getElementById("text1"));
-          updateMoodColor(document.getElementById("mood-div"), jsonTweet["mood"]);
-          updateAverageMood(jsonTweet["mood"]);
+          displayText(document.getElementById('text1'));
+          updateMoodBox(document.getElementById('mood-div'), jsonTweet['stats']['mood']);
+          updateAverageMoodBox(jsonTweet['stats']['mood']);
+          var latLong = geoCodeTweet(jsonTweet['location']);
+          drawTweetCircle(jsonTweet['stats'], latLong);
           return jsonTweet;
 
-          function displayResponse(html){
-            html.value = (html.value + '\n\n' + jsonTweet["text"] + '\n\n' + ' . .  .   .  . .  .   .  . .');
+          function displayText(html){
+            html.value = (html.value + '\n\n' + jsonTweet['text'] + '\n\n' + ' . .  .   .  . .  .   .  . .');
           }
          
-          function updateMoodColor(html, mood){
-            if (typeof mood != 'string'){
-              mood = mood.toString();
-            }
-            html.style = "background-color: RGB(" + mood + ")";  
+          function updateMoodBox(html, mood){
+            mood = mood.toString();
+            html.style = 'background-color: RGB(' + mood + ')';  
           }
           
-          function updateAverageMood(mood){
+          function updateAverageMoodBox(mood){
             var RGB = [];
             
             if (mood.length === globalMood["mood"].length){
-
               mood.forEach(function(value, i){
-                globalMood["mood"][i] += Number(value);
-                RGB[i] = (globalMood["mood"][i] / globalMood["count"]).toFixed(0);
+                globalMood['mood'][i] += Number(value);
+                RGB[i] = (globalMood['mood'][i] / globalMood['count']).toFixed(0);
               }) 
-
             } else {
               alert("Error: This tweet's color array is incorrectly formatted.")
             }
-            updateMoodColor(document.getElementById("globalMood-div"), RGB);
-            globalMood["count"]++;
+            updateMoodBox(document.getElementById('globalMood-div'), RGB);
+            globalMood['count']++;
+          }
+
+          function geoCodeTweet(location){
+            /*
+            if (location != null){
+              var searchParam;
+              if (location){
+                3+4;
+              }
+            }
+            */
+            function randGen(){
+              return ((Math.random() * 360)).toFixed(6) - 180;
+            }
+            var center = {'lat': randGen(), 'lng': randGen()};
+                //center = {'lat': 40.748817, 'lng': -73.985428};            
+            return center;
+          }
+
+          function drawTweetCircle(stats, center){
+            var color = 'RGB(' + stats['mood'].toString() + ')';
+            var radius = stats['reach'] * 100;
+            if (radius == undefined){
+              radius = 100;
+            }
+            //alert(color + " " + radius + " " + center);
+            var cityCircle = new google.maps.Circle({
+              'strokeColor': color,
+              'strokeOpacity': .8,
+              'strokeWeight': 2,
+              'fillColor': color,
+              'fillOpacity': .35, 
+              'map': map,
+              'center': center,
+              'radius': radius 
+/*
+            var cityCircle = new google.maps.Circle({
+              'strokeColor': '#FF0000',
+              'strokeOpacity': .8,
+              'strokeWeight': 2,
+              'fillColor': '#FF0000',
+              'fillOpacity': .35, 
+              'map': map,
+              'center': center,
+              'radius': radius */
+            });
+            //alert('Circle drawn at: ' + center)
           }          
         }
       }         
     }
+  }
+
+</script>
+<script>
+
+  function initMap(){
+    var styles = [
+      {
+        "featureType": "road",
+        "stylers": [
+          { "visibility": "off" }
+        ]
+      },{
+        "featureType": "poi",
+        "stylers": [
+          { "visibility": "off" }
+        ]
+      },{
+        "featureType": "transit",
+        "stylers": [
+          { "visibility": "off" }
+        ]
+      },{
+        "elementType": "labels",
+        "stylers": [
+          { "lightness": 49 }
+        ]
+      },{
+        "featureType": "administrative",
+        "elementType": "geometry.fill",
+        "stylers": [
+          { "visibility": "off" }
+        ]
+      },{
+        "featureType": "administrative",
+        "elementType": "geometry.stroke",
+        "stylers": [
+          { "lightness": 48 }
+        ]
+      },{
+      }
+    ];
+
+    var styledMap = new google.maps.StyledMapType(styles, {name: 'Styled Map'});
+
+    var mapProps = {
+      center :  new google.maps.LatLng(42.877742, -97.380979),
+      zoom : 4,
+      minZoom : 1,
+      maxZoom : 12,
+      mapTypeId: [google.maps.MapTypeId.ROADMAP, 'map_style'],
+      streetViewControl: false,
+
+    };
+
+    map = new google.maps.Map(document.getElementById('map'), mapProps);
+    map.mapTypes.set('map_style', styledMap);
+    map.setMapTypeId('map_style');
+
+      /*
+              var cityCircle = new google.maps.Circle({
+              'strokeColor': 'RGB(45,0,0)',
+              'strokeOpacity': .8,
+              'strokeWeight': 2,
+              'fillColor': '#FF0000',
+              'fillOpacity': .35, 
+              'map': map,
+              'center': {'lat': 40.748817, 'lng': -73.985428},
+              'radius': 100000
+            });
+       */     
   }
 
 </script>
