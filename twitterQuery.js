@@ -61,8 +61,6 @@ this.makeQuery = function(data, response, request){
  				console.log("Sending data: " + JSON.stringify(data));
 	  			console.log("\n");			
  				connection.sendUTF(JSON.stringify(data)); 
- 				// Uncomment below to kee calling function.
- 				//setTimeout(sendParameters,1000);
  			}
  		};
 
@@ -71,7 +69,6 @@ this.makeQuery = function(data, response, request){
  	});
 
 	client.connect('ws://localhost:8080/', 'echo-protocol', 'twitterQuery');
-
 
 };
  

@@ -1,38 +1,66 @@
 var util = require('util');
 
-	this.analyze = function(tweet, wordBank){
+	this.analyze = function(tweet, wordBanks){
 
-		var result = {};
-		setResult();
+		var wordBank = setWordBank();
+		var result = setResult();
 		return result;
 
+		function setWordBank(){
+			var wordBank = {};
+			switch (tweet.lang){
+				case 'sp':
+					wordBank = wordBanks.spanish;
+					console.log('ALERTA!!! HABLAMOS ESPANOL AHORA')
+					break;
+				case 'en':
+				default:
+					wordBank = wordBanks.english;
+			}
+			return wordBank;		
+		}
+
 		function setResult(){
-			// Make sure the tweet has text. If not, return null, as the analysis can't be done
+			var result = {};
+
+			// Note: 'text' MUST be first property of result to agree with front end selection of data (index.html, line 148)
 			if (tweet.text != null){
-				result['text'] = tweet.text;				 
-				result['stats'] = analyzeMood();
-				result['location'] = getLocation();
-				result['stats']['reach'] = tweet.user['followers_count'];
-				console.log("Mood in determineResults() is: " + result['stats']['mood']);
+				result.text        = tweet.text;
+				result.stats       = analyzeMood();				
+				result.stats.reach = tweet.user.followers_count;													
+				result.id          = tweet.id_str;
+				result.location    = setLocation();
+				result.user        = setUser();				 
 			} else {
-				result['text'] = null;
-				result['stats'] = null;
-				result['location'] = null;
-				result['reach'] = null;
+				result.text    	   = null;	
+				result.stats       = null;					
+				result.stats.reach = null;							
+				result.id          = tweet.id_str;				
+				result.location    = null;
+				result.user        = null;				 
+			}
+			return result;
+
+			function setUser(){
+				var user = {};
+				user.description = tweet.user.description;
+				user.id = tweet.user.id_str;
+				user.name = tweet.user.screen_name;
+				user.verified = tweet.user.verified;
+				return user;
 			}
 
-			// Assign a location string to the result. The two-letter code thtat starts the string
-			// in all of the if-else clauses will assist in later geocoding. 
-			function getLocation(){
+			// Assign a location string to the result. The two-letter id's ('CO, ST, UL') will assist in geocoding on the front end.
+			function setLocation(){
 				var location = null;
 				if (tweet.coordinates != null) {
-					location = 'CO:' + (tweet.coordinates['coordinates']).toString();
+					location = 'CO:' + (tweet.coordinates.coordinates).toString();
 				} else if (tweet.place != null) {
 					var street = "";
-					if (tweet.place['attributes']['street_address'] != null){
-						street += tweet.place['attributes']['street_address'] + ", ";
-						if (tweet.place['attributes']['623:id'] != null){
-							street += tweet.place['attributes']['623:id'] + ", "; 
+					if (tweet.place.attributes.street_address != null){
+						street += tweet.place.attributes.street_address + ", ";
+						if (tweet.place.attributes['623:id'] != null){
+							street += tweet.place.attributes['623:id'] + ", "; 
 						}
 					} 
 					location = 'ST:' + street + tweet.place.full_name + ", " + tweet.place.country;
@@ -58,10 +86,10 @@ var util = require('util');
 					stats['negWords'] ==> Same as above comment, but for negative words in a tweet.
 				*/					
 				var stats = {};
-				stats['mood'] = [];				
+				stats.mood = [];				
 				// Both arrays are populated in scoreWord() below, according to a word's score found in wordBank. 
-				stats['posWords'] = [];
-				stats['negWords'] = [];
+				stats.posWords = [];
+				stats.negWords = [];
 
 				/*
 				 The mood is represented by an RGB color array. Negative words will increase R, decrease GB; positive will 
@@ -91,7 +119,7 @@ var util = require('util');
 						*/
 						wordMultiplier = 1;
 
-						console.log("Word pre-norm is: " + word);
+						//console.log("Word pre-norm is: " + word);
 
 						/* 
 						 wordBank contains lowercased, non-punctuated words. If the current word isn't already
@@ -102,25 +130,25 @@ var util = require('util');
 							word = normalizeWord(word);
 						}	
 
-						console.log("Word post-norm is: " + word);
+						//console.log("Word post-norm is: " + word);
 						
 						/*
 						 After normalization, the word can be checked against wordBank. If there is a match, the 
 						 word's score will be stored for later calculation of the overall mood in the tweet.
 						*/ 
 						if (wordBank[word] != undefined){
-							console.log("Word post-dbCheck is: " + word);
+							//console.log("Word post-dbCheck is: " + word);
 							scoreWord(word, i);
 						}
 
 					}	
 				})
 
-				console.log("tweetMultiplier is now: " + tweetMultiplier);
+				//console.log("tweetMultiplier is now: " + tweetMultiplier);
 
 				scoreTweet();
-				stats['tweetEF'] = tweetMultiplier.toFixed(2);
-				stats['mood'] = mood;
+				stats.tweetEF = tweetMultiplier.toFixed(2);
+				stats.mood = mood;
 				return stats;
  						
  				function normalizeWord(word){
@@ -132,7 +160,7 @@ var util = require('util');
  					word = word.match(/[a-z]+/gi);
  					if (word != null){
  						word = word.join('');
- 						console.log("Word post-match and join is: " + word + " and it is of type: " + typeof word)
+ 						//console.log("Word post-match and join is: " + word + " and it is of type: " + typeof word)
 
  						// scoreCasing adds to multiplier for every "!" or all-caps word.								
  						scoreCasing(word);
@@ -150,7 +178,7 @@ var util = require('util');
  					// Checks for null returns on matching capitalized letters, increases multiplier per length of all-cap word.
  					function scoreCasing(word){
  						var caps = word.match(/[A-Z]/g);
- 						console.log("caps is: " + caps)
+ 						//console.log("caps is: " + caps)
  						if (caps != null && caps.length == word.length){
  							wordMultiplier += .05 * caps.length;
  							tweetMultiplier += .02 * caps.length;
@@ -160,7 +188,7 @@ var util = require('util');
  					// Checks for null returns on cutting all letters, leaving only punctuation. '!' augments the multiplier; smiley augments a mood. 
  					function scorePunctuation(word){
  						punc = word.replace(/[a-z]/gi,'');
- 						console.log("punc is: " + punc); 						
+ 						//console.log("punc is: " + punc); 						
  						if (punc != null){
 	 						var exclam = punc.match(/!/g);
 	 						if (exclam != null){
@@ -169,14 +197,14 @@ var util = require('util');
 	 						}
 	 						var happyFace = punc.match(/\:\)|\=\)|\:,|\:\D/g);
 	 						if (happyFace != null){
-	 							console.log("Happy face found.")
+	 							//console.log("Happy face found.")
 	 							mood[0] -= 50 * happyFace.length;	 							
 	 							mood[1] += 50 * happyFace.length;
 	 							mood[1] = mood[2];		 							
 	 						}
 	 						var sadFace = punc.match(/\:\(|\=\(/g);
 	 						if (sadFace != null){
-	 							console.log("Sad face found.")
+	 							//console.log("Sad face found.")
 	 							mood[0] += 50 * sadFace.length;
 	 							mood[2] -= 50 * sadFace.length;
 	 							mood[1] = mood[2];		 							
@@ -197,8 +225,7 @@ var util = require('util');
 					var score = 1;
 					if (i != 0){
 						var prevWord = tweetWords[i - 1];
-						console.log("Word is : " + word + "~And prevWord is: " + prevWord + "~And indexOf yields: " + 
-							negators.indexOf(prevWord)) 
+						//console.log("Word is : " + word + "~And prevWord is: " + prevWord + "~And indexOf yields: " + negators.indexOf(prevWord)) 
 						if (negators.indexOf(prevWord) != -1){
 							score = -1;
 							console.log("~~~ALERT~~~ Negator found.")
@@ -210,13 +237,13 @@ var util = require('util');
 					// score == -1 because a negator preceded the current word, then the change below will be inverted -- 
 					// i.e., "is good" ==> [R--, G++, B++], but "not good" ==> [R++, G--, B--].
 					if (wordBank[word] > 0){
-						stats['posWords'].push({'word':word,'score':wordBank[word],'EF':wordMultiplier * score});
+						stats.posWords.push({'word': word, 'score': wordBank[word], 'EF': wordMultiplier * score});
 						score *= wordBank[word] * 25 * wordMultiplier;
 						mood[1] = mood[2] += score;
 						mood[0] -= score;
 					}
 					if (wordBank[word] < 0){
-						stats['negWords'].push({'word':word,'score':wordBank[word],'EF':wordMultiplier * score});
+						stats.negWords.push({'word': word, 'score': wordBank[word], 'EF': wordMultiplier * score});
 						score *= wordBank[word] * -25 * wordMultiplier;
 						mood[0] += score;
 						mood[1] = mood[2] -= score;

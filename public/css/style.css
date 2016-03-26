@@ -49,7 +49,7 @@ a.article {
 }
 .div-color .color-box {
     width: 700px;
-    height: 30px;
+    height: 15px;
     display: inline-block;
     background-color: #ccc;
     position: relative;
@@ -59,12 +59,12 @@ a.article {
 
 .div-color .color-box2 {
     width: 700px;
-    height: 30px;
+    height: 15px;
     display: inline-block;
     background-color: #ccc;
     position: relative;
     left: 180px;
-    top: 30px;
+    top: 18px;
 }
 
 .central{
@@ -74,7 +74,7 @@ a.article {
 .map{
     position: relative;
     width: 75%;
-    height: 500px;
+    height: 750px;
     background-color:RGB(240,240,240);
     top: 10px;
     left: 20px;

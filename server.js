@@ -16,7 +16,7 @@ var TweetAnalyzer = require('./tweetAnalyzer.js');
 
 var globalStream = null;
 var globalConnection = null;
-var wordBank;
+var wordBank = {};
 
 /* ================================================================================
 	
@@ -48,9 +48,7 @@ var wordBank;
 			globalStream.destroy();
 			globalConnection.close();
 		})
-	});
-
-	mainServer.listen(process.env.PORT || 3000 , function(){
+	}).listen(process.env.PORT || 3000 , function(){
 		console.log('Server running at ' + process.env.PORT || 3000);
 	});
 
@@ -63,10 +61,16 @@ var wordBank;
 				throw err;
 			}
 			fileContents = JSON.parse(data);
-			wordBank = {};
-			fileContents.forEach(function(wordJson){
-				wordBank[wordJson["word"]] = wordJson["score"];
-			})	
+			setWordBank();
+			function setWordBank(){
+				for (var key in fileContents){
+					wordBank[key] = {};
+					var list = fileContents[key];
+					list.forEach(function(wordJson){
+						wordBank[key][wordJson['word']] = wordJson['score'];
+					})
+				}
+			}
 		})
 	})
 
