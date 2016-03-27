@@ -3,8 +3,8 @@
    <link rel="stylesheet" type="text/css" href="resource/css/style.css">
    <meta charset="ISO-8859-1">
    <title>Insert title here</title>
-   <script src="https://maps.googleapis.com/maps/api/js?callback=initMap&key=" 
-              async defer></script><!-- AIzaSyC_IEs6_W9MDGagKWO6ABTzAqJm0O5AyNQ-->   
+   <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" 
+              async defer></script><!-- &key=AIzaSyC_IEs6_W9MDGagKWO6ABTzAqJm0O5AyNQ-->   
 </head>
 <body>
 <div>
@@ -20,11 +20,12 @@
   </div>
     <br><br>        
   <div id='button-div' style='display: none'>
-       <button type="button" id="stop-btn" onclick="buttonHandler()" 
+       <button type="button" id="stop-btn" name='stop-btn' onclick="buttonHandler(this)" 
          method="post">Pause Streaming</button>
       Note: You can always pause your streaming, change the parameters in your form, then click 'Resume Streaming'. 
       This will show you your new results on top of the current map.
-       <button type="button" id="stop-btn" onclick="toggleMarkerVisibility()" 
+      <br><br>          
+       <button type="button" id="circle-btn" name='circle-btn' onclick="buttonHandler(this)" 
          method="post">Show Hidden Circles</button>                
   </div>  
     <br><br>      
@@ -55,10 +56,10 @@ page refresh, to preserve utility of ajax-->
          <option value="seconds">Seconds</option>
          <option value="minutes">Minutes</option>
          <option value="hours">Hours</option>
-        <option value="days">Days</option>
+         <option value="days">Days</option>
       </select>
        <br><br>
-       <button type="button" id="submit-btn" onclick="ajaxFormSubmit()" 
+       <button type="button" id="submit-btn" onclick="buttonHandler(this)" name='submit-btn' style='display: block'
          method="post">Submit</button>  
      </fieldset>
    </form>
@@ -67,39 +68,48 @@ page refresh, to preserve utility of ajax-->
 
 <script type="text/javascript">
 
+  var hiddenMarks = []; 
   var xhr = new XMLHttpRequest();
   var globalMood = {"mood" : [0,0,0],
                     "count" : 1 };
   var geoCoder;
-  var map;      
+  var map;       
 
-  // Callbacks are optional
-  function toggleProperty(elem, prop, oldValue, newValue, callback1, callback2){
-    elem.prop == oldValue ? setProperty(newValue, callback1) : setProperty(oldValue, callback2)
-    function setProperty(value,callback){
-      elem.prop = value;
-      if (callback != undefined){
-        callback();
+  function buttonHandler(source){
+    var name = source.name;
+    switch (name){
+      case 'submit-btn':
+        toggle(document.getElementById('button-div').style, 'display', 'none', 'block', ajaxFormSubmit);
+        toggle(document.getElementById('submit-btn').style, 'display', 'block', 'none');
+        break;
+      case 'stop-btn':
+        toggle(document.getElementById('stop-btn').firstChild, 'data', 'Resume Streaming', 'Pause Streaming', ajaxFormSubmit,  ajaxPauseStream);
+        break;        
+      case 'circle-btn':
+        showHidden();
+        break;
+    }
+
+    // Callbacks are optional -- if ommitted, the action will only toggle an element's property; if included, will also invoke callback.
+    function toggle(elem, prop, oldValue, newValue, callback1, callback2){
+      elem[prop] == oldValue ? action(newValue, callback1) : action(oldValue, callback2); 
+      function action(value, callback){
+          elem[prop] = value;
+        if (callback != undefined){        
+          callback();
+        }
       }
     }
-  }
-/*
-  function toggleDisplay(buttonStyle){
-    buttonStyle.display == 'none' ? buttonStyle.display = 'block' : buttonStyle = 'none';
-  }
-  
-  function toggleMarkerVisibility(){
 
+    function showHidden(){
+      alert("showHidden fired. Length of enclosed array is: " + hiddenMarks.length)
+      hiddenMarks.forEach(function(mark){
+        alert(mark)
+        mark.setMap(map);
+      });
+    }    
   }
-
-  function buttonHandler(){
-    // Used outer IIFE to avoid re-writing long DOM assignemnts, ternary operator and inner IIFE's to cut some space.
-    (function toggleButtonText(text, onLoadText, cb1, newText,  cb2){
-      text.data == onLoadText ? (function(){text.data = newText; cb1();})() 
-                              : (function(){text.data = onLoadText; cb2();})()
-    })(document.getElementById('stop-btn').firstChild, 'Resume Streaming', ajaxFormSubmit, 'Pause Streaming', ajaxPauseStream);
-  }
-*/  
+//})();
 
   function ajaxPauseStream(){
     
@@ -128,7 +138,6 @@ page refresh, to preserve utility of ajax-->
 
   function ajaxFormSubmit(){
     
-    toggleDisplay(document.getElementById('button-div').style)    
     sendData(serializeJson(jsonifyForm()));
 
     (function toggleButtonDisplay(buttonStyle){
@@ -221,6 +230,7 @@ page refresh, to preserve utility of ajax-->
             if (location != null){
               var id = location.substring(0,3);
               location = location.substring(3,location.length);
+              tweet.location = location;
               switch(id){
                 case 'CO:':
                   alert("~~~~ CO FOUND")
@@ -257,9 +267,9 @@ page refresh, to preserve utility of ajax-->
             var color = 'RGB(' + stats.mood.toString() + ')';
             var radius = tweet.stats.reach;
             if (radius == undefined){
-              radius = 100;
+              radius = 25;
             } else {
-              radius *= 50;
+              radius *= 25;
             }
             var cityCircle = new google.maps.Circle({
               'strokeColor'  : color,
@@ -274,13 +284,21 @@ page refresh, to preserve utility of ajax-->
               'clickable'    : true,
             });
 
+            var content = "User: " + tweet.name + "\nText: " + tweet.text + "\nLocation: " + tweet.location + "\nMood: " + tweet.stats.mood + "\nReach: " + tweet.stats.reach;
             var infoWindow = new google.maps.InfoWindow({
-              'content'  : tweet.text,
-              'maxWidth' : 100,
+              'content'  : content,
+              'maxWidth' : 250,
               'position' : cityCircle.center,
             });
 
+/*
+            cityCircle.addListener('click', function(){
+                infoWindow.position = this.center;
+                infoWindow.open(map);              
+            })
+*/           
             cityCircle.addListener('mouseover', function(){
+
               infoWindow.position = this.center;
               infoWindow.open(map);
             });
@@ -289,25 +307,26 @@ page refresh, to preserve utility of ajax-->
               infoWindow.close(map);
             });
 
-            cityCircle.addListener('drag', function(){
-              infoWindow.position = this.center;
-            });
-
             cityCircle.addListener('dblclick', function(){
-              infoWindow.close(map);
+              infoWindow.setMap(null);
               this.setMap(null);
+              hiddenMarks.push([this, infoWindow]);
+            });            
+
+            cityCircle.addListener('drag', function(){
+              infoWindow.setMap(null);
             });
 
+            cityCircle.addListener('dragend', function(){
+              this.setMap(map);
+              infoWindow.position = this.center;
+              infoWindow.setMap(map);
+            });
           }          
         }
       }         
     }
   }
-
-</script>
-
-
-<script>
 
   function initMap(){
 
@@ -358,13 +377,13 @@ page refresh, to preserve utility of ajax-->
       },{
       }
     ];
-
     var styledMap = new google.maps.StyledMapType(mapStyles, {name: 'Styled Map'});
     geoCoder = new google.maps.Geocoder();
     map = new google.maps.Map(document.getElementById('map'), mapProps);
     map.mapTypes.set('map_style', styledMap);
     map.setMapTypeId('map_style');
-
+    alert(typeof map)
+    alert(JSON.stringify(map));
   }
 
 </script>
