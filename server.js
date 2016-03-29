@@ -1,37 +1,19 @@
 
-var util = require('util');
-var http = require('http');
-var url = require ('url');
-var fs = require('fs');
-
-var WebSocketServer = require('websocket').server;
-var Twitter = require('ntwitter');
+var util  = require('util');
+var https = require('https');
+var http  = require('http');
+var url   = require ('url');
+var fs    = require('fs');
+var Dispatcher       = require('./dispatcher.js');
+var TweetAnalyzer    = require('./tweetAnalyzer.js');
+var globalStream     = null;
+var globalConnection = null;
+var wordBank         = {};
+var WebSocketServer  = require('websocket').server;
+var Twitter          = require('ntwitter');
 
 // Environment variables (twitter keys)
 require('./env.js');
-
-// Custom-built dispatcher
-var Dispatcher = require('./dispatcher.js');
-var TweetAnalyzer = require('./tweetAnalyzer.js');
-
-var globalStream = null;
-var globalConnection = null;
-var wordBank = {};
-
-/* ================================================================================
-	
-	HTTP REQUEST SERVER: 
-
-	- Handles requests from the client, sends them to a dispatcher function 
-	  (called dispatcher.js)
-
-	- Note: When a client requests the twitter data, the request enters the dis-
-	  patcher, is reformatted into JSON, is passed into twitterQuery.js, and is
-	  then used to establish a WebSocketClient to query the websocket server 
-	  (defined below, in this file) using the user-defined parameters from the 
-	  initial request. 
-
-   ================================================================================= */
 
 	console.log('Starting server @ localhost:3000/')
 
@@ -51,10 +33,7 @@ var wordBank = {};
 	}).listen(process.env.PORT || 3000 , function(){
 		console.log('Server running at ' + process.env.PORT || 3000);
 	});
-
-	// Load the wordbank the moment the user arrives at the home page and is presumably entering parameters, 
-	// doing so now to avoid blocking the event loop when the user requests tweet processing, as that will 
-	// already be CPU intensive.		
+		
 	mainServer.on('listening', function(){		
 		fs.readFile('./public/AFINN/JSON/MasterList.json','utf-8', function(err,data){
 			if (err){
@@ -74,15 +53,59 @@ var wordBank = {};
 		})
 	})
 
-/* ==================================================================================
 
-	WEBSOCKET SERVER:
+	var auth2 = requestAuthFromTwit();
+	function twitQuery(auth){
+		
+		var req = new https.request(options, function(res){
+			var options = {
 
-	- This server handles requests from the HTTP dispatcher to the twitter streaming 
-	  API. 
+			};
 
-   ================================================================================== */
+			var responseString = '';
 
+			res.on('data', function(data){
+				responseString += data;
+				console.log("data from twit query: ")
+				console.log(data)
+			})
+
+			res.on('end'){
+				console.log("Now, data is:")
+				console.log(responseString)
+			}
+
+			req.end('')
+		})
+
+	} 
+	//var twitterAppOnlyOAuth = htt
+	function requestAuthFromTwit(){
+
+		var options = {
+			'path'			 : '/oauth2/token',
+			'host'    	     : 'api.twitter.com',
+			'method'  	     : 'POST',
+			'headers' 	     : {'Content-Type'  : 'application/x-www-form-urlencoded;charset=UTF-8',
+						         'Authorization': 'Basic ' + process.env.ENCODED_BEARER_TOKEN_CREDENTIALS}
+		};
+
+		var req = new https.request(options, function(res){
+			var responseString = '';
+
+			res.on('data', function(data){
+				responseString += data;
+			});
+
+			res.on('end', function(){
+				console.log("Bearer tok: " + responseString);
+			});
+		});
+
+		req.end('grant_type=client_credentials');	
+	}
+
+	
 
 	var twitterClient = new Twitter({
 	  consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -90,6 +113,8 @@ var wordBank = {};
 	  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
 	  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
 	});
+
+
 
 	//console.log("Checking twitter client : ");
 	//console.log(twitterClient);
@@ -156,7 +181,7 @@ var wordBank = {};
 
 						//console.log(stream);
 						//console.log(tweet.place.bounding_box["coordinates"]);
-					//	console.log("\n");
+						//	console.log("\n");
 						//console.log(connection);
 						//console.log("\n");
 						//console.log(tweet);

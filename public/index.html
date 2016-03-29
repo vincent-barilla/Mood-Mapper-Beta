@@ -7,26 +7,30 @@
               async defer></script><!-- &key=AIzaSyC_IEs6_W9MDGagKWO6ABTzAqJm0O5AyNQ-->   
 </head>
 <body>
-<div>
-    <br>  
-  <div class="map" id="map">
+  <br>  
+<div class="map" id="map" style="display:block">
    map goes here.
-  </div>  
-  <div class="div-color">
+</div>    
+<div id="hidden-div" style="display:none">
+  <div class="div-color boxes">
       <div class="color-box" id="mood-div" style="background-color: RGB(127,127,127)">Current Tweet Mood</div>
   </div>
   <div class="div-color">
       <div class="color-box2" id="globalMood-div" style="background-color: RGB(127,127,127)">Average Tweet Mood</div>
   </div>
-    <br><br>        
-  <div id='button-div' style='display: none'>
-       <button type="button" id="stop-btn" name='stop-btn' onclick="buttonHandler(this)" 
+    <br><br>
+
+  <div id='button-div'>
+       <button type="button" id="pause-btn" name='pause' onclick="buttonHandler(this)" 
          method="post">Pause Streaming</button>
-      Note: You can always pause your streaming, change the parameters in your form, then click 'Resume Streaming'. 
-      This will show you your new results on top of the current map.
+       <button type="button" id="clear-btn" name='clear' onclick="buttonHandler(this)" 
+         method="post">Clear Map</button>
+       <button type="button" id="togCircVis-btn" name='togCircVis' style='display: block' onclick="buttonHandler(this)" 
+         method="post">Hide Circles</button>   
+      <br>             
+      Note: You can always pause your streaming, change the parameters in your form, then click 'Resume Streaming'. This will show you your new results on top of the current map. Hit 'Clear Map' to avoid overlapping results.
       <br><br>          
-       <button type="button" id="circle-btn" name='circle-btn' onclick="buttonHandler(this)" 
-         method="post">Show Hidden Circles</button>                
+                          
   </div>  
     <br><br>      
   <textarea name="text" id="text1" cols="150" rows="10">
@@ -42,7 +46,7 @@ page refresh, to preserve utility of ajax-->
      <fieldset>
        <legend>Your guidelines:</legend>
           What subject do you want to follow?<br>
-       <input type="text" id="subject" value="DonaldTrump"><br>
+       <input type="text" id="subject" value="BernieSanders"><br>
          Define a coordinate bounding box for your search. The default box is all of continental US. <br>
        <input type="text" id="location" value="'-124.47,24.0,-66.56,49.3843'"><br>
          When do you want your viewing to start? <br>
@@ -59,7 +63,7 @@ page refresh, to preserve utility of ajax-->
          <option value="days">Days</option>
       </select>
        <br><br>
-       <button type="button" id="submit-btn" onclick="buttonHandler(this)" name='submit-btn' style='display: block'
+       <button type="button" id="submit-btn" onclick="buttonHandler(this)" name='submit' style='display: block'
          method="post">Submit</button>  
      </fieldset>
    </form>
@@ -68,61 +72,61 @@ page refresh, to preserve utility of ajax-->
 
 <script type="text/javascript">
 
-  var hiddenMarks = []; 
+  const ReachBoost = 75;
+  const DefaultCenter = {'lat': 77.113132, 'lng': -42.539063};
+
   var xhr = new XMLHttpRequest();
   var globalMood = {"mood" : [0,0,0],
                     "count" : 1 };
   var geoCoder;
   var map;       
 
+  // Execute functions according to button clicks. Note the flexibility in the logic of clickWrapper(a,b,c,d,e,f) --
+  // it MUST have the first 4 arguments, but also works with either 5 or 6 args (extras as optional callbacks).
   function buttonHandler(source){
     var name = source.name;
     switch (name){
-      case 'submit-btn':
-        toggle(document.getElementById('button-div').style, 'display', 'none', 'block', ajaxFormSubmit);
-        toggle(document.getElementById('submit-btn').style, 'display', 'block', 'none');
+      case 'submit':
+        clickWrapper(document.getElementById('hidden-div').style, 'display', 'none', 'block', ajaxFormSubmit);
+        clickWrapper(document.getElementById('submit-btn').style, 'display', 'block', 'none');
         break;
-      case 'stop-btn':
-        toggle(document.getElementById('stop-btn').firstChild, 'data', 'Resume Streaming', 'Pause Streaming', ajaxFormSubmit,  ajaxPauseStream);
+      case 'pause':
+        clickWrapper(document.getElementById('pause-btn').firstChild, 'data', 'Pause Streaming', 'Resume Streaming', ajaxPauseStream, ajaxFormSubmit);
         break;        
-      case 'circle-btn':
-        showHidden();
+      case 'togCircVis':
+        clickWrapper(document.getElementById('togCircVis-btn').firstChild, 'data', 'Hide Circles', 'Show Circles', map._togCircVis.call(map));
         break;
+      case 'clear':
+        map._clearCircles();
+        document.getElementById('togCircVis-btn').style.display = 'none';
+        document.getElementById('togCircVis-btn').firstChild.data = 'Hide Circles';
+        break;       
     }
 
-    // Callbacks are optional -- if ommitted, the action will only toggle an element's property; if included, will also invoke callback.
-    function toggle(elem, prop, oldValue, newValue, callback1, callback2){
-      elem[prop] == oldValue ? action(newValue, callback1) : action(oldValue, callback2); 
-      function action(value, callback){
-          elem[prop] = value;
-        if (callback != undefined){        
+    // Toggle between two values for one property, and, optionally, execute click-triggered function(s). In clickAction(value, callback), 
+    // value is what the property will be set to, callback is the onclick for the current value. clickAction handles 2, 1, or 0 calllbacks from
+    // user (via clickWrapper). If 1 callback is passed to clickWrapper, clickAction uses that for both toggled values (see 'togCircVis' or 'submit' case above).
+    function clickWrapper(elem, prop, oldVal, newVal, oldOnClick, newOnClick){
+      elem[prop] == oldVal ? clickAction(newVal, oldOnClick) : clickAction(oldVal, newOnClick); 
+      function clickAction(value, callback){
+        elem[prop] = value;
+        if (!callback && oldOnClick){
+          callback = oldOnClick;
+        }
+        if (callback){        
           callback();
         }
       }
     }
-
-    function showHidden(){
-      alert("showHidden fired. Length of enclosed array is: " + hiddenMarks.length)
-      hiddenMarks.forEach(function(mark){
-        alert(mark)
-        mark.setMap(map);
-      });
-    }    
   }
-//})();
 
   function ajaxPauseStream(){
-    
-    // Abort should be sufficient. The request below is a fail safe measure to ensure twitter streaming stops.
-    xhr.abort();
-        
-    var pauseXhr = new XMLHttpRequest();
-    var response = {};
 
+    // Abort should be sufficient. The request below is a fail safe measure to ensure twitter streaming stops.
+    xhr.abort();      
+    var pauseXhr = new XMLHttpRequest();
     pauseXhr.open('POST','../pauseStream', true);
-     // Needed for the POST form data request
     pauseXhr.setRequestHeader('Content-Type','text/plain');
-      // Send the request
     pauseXhr.send();
 
     pauseXhr.onreadystatechange = function(){
@@ -137,22 +141,18 @@ page refresh, to preserve utility of ajax-->
   }
 
   function ajaxFormSubmit(){
-    
-    sendData(serializeJson(jsonifyForm()));
 
-    (function toggleButtonDisplay(buttonStyle){
-      if (buttonStyle.display == 'none'){
-        buttonStyle = 'block';
-      }
-    })(document.getElementById('stop-btn').style)
+    sendData(serializeJson(jsonifyForm()));
+    document.getElementById('togCircVis-btn').style.display = 'block';        
+
 
     function jsonifyForm(){
-      var data = { subject: document.getElementById("subject").value,
+      var data = { subject   : document.getElementById("subject").value,
                    locations : document.getElementById("location").value,
-                   tart : document.getElementById("startdate").value,
-                   end : document.getElementById("enddate").value,
-                   step : document.getElementById("timestep").value,
-                   units : document.getElementById("timeunits").value 
+                   tart      : document.getElementById("startdate").value,
+                   end       : document.getElementById("enddate").value,
+                   step      : document.getElementById("timestep").value,
+                   units     : document.getElementById("timeunits").value 
                   }
       return data;
     }    
@@ -171,15 +171,9 @@ page refresh, to preserve utility of ajax-->
 
     function sendData(data){
 
-      // Set the request
       xhr.open('POST','../twitterQuery', true);
-
-      // Needed for the POST form data request
       xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-
-      // Send the data
       xhr.send(data);
-
       xhr.onreadystatechange = function (){
 
         if (this.readyState === XMLHttpRequest.LOADING ||
@@ -192,7 +186,8 @@ page refresh, to preserve utility of ajax-->
         }
 
         function parseResponse(response){
-
+          // '{"text":"'' delimits the start of a new tweet -- a possible flaw being, if '{"text":"' occurs
+          // in a tweet, the code will think everything subsequent is a new tweet, ruining everything. 
           var jsonTweet = JSON.parse(response.substring(response.lastIndexOf('{"text":"'), response.length));
           displayText(document.getElementById('text1'));
           updateMoodBox(document.getElementById('mood-div'), jsonTweet.stats.mood);
@@ -211,117 +206,121 @@ page refresh, to preserve utility of ajax-->
           
           function updateAverageMoodBox(mood){
             var RGB = [];
-            if (mood.length === globalMood["mood"].length){
-              mood.forEach(function(value, i){
-                globalMood.mood[i] += Number(value);
-                RGB[i] = (globalMood.mood[i] / globalMood.count).toFixed(0);
-              }) 
-            } else {
-              alert("Error: This tweet's color array is incorrectly formatted.")
-            }
+            mood.forEach(function(value, i){
+              globalMood.mood[i] += Number(value);
+              RGB[i] = (globalMood.mood[i] / globalMood.count).toFixed(0);
+            }) 
             updateMoodBox(document.getElementById('globalMood-div'), RGB);
             globalMood.count++;
           }
 
           function geoCodeTweet(tweet){
-            var location = tweet.location;
-            var center = null;
-
-            if (location != null){
-              var id = location.substring(0,3);
-              location = location.substring(3,location.length);
-              tweet.location = location;
+            var center  = null;
+            if (tweet.location != null){
+              var location = tweet.location.substring(3, tweet.location.length);
+              var id       = tweet.location.substring(0, 3);
               switch(id){
                 case 'CO:':
-                  alert("~~~~ CO FOUND")
+                  alert("~~~~ CO FOUND: Location is " + location)
                   var latLng = location.split(",");
-                  center.lat = Number(latLng[0]);
-                  center.lng = Number(latLng[1]);
+                  center = {'lat': Number(latLng[0]), 'lng': Number(latLng[1])};
+                  alert("CO center is " + center.lat() + " " + center.lng());
                   break;
                 case 'ST':
                   // the UL code should work just as well for street names; allow to continue through to UL caes.
                 case 'UL:':
                   geoCoder.geocode({'address':location}, function(results, status){
                     if (status == google.maps.GeocoderStatus.OK){
-                      if (results != null){
-                        if (results[0].geometry != null && results[0].geometry.location != null){
+                      if (results[0].geometry != null && results[0].geometry.location != null){
                           center = results[0].geometry.location;
-                          //center = {'lat': loc.lat(), 'lng': loc.lng()};
                           drawTweetCircle(tweet, center);
-                        }
-                      }
+                      }                     
+                    } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
+                      alert('Oh no! This app has maxed out its queries. Try again later.')
                     }  
                   });               
-                  break;
-                default:    
+                  break;   
               }
             } else if (location == null || center == null){
             // The middle of Iceland, for non-located tweets!
-              center = {'lat': 77.113132, 'lng': -42.539063};
-              drawTweetCircle(tweet, center);   
-            }  
+              center = DefaultCenter;
+            }
+            drawTweetCircle(tweet, center);   
           }
 
           function drawTweetCircle(tweet, center){
-            var stats = tweet.stats;
-            var color = 'RGB(' + stats.mood.toString() + ')';
-            var radius = tweet.stats.reach;
-            if (radius == undefined){
-              radius = 25;
-            } else {
-              radius *= 25;
+
+            var radius      = tweet.stats.reach ? tweet.stats.reach * ReachBoost : ReachBoost;
+            var tweetCircle = initTweetCircle();
+            tweetCircle.initListeners();
+            tweetCircle._storeInMap(map);
+
+            function initTweetCircle(){
+              
+              var circle = new google.maps.Circle({
+                'strokeColor'  : 'RGB(' + tweet.stats.mood.toString() + ')',
+                'strokeOpacity': .8,
+                'strokeWeight' : 2,
+                'fillColor'    : 'RGB(' + tweet.stats.mood.toString() + ')',
+                'fillOpacity'  : .35, 
+                'map'          : map,
+                'center'       : center,
+                'radius'       : radius,
+                'draggable'    : true,
+                'clickable'    : true,
+              });
+
+              circle.infoWindow = initInfoWindow(); 
+
+              function initInfoWindow(){
+                var content = ("<p>"
+                               + "User:<br/> "     + tweet.user.name   + "<br/><br/>" 
+                               + "Text:<br/> "     + tweet.text        + "<br/><br/>" 
+                               + "Location:<br/> " + tweet.location    + "<br/><br/>" 
+                               + "Mood:<br/> "     + tweet.stats.mood  + "<br/><br/>" 
+                               + "Reach:<br/> "    + tweet.stats.reach + "<br/><br/>" +
+                              "</p>");
+                return new google.maps.InfoWindow({
+                  'content'        : content,
+                  'maxWidth'       : 250,
+                  'disableAutoPan' : true,
+                });
+              }
+
+              circle.initListeners = function(){          
+                this.addListener('click', function(){
+                  map.panTo(this.getCenter());
+                })
+               
+                this.addListener('mouseover', function(){
+                  var radiusExtender = ((300 - tweet.stats.reach) + 1) / 60;
+                  radiusExtender > 1.15 ? this.setRadius(radiusExtender * radius) : this.setRadius(radius * 1.15);
+                  this.infoWindow.setPosition(this.getBounds().getNorthEast());
+                  this.infoWindow.open(map);
+                });
+     
+                this.addListener('mouseout', function(){
+                  this.setRadius(radius);
+                  this.infoWindow.close(map);
+                });
+
+                this.addListener('drag', function(){
+                  this.infoWindow.setMap(null);
+                });
+
+                this.addListener('dragend', function(){
+                  this.setMap(map);
+                  this.infoWindow.setPosition(this.getBounds().getNorthEast());
+                  this.infoWindow.setMap(map);
+                });
+
+                this.addListener('dblclick', function(){
+                  this.infoWindow.setMap(null);
+                  this.setMap(null);
+                });            
+              }
+              return circle; 
             }
-            var cityCircle = new google.maps.Circle({
-              'strokeColor'  : color,
-              'strokeOpacity': .8,
-              'strokeWeight' : 2,
-              'fillColor'    : color,
-              'fillOpacity'  : .35, 
-              'map'          : map,
-              'center'       : center,
-              'radius'       : radius,
-              'draggable'    : true,
-              'clickable'    : true,
-            });
-
-            var content = "User: " + tweet.name + "\nText: " + tweet.text + "\nLocation: " + tweet.location + "\nMood: " + tweet.stats.mood + "\nReach: " + tweet.stats.reach;
-            var infoWindow = new google.maps.InfoWindow({
-              'content'  : content,
-              'maxWidth' : 250,
-              'position' : cityCircle.center,
-            });
-
-/*
-            cityCircle.addListener('click', function(){
-                infoWindow.position = this.center;
-                infoWindow.open(map);              
-            })
-*/           
-            cityCircle.addListener('mouseover', function(){
-
-              infoWindow.position = this.center;
-              infoWindow.open(map);
-            });
- 
-            cityCircle.addListener('mouseout', function(){
-              infoWindow.close(map);
-            });
-
-            cityCircle.addListener('dblclick', function(){
-              infoWindow.setMap(null);
-              this.setMap(null);
-              hiddenMarks.push([this, infoWindow]);
-            });            
-
-            cityCircle.addListener('drag', function(){
-              infoWindow.setMap(null);
-            });
-
-            cityCircle.addListener('dragend', function(){
-              this.setMap(map);
-              infoWindow.position = this.center;
-              infoWindow.setMap(map);
-            });
           }          
         }
       }         
@@ -329,61 +328,97 @@ page refresh, to preserve utility of ajax-->
   }
 
   function initMap(){
-
-    var mapProps = {
-      'streetViewControl'      : false,
-      'disableDoubleClickZoom' : true,      
-      'center'                 : new google.maps.LatLng(42.877742, -97.380979),
-      'zoom'                   : 4,
-      'minZoom'                : 2,
-      'maxZoom'                : 12,
-      'mapTypeId'              : [google.maps.MapTypeId.ROADMAP, 'map_style'],
-    };
-
-    // Styles from the fantastic Google Styled Maps Wizard, http://googlemaps.github.io/js-samples/styledmaps/wizard/index.html
-    var mapStyles = [
-      {
-        "featureType": "road",
-        "stylers": [
-          { "visibility": "off" }
-        ]
-      },{
-        "featureType": "poi",
-        "stylers": [
-          { "visibility": "off" }
-        ]
-      },{
-        "featureType": "transit",
-        "stylers": [
-          { "visibility": "off" }
-        ]
-      },{
-        "elementType": "labels",
-        "stylers": [
-          { "lightness": 49 }
-        ]
-      },{
-        "featureType": "administrative",
-        "elementType": "geometry.fill",
-        "stylers": [
-          { "visibility": "off" }
-        ]
-      },{
-        "featureType": "administrative",
-        "elementType": "geometry.stroke",
-        "stylers": [
-          { "lightness": 48 }
-        ]
-      },{
-      }
-    ];
-    var styledMap = new google.maps.StyledMapType(mapStyles, {name: 'Styled Map'});
-    geoCoder = new google.maps.Geocoder();
-    map = new google.maps.Map(document.getElementById('map'), mapProps);
+    addCircleStorageToMap();
+    var props     = setProperties();
+    var styles    = setStyles();
+    var styledMap = new google.maps.StyledMapType(styles, {name: 'Styled Map'});
+    geoCoder      = new google.maps.Geocoder();
+    map           = new google.maps.Map(document.getElementById('map'), props);
     map.mapTypes.set('map_style', styledMap);
     map.setMapTypeId('map_style');
-    alert(typeof map)
-    alert(JSON.stringify(map));
+
+    function setProperties(){
+      return {
+        'streetViewControl'      : false,
+        'disableDoubleClickZoom' : true,      
+        'center'                 : new google.maps.LatLng(42.877742, -97.380979),
+        'zoom'                   : 4,
+        'minZoom'                : 2,
+        'maxZoom'                : 12,
+        'mapTypeId'              : [google.maps.MapTypeId.ROADMAP, 'map_style'],
+      };
+    }
+
+    function setStyles(){
+      // Styles from the fantastic Google Styled Maps Wizard, http://googlemaps.github.io/js-samples/styledmaps/wizard/index.html
+      return [
+        {
+          "featureType": "road",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },{
+          "featureType": "poi",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },{
+          "featureType": "transit",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },{
+          "elementType": "labels",
+          "stylers": [
+            { "lightness": 49 }
+          ]
+        },{
+          "featureType": "administrative",
+          "elementType": "geometry.fill",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },{
+          "featureType": "administrative",
+          "elementType": "geometry.stroke",
+          "stylers": [
+            { "lightness": 48 }
+          ]
+        }
+      ];      
+    }
+
+    function addCircleStorageToMap(){
+
+      var listeners = ['click','dblclick','drag','dragend','mouseover','mouseout'];
+      google.maps.Map.prototype.circles = [];
+
+      google.maps.Map.prototype._getCircles = function(){
+        return this.circles;
+      };
+
+      google.maps.Map.prototype._clearCircles = function(){
+        this.circles.forEach(function(circle){
+          listeners.forEach(function(listener){
+            google.maps.event.clearListeners(circle, listener);
+          });
+          circle.setMap(null);
+        });
+        this.circles = [];
+      };
+
+      google.maps.Map.prototype._togCircVis = function(){
+        this.circles.forEach(function(circle){
+          circle.getMap() != null ? circle.setMap(null) : circle.setMap(map);
+        })
+      }
+
+      google.maps.Circle.prototype._storeInMap = function(map){
+        if(map){
+          map.circles.push(this);
+        }
+      }
+    }
   }
 
 </script>

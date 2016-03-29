@@ -1,8 +1,8 @@
-var fs = require('fs');
-var path = require ('path');
-var mime = require ('mime');
-var util = require ('util');
-var twitterQuery = require('./twitterQuery.js');
+var fs           = require('fs');
+var path         = require ('path');
+var mime         = require ('mime');
+var util         = require ('util');
+var socketClient = require('./socketClient.js');
 
 this.dispatch = function(request, response, connection, stream) {
 
@@ -20,7 +20,8 @@ this.dispatch = function(request, response, connection, stream) {
 				break;
 			case 'twitterQuery':
 				request.on('data', function(data){
-					twitterQuery.makeQuery(jsonifyRequest(data.toString()), response, request);
+					var dataJson = jsonifyRequest(data.toString());
+					socketClient.makeQuery(dataJson, response, request);
 				});
 				break;
 			case 'pauseStream':
