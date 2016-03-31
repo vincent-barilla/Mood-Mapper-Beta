@@ -16,12 +16,10 @@ this.makeQuery = function(data, response, request){
  	client.on('connect', function(connection){
 
  		connection.on('message', function(message) {
-
  			console.log("From server: '"); 
  			console.log(message.utf8Data + "'");
  			console.log("\n");
 			response.write(message.utf8Data);
-
  		});
 
  		connection.on('close',function(){
@@ -42,13 +40,28 @@ this.makeQuery = function(data, response, request){
  			}
  		};
 
- 		sendParameters();
 
+ 		setInterval(function(){
+ 			if (connection.connected){
+ 				connection.ping();
+ 			}
+ 		}, 19900)
+
+ 		connection.on('pong', function(){
+ 			console.log('Client: pong received at: ' + (new Date()) + '\n')
+ 		})
+
+		connection.on('ping', function(){
+			console.log('Server just sent a keepalive ping.')
+		})
+ 		sendParameters();	
+ 		
  	});
 
 	client.connect('ws://localhost:8080/', 'echo-protocol', 'twitterQuery');
-
 };
+
+
 
 
  

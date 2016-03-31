@@ -1088,10 +1088,6 @@
       "score": -3
     },
     {
-      "word": "better",
-      "score": 2
-    },
-    {
       "word": "bias",
       "score": -1
     },
@@ -1103,6 +1099,10 @@
       "word": "big",
       "score": 1
     },
+    {
+      "word": "birth",
+      "score": 1
+    },    
     {
       "word": "bitch",
       "score": -5
@@ -2358,7 +2358,7 @@
     {
       "word": "danger",
       "score": -2
-    },
+    },       
     {
       "word": "daredevil",
       "score": 2
@@ -3483,6 +3483,14 @@
       "word": "effectively",
       "score": 2
     },
+    {
+      "word": "effigy",
+      "score": -1
+    },     
+    {
+      "word": "effigies",
+      "score": -1
+    },    
     {
       "word": "elated",
       "score": 3
@@ -5120,6 +5128,10 @@
       "score": -2
     },
     {
+      "word": "holy",
+      "score": 3
+    },    
+    {
       "word": "homesick",
       "score": -2
     },
@@ -6368,6 +6380,10 @@
       "score": -1
     },
     {
+      "word": "makeamericagreatagain",
+      "score": 3
+    },    
+    {
       "word": "manipulated",
       "score": -1
     },
@@ -7251,6 +7267,10 @@
       "word": "perjury",
       "score": -3
     },
+    {
+      "word": "pernicious",
+      "score": -3
+    },    
     {
       "word": "perpetrator",
       "score": -2
@@ -9956,6 +9976,10 @@
       "score": -2
     },
     {
+      "word": "unholy",
+      "score": -3
+    },    
+    {
       "word": "unified",
       "score": 1
     },
@@ -9992,6 +10016,10 @@
       "score": -2
     },
     {
+      "word": "unnatural",
+      "score": -1
+    },    
+    {
       "word": "unprepared",
       "score": -2
     },  
@@ -9999,6 +10027,10 @@
       "word": "unprofessional",
       "score": -2
     },
+    {
+      "word": "unproven",
+      "score": -2
+    },    
     {
       "word": "unresearched",
       "score": -2
@@ -10047,6 +10079,10 @@
       "word": "unworthy",
       "score": -2
     },
+    {
+      "word": "uproot",
+      "score": -1
+    },    
     {
       "word": "upset",
       "score": -2
@@ -13698,6 +13734,10 @@
   "score": -2
     },
     {
+      "word": "efigie",
+      "score": -1
+    },         
+    {
   "word": "enojado",
   "score": -2
     },
@@ -16923,8 +16963,12 @@
     },
     {
   "word": "lyin",
-  "score": -3
-    },  
+  "score": -2
+    },
+    {
+    "word": "lyinted",
+    "score": -2
+    },        
     {
   "word": "mentira",
   "score": -3
@@ -18793,6 +18837,10 @@
   "word": "riots",
   "score": -2
     },
+    {
+  "word": "rise direction",
+  "score": 3
+    },    
     {
   "word": "risk",
   "score": -2

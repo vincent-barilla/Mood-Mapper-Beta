@@ -68,7 +68,9 @@ this.dispatch = function(request, response, connection, stream) {
 
 	function pauseStream (response,connection,stream){
 		if (connection != null && stream != null){
-			stream.destroy();
+			if (stream){
+				stream.destroy();
+			}	
 			connection.close();
 			response.writeHead(200,{'Content-Type': 'text/plain; charset=UTF-8'});
 			response.end("All connections closed.");
