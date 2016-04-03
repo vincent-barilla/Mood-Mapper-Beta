@@ -88,7 +88,7 @@ page refresh, to preserve utility of ajax-->
 <script type="text/javascript">
 
 const ReachBoost = 750;
-const DefaultCenter = {'lat': 77.113132, 'lng': -42.539063};
+const DefaultCenter = {'lat': -3.8963993, 'lng': -146.42578125};
 const Week = xBrowserWeek();
 
 // Apparently cross-browser standardization of date construction is not so consistent, so I use this as a golden standard: 
@@ -355,76 +355,76 @@ function ajaxFormSubmit(){
                 center = {'lat': Number(latLng[0]), 'lng': Number(latLng[1])};
                 alert("CO center is " + center.lat + " " + center.lng);
                 break;
-              case 'ST:':
               case 'UL:':
+                switch(turnstileCount){
+                  case 0:
+                    turnstileCount++;    console.log('google')
+                    geoCoder.geocode({'address':location}, function(results, status){
+                      if (status == google.maps.GeocoderStatus.OK){
+                          if (results[0].geometry != null && results[0].geometry.location != null){
+                            center = results[0].geometry.location;
+                            drawTweetCircle(tweet, center, 'google');
+                          }                     
+                        } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
+                          alert('Oh no! This app has maxed out its queries. Try again later.')
+                        }  
+                      });
+                      break;
+                  case 1:  
+                    turnstileCount++; console.log('mapquest')                
+                    var mapQuestXHR = new XMLHttpRequest(); 
+                    mapQuestXHR.open('GET', 'http://www.mapquestapi.com/geocoding/v1/address?key=bTOgIMAbO4p0SvZmAgD9EIFVxqO2MocO&maxResults=1&location=' + location);
+                    mapQuestXHR.send();
+                    mapQuestXHR.onreadystatechange = function() {
+                      if (mapQuestXHR.readyState == XMLHttpRequest.DONE && mapQuestXHR.status == 200) {
+                        var response = JSON.parse(mapQuestXHR.responseText);
+                        if (response.results[0]){
+                          center = response.results[0].locations[0].latLng;
+                          if (center) {
+                            drawTweetCircle(tweet, center, 'mapQuest')
+                          }
+                        }  
+                      } 
+                    };
+                    break; 
+                  case 2:
+                    turnstileCount++; console.log('openCage')
+                    var openCageXHR = new XMLHttpRequest(); 
+                    openCageXHR.open('GET', 'http://api.opencagedata.com/geocode/v1/json?q=' + location + '&key=02b58331c3075f21b23ab96521c85d81&limit=1');
+                    openCageXHR.send();
+                     
+                    openCageXHR.onreadystatechange = function() {
+                      if (openCageXHR.readyState == XMLHttpRequest.DONE && openCageXHR.status == 200) {
+                        var response = JSON.parse(openCageXHR.responseText);
+                        if(response.results[0]){
+                          center = response.results[0].geometry;
+                          if (center) {
+                            drawTweetCircle(tweet, center,' openCage')
+                          }
+                        }
+                      } 
+                    };
+                  case 3:
+                    turnstileCount = 0; console.log('bing')
 
-              if(turnstileCount == 0){
-                turnstileCount++; console.log('google')
+                    var geocodeRequest = 'http://dev.virtualearth.net/REST/v1/Locations?query=' + location
+                      + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
 
-                geoCoder.geocode({'address':location}, function(results, status){
-                  if (status == google.maps.GeocoderStatus.OK){
-                    if (results[0].geometry != null && results[0].geometry.location != null){
-                      center = results[0].geometry.location;
-                      drawTweetCircle(tweet, center, 'google');
-                    }                     
-                  } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
-                    alert('Oh no! This app has maxed out its queries. Try again later.')
-                  }  
-                });
-              } else if(turnstileCount == 1){
-                turnstileCount++; console.log('mapquest')                
-                var mapQuestXHR = new XMLHttpRequest(); 
-                mapQuestXHR.open('GET', 'http://www.mapquestapi.com/geocoding/v1/address?key=bTOgIMAbO4p0SvZmAgD9EIFVxqO2MocO&maxResults=1&location=' + location);
-                mapQuestXHR.send();
-                 
-                mapQuestXHR.onreadystatechange = function() {
-                  if (mapQuestXHR.readyState == XMLHttpRequest.DONE && mapQuestXHR.status == 200) {
-                    var response = JSON.parse(mapQuestXHR.responseText);
-                    if (response.results[0]){
-                      center = response.results[0].locations[0].latLng;
-                      if (center) {
-                        drawTweetCircle(tweet, center, 'mapQuest')
-                      }
-                    }  
-                  } 
-                }; 
-              } else if (turnstileCount == 2){
-                turnstileCount++; console.log('openCage')
-                var openCageXHR = new XMLHttpRequest(); 
-                openCageXHR.open('GET', 'http://api.opencagedata.com/geocode/v1/json?q=' + location + '&key=02b58331c3075f21b23ab96521c85d81&limit=1');
-                openCageXHR.send();
-                 
-                openCageXHR.onreadystatechange = function() {
-                  if (openCageXHR.readyState == XMLHttpRequest.DONE && openCageXHR.status == 200) {
-                    var response = JSON.parse(openCageXHR.responseText);
-                    if(response.results[0]){
-                      center = response.results[0].geometry;
-                      if (center) {
-                        drawTweetCircle(tweet, center,' openCage')
+                    bingScript.setAttribute('src', geocodeRequest);                                             
+
+                    bingCallback = function(response){ 
+                      if(response.resourceSets[0]){
+                        center = response.resourceSets[0].resources[0].point.coordinates;
+                        console.log(center)
+                        center = {'lat': Number(center[0]), 'lng': Number(center[1])}
+                        console.log(center)
+                        if (center) {
+                          drawTweetCircle(tweet, center, 'bing')
+                        }
                       }
                     }
-                  } 
-                };
-              } else if (turnstileCount == 3){
-                turnstileCount = 0; console.log('bing')
-
-                var geocodeRequest = 'http://dev.virtualearth.net/REST/v1/Locations?query=' + location
-                  + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
-
-                bingCallback = function(response){ 
-                  if(response.resourceSets[0]){
-                    center = response.resourceSets[0].resources[0].point.coordinates;
-                    console.log(center)
-                    center = {'lat': Number(center[0]), 'lng': Number(center[1])}
-                    console.log(center)
-                    if (center) {
-                      drawTweetCircle(tweet, center, 'bing')
-                    }
-                  }
-                }
-
-                bingScript.setAttribute('src', geocodeRequest);                                             
-              }    
+                    break;
+                }    
               break;
             }
           } else if (location == null || center == null){
@@ -443,9 +443,9 @@ function ajaxFormSubmit(){
           function setRadius(){
             var rad = tweet.stats.reach;
             if (rad){
-              rad > 1000 ? null : rad = ((750 - rad) * rad);
+              rad > 300 ? rad *= 30 : rad = ((600 - rad) * rad);
             } else {
-              rad = 1000;
+              rad = 90000;
             }
             return rad;
           }

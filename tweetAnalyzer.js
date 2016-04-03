@@ -64,7 +64,7 @@ this.analyze = function(tweet, wordBanks){
 						street += tweet.place.attributes['623:id'] + ", "; 
 					}
 				} 
-				location = 'ST:' + street + tweet.place.full_name + ", " + tweet.place.country;
+				location = 'UL:' + street + tweet.place.full_name + ", " + tweet.place.country;
 			} else if (tweet.user && tweet.user.location){
 			 	location = 'UL:' + tweet.user.location; 		
 			} 

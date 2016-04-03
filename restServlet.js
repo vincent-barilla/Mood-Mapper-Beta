@@ -8,7 +8,7 @@ this.makeQuery = function(data, response, request, wordBank){
 	var queryString = '/1.1/search/tweets.json?q=' + data.subject 
 	                + '%20since%3A' + parseDate(data.start) 
 	                + '%20until%3A' + parseDate(data.end)
-	                + '&count=6';
+	                + '&count=100';
 
 	console.log("GET MODE")
 	var options = {
@@ -49,8 +49,7 @@ this.makeQuery = function(data, response, request, wordBank){
 
 	})
 	req.end();
-	request.end();
-
+	
 	function parseDate(date){
 		date = date.split('%2F');
 		return (date[2] + '-' + checkSingle(date[0]) + '-' + checkSingle(date[1]));

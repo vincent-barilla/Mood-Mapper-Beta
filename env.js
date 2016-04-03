@@ -11,35 +11,38 @@ process.env['BEARER_ACCESS_TOKEN']              = "AAAAAAAAAAAAAAAAAAAAANazuAAAA
 
 /* 
 
+
 	Code used to generate process.end['ENCODED_BEARER_TOKEN_CREDENTIALS'] = btoa(process.end['BEARER_TOKEN_CREDENTIALS']); // btoa == Javascript's base64 encoder
 	
+
+
 	Code used to generate process.env['BEARER_TOKEN']:
 
 	var https = require('https');
 
-	(function requestAuthFromTwit(){
+		(function requestAuthFromTwit(){
 
-		var options = {
-			'path'	  : '/oauth2/token',
-			'host'    : 'api.twitter.com',
-			'method'  : 'POST',
-			'headers' : {'Content-Type'  : 'application/x-www-form-urlencoded;charset=UTF-8',
-						         'Authorization': 'Basic ' + process.env.ENCODED_BEARER_TOKEN_CREDENTIALS}
-		};
+			var options = {
+				'path'	  : '/oauth2/token',
+				'host'    : 'api.twitter.com',
+				'method'  : 'POST',
+				'headers' : {'Content-Type'   : 'application/x-www-form-urlencoded;charset=UTF-8',
+							  'Authorization' : 'Basic ' + process.env.ENCODED_BEARER_TOKEN_CREDENTIALS}
+			};
 
-		var req = new https.request(options, function(res){
-			var responseString = '';
+			var req = new https.request(options, function(res){
+				var responseString = '';
 
-			res.on('data', function(data){
-				responseString += data;
+				res.on('data', function(data){
+					responseString += data;
+				});
+
+				res.on('end', function(){
+					console.log("Bearer tok: " + responseString);
+				});
 			});
 
-			res.on('end', function(){
-				console.log("Bearer tok: " + responseString);
-			});
-		});
-
-		req.end('grant_type=client_credentials');	
-	})()
+			req.end('grant_type=client_credentials');	
+		})()
 */	
 

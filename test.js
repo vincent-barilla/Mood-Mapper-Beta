@@ -21,7 +21,6 @@ function initWordBank(){
 			})
 		}
 	}
-	console.log("MAIN SERVER: wordBank initialized.")
 	return wordBank;
 }
 

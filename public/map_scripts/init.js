@@ -10,6 +10,21 @@ function initMap(){
   map.mapTypes.set('map_style', styledMap);
   map.setMapTypeId('map_style');
 
+  var rectangle = new google.maps.Rectangle({
+    strokeColor: 'RGB(85,85,85)',
+    strokeOpacity: 0.25,
+    strokeWeight: 2,
+    fillColor: 'RGB(85,85,85)',
+    fillOpacity: 0.05,
+    map: map,
+    bounds: {
+      north: 6.393879233,
+      south: -16.186677698,
+      east: -131.8916015625,
+      west: -160.9599609375
+    }
+  });
+
   function setProperties(){
     return {
       'streetViewControl'      : false,
@@ -57,7 +72,7 @@ function initMap(){
         "stylers": [
           { "lightness": 48 }
         ]
-      }
+      }      
     ];      
   }
 
