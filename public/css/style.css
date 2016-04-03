@@ -14,33 +14,6 @@ body {
     border-radius: 5px
 }
 
-#content {
-	width: 702px;
-	margin: auto;
-}
-
-#menu > li{
-	display: inline-block;
-	padding-right: 14px;
-	font-size: 0.8em;
-}
-
-h2 {
-	color: #333;
-	text-decoration: none;
-}
-a {
-	text-decoration: none;
-	color: #333;
-}
-a.article {
-	color: #156cff;
-}
-
-#content p {
-	border-bottom: 2px dotted #167cff;
-	padding-bottom: 10px;
-}
 
 /* color box elements */
 .div-color {
@@ -68,14 +41,59 @@ a.article {
 }
 
 .central{
-	position: relative
+	position: relative;
+    width: 29%
 }
 
+
+td
+{
+    padding:0 10px 0 10px;
+}
+
+.inline {
+    display: inline;
+}
+
+.form{
+    position: relative;
+    float: center;
+    padding-right: 30px;
+}
+
+section {
+    width: 100%;
+    height: 750px;
+    background: RGB(240,240,240);
+    margin: auto;
+    padding: 10px;
+}
+div#map { 
+    width: 70%;
+    height: 750px;
+    float: left;
+    position: relative;
+}
+div#text-div {
+    margin-left: 75%;
+    height: 750px;
+    background: RGB(240,240,240);
+}
+
+.textAr{
+    position: relative;
+    padding-left: 10px;
+    top: 10px;
+    bottom: 10px;
+    width: 80%;
+}
+
+/*
 .map{
     position: relative;
     width: 75%;
     height: 750px;
-    background-color:RGB(240,240,240);
+    background-color: RGB(240,240,240);
     top: 10px;
     left: 20px;
-}   
+}   */

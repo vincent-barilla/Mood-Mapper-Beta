@@ -1,31 +1,36 @@
-var fs           = require('fs');
-var path         = require ('path');
-var mime         = require ('mime');
-var util         = require ('util');
-var socketClient = require('./socketClient.js');
+var fs            = require('fs');
+var path          = require('path');
+var mime          = require('mime');
+var util          = require('util');
+var streamServlet = require('./streamServlet.js');
+var restServlet   = require('./restServlet.js');
 
-this.dispatch = function(request, response, connection, stream) {
+this.dispatch = function(request, response, stream, wordBank) {
 
 	if (request.url == "/" || request.url == "/home") {
 		viewPage('./public/index.html');
 	} else {
-
 		var parts = request.url.split('/');
 		var action = parts[1];
 		var argument = parts.slice(2, parts.length).join("/");
-
 		switch(action){
 			case 'resource':
 				viewPage('./public/' + argument);
 				break;
-			case 'twitterQuery':
+			case 'streamTweets':
 				request.on('data', function(data){
 					var dataJson = jsonifyRequest(data.toString());
-					socketClient.makeQuery(dataJson, response, request);
+					streamServlet.makeQuery(dataJson, response, request, stream, wordBank);
 				});
 				break;
+			case 'getTweets':
+				request.on('data', function(data){			
+					var dataJson = jsonifyRequest(data.toString());
+					restServlet.makeQuery(dataJson, response, request, wordBank);
+				});
+				break;				
 			case 'pauseStream':
-				pauseStream(response,connection,stream);
+				pauseStream();
 				break;	
 			default:
 				serverError(404, '404 Error: Resource not found.');
@@ -57,21 +62,18 @@ this.dispatch = function(request, response, connection, stream) {
 		}
 	}
 
-	function jsonifyRequest(request){
+	function jsonifyRequest(req){
 		var json = {};
-		request.split("&").forEach(function(pair){
+		req.split("&").forEach(function(pair){
 			pair = pair.split("=");
 			json[pair[0]] = pair[1];
 		});
 		return json;
 	}
 
-	function pauseStream (response,connection,stream){
-		if (connection != null && stream != null){
-			if (stream){
-				stream.destroy();
-			}	
-			connection.close();
+	function pauseStream (){
+		if (stream){
+			request.end();	
 			response.writeHead(200,{'Content-Type': 'text/plain; charset=UTF-8'});
 			response.end("All connections closed.");
 			console.log("Streaming paused.")
