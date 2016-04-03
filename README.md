@@ -5,7 +5,7 @@ Explaining some of the denser coding blocks:
 
 
 
-I. initWordBank()
+I.     initWordBank()
 
    Read in data from a local file path, then reformat it into a wordBank that is tailored to the 
    needs of tweetAnalyzer. A sample of the start product:
@@ -48,7 +48,7 @@ All other solutions that I can think of would similarly ask Twitter's public str
 	
 	
 	
-III. onclickWrapper(elem, prop, toggleEnabled, newVal, oldVal, newOnClickMthd, oldOnClickMthd)
+III.     onclickWrapper(elem, prop, toggleEnabled, newVal, oldVal, newOnClickMthd, oldOnClickMthd)
 
   elem is the html element being changed, prop is what property of elem is being changed, oldVal is what prop starts as, newVal is what it finishes as, toggleEnabled is a boolean value, and the last two inputs are optional callbacks. 
 
