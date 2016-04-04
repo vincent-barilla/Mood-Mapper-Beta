@@ -5,7 +5,7 @@
    <title>Insert title here</title>
    <script src='resource/map_scripts/init.js'></script>   
    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
-    <script id='bingScript' type='text/javascript'></script>
+   <script id='bingScript' type='text/javascript'></script>
 </head>
 <body>
   <br>  
@@ -13,10 +13,7 @@
   <div class="map" id="map" style="display:block-inline">
    map goes here.
  </div>    
-  <div id="text-div">
-      <textarea name="text" id="textar" cols="5" rows="25" class='central textAr' style='display:none'>
-       Live streaming tweets...
-      </textarea>   
+  <div id="text-div" style='display:none' class = 'text'>
   </div>
 </section>          
 <div id="hidden-div" style="display:none">
@@ -65,11 +62,11 @@ page refresh, to preserve utility of ajax-->
            <input type="text" id="subject" value="BernieSanders"><br>
 
              Choose a start date for a search, up to one week ago: <br>
-           <input type="text" id="startdate" value="3/28/2016" placeholder="day/month/2016"><br>
+           <input type="text" id="startdate" value="4/2/2016" placeholder="day/month/2016"><br>
            <textarea name="error1" id="starterror" cols="100" rows="3" style="display:none">Not quite. Please correct the following: </textarea>   
            
              Choose an end date for your search: <br>
-           <input type="text" id="enddate" value="3/30/2016" placeholder="day/month/2016"><br>       
+           <input type="text" id="enddate" value="4/4/2016" placeholder="day/month/2016"><br>       
            <textarea name="error2" id="enderror" cols="110" rows="4" style="display:none">Not quite. Please correct the following: </textarea>   
            
              Select your search mode.<br>   
@@ -87,8 +84,7 @@ page refresh, to preserve utility of ajax-->
 
 <script type="text/javascript">
 
-const ReachBoost = 750;
-const DefaultCenter = {'lat': -3.8963993, 'lng': -146.42578125};
+const DefaultCenter = {'lat': -3.8963, 'lng': -146.4255};
 const Week = xBrowserWeek();
 
 // Apparently cross-browser standardization of date construction is not so consistent, so I use this as a golden standard: 
@@ -96,13 +92,16 @@ function xBrowserWeek(){
   var pointA = new Date('3/3/2016');
   var pointB = new Date('3/10/2016'); 
   return pointB - pointA;
-}     
-bingCallback = function(){};
+}
+
+var bingCallback = function(){};
+var panToCircle = function(){};
 
 var xhr = new XMLHttpRequest();
 var globalMood = {"mood" : [0,0,0], "count" : 1 };
 var geoCoder;
 var turnstileCount = 0;
+var tweetCount = -1;
 var map;  
 var startErrMsg;
 var endErrMsg;
@@ -117,7 +116,7 @@ function buttonHandler(source){
       if (formValidates()){
         onclickWrapper(document.getElementById('hidden-div').style, 'display', false, 'block', 'none', ajaxFormSubmit);
         batchHide(['submit-btn','starterror','enderror','form']);
-        document.getElementById('textar').style = 'display:block-inline';
+        document.getElementById('text-div').style = 'display:block-inline';
       } else {
         showErrorMsgs();
       }
@@ -131,31 +130,18 @@ function buttonHandler(source){
       }
       break;        
     case 'togCircVis':
-      onclickWrapper(document.getElementById('togCircVis-btn').firstChild, 'data', true, 'Show Circles', 'Hide Circles', map._togCircVis.call(map));
+      onclickWrapper(document.getElementById('togCircVis-btn').firstChild, 'data', true, 'Show Circles', 'Hide Circles', 
+                     map._togCircVis.call(map, document.getElementById('togCircVis-btn').firstChild.data));
       break;
     case 'clear':
-      map._clearCircles();
-      document.getElementById('togCircVis-btn').style.display = 'none';
-      document.getElementById('togCircVis-btn').firstChild.data = 'Hide Circles';
+      resetGlobals();
       break;       
   }
 
-  /*... onclickWrapper(elem, prop, toggleEnabled, newVal, oldVal, newOnClickMthd, oldOnClickMthd .................................*/ /*
-
-  elem is the html element being changed, prop is what property of elem is being changed, oldVal is what prop starts as, newVal is what it finishes as, 
-  toggleEnabled is a boolean value, and the last two inputs are optional callbacks. 
-
-  If toggleEnabled is true, elem.prop will toggle back and for between oldVal and newVal. Zero, one, or two callbacks may also be accepted. With zero,
-  no callbacks are fired. With one callback given, clickAction uses that callback for both toggle states. If two are, clickAction uses the first
-  callback when elem.prop == newVal, and the second callback when elem.prop == oldVal.
-
-  If toggleEnabled is false, zero, one, or two callbacks may be accepted. With zero, no callbacks are fired. With one, clickAction uses that action for 
-  both toggle states. If two are, clickAction uses the first callback when elem.prop == oldVal, and the second callback when elem.prop == newval. If
-  none are, no callbacks are fired. 
-
-  Note: At the point that you would use this to change one value to another, with no callback, you're duplicating the logic of 
-  document.getElementById.property = value. When I encountered that case, I used the native JS code. I wrote this, in the first place, because 
-  of how space-intensive toggling the values was getting. Using it when it's not serving that purpose would make that all wasted effort. */ 
+/*
+  Refer to Readme.md "III: onclickWrapper(elem, prop, toggleEnabled, newVal, oldVal, newOnClickMthd, oldOnClickMthd)" for an explanation of this 
+  function.
+ */ 
 
   function onclickWrapper(elem, prop, toggleEnabled, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
     if(toggleEnabled) {
@@ -176,6 +162,15 @@ function buttonHandler(source){
         callback();
       }
     }
+  }
+
+  function resetGlobals(){
+    map._clearCircles();
+    tweetCount = -1;
+    globalMood = {"mood" : [0,0,0], "count" : 1 };
+    document.getElementById('text-div').innerHTML = '';
+    document.getElementById('togCircVis-btn').style.display = 'none';
+    document.getElementById('togCircVis-btn').firstChild.data = 'Hide Circles';    
   }
 
   function batchHide(toBeHidden){
@@ -270,7 +265,7 @@ function ajaxPauseStream(){
 
   pauseXhr.onreadystatechange = function(){
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200){
-      document.getElementById("textar").value = 'Streaming paused \n\n' + document.getElementById("textar").value;
+      document.getElementById("text-div").value = 'Streaming paused \n\n' + document.getElementById("text-div").value;
     } else {
         //alert('There was a problem with the request.')
     }
@@ -289,7 +284,7 @@ function ajaxFormSubmit(){
   function serializeForm(){
     var data = {'subject' : document.getElementById("subject").value,
                 'start'   : document.getElementById("startdate").value,
-                'end'     : document.getElementById("enddate").value}
+                'end'     : document.getElementById("enddate").value}            
 
     var urlEncodedData = "";
     var urlEncodedDataPairs = [];
@@ -302,45 +297,46 @@ function ajaxFormSubmit(){
 
   function sendData(data){
 
+    if (tweetCount != -1){
+      var circs = map._getCircles(;
+      data.id = circs[circs.length]._getId();
+    }
     xhr.open('POST', data[1], true);
     xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     xhr.send(data[0]);
     xhr.onreadystatechange = function (){
 
-      if ((this.readyState === XMLHttpRequest.LOADING ||
-           this.readyState === XMLHttpRequest.DONE) && this.status === 200) {
-        var responseJSON = parseResponse(this.responseText);
-        } else {
-            // alert('There was a problem with the request.')
-      }
+      if ((this.readyState === XMLHttpRequest.LOADING || this.readyState === XMLHttpRequest.DONE) 
+        && this.status === 200) {
+        tweetCount++;
+        parseResponse(this.responseText);
+      } 
 
       function parseResponse(response){
         // '{"text":"'' delimits the start of a new tweet -- the flaw being, if '{"text":"' occurs
         // in a tweet, the code will think everything subsequent is a new tweet. 
         var jsonTweet = JSON.parse(response.substring(response.lastIndexOf('{"text":"'), response.length));
-        displayText(document.getElementById('textar'));
-        updateMoodBox(document.getElementById('mood-div'), jsonTweet.stats.mood);
-        updateAverageMoodBox(jsonTweet.stats.mood);
         geoCodeTweet(jsonTweet);
-        return jsonTweet;
-
-        function displayText(html){
-          html.value = (html.value + '\n\n' + jsonTweet.text + '\n\n' + ' . .  .   .  . .  .   .  . .');
-        }
-         
-        function updateMoodBox(html, mood){
-          mood = mood.toString();
-          html.style = 'background-color: RGB(' + mood + ')';  
-        }
+        updateMoodBoxes(jsonTweet.stats.mood);    
           
-        function updateAverageMoodBox(mood){
+        function updateMoodBoxes(mood){
           var RGB = [];
-          mood.forEach(function(value, i){
-            globalMood.mood[i] += Number(value);
-            RGB[i] = (globalMood.mood[i] / globalMood.count).toFixed(0);
-          }) 
-          updateMoodBox(document.getElementById('globalMood-div'), RGB);
+          updateRGB();
+          colorBox(document.getElementById('mood-div'), mood)
+          colorBox(document.getElementById('globalMood-div'), RGB);
           globalMood.count++;
+
+          function updateRGB(){
+            mood.forEach(function(value, i){
+              globalMood.mood[i] += Number(value);
+              RGB[i] = (globalMood.mood[i] / globalMood.count).toFixed(0);
+            })
+          }
+
+          function colorBox(html, mood){
+            mood = mood.toString();
+            html.style = 'background-color: RGB(' + mood + ')';  
+          }
         }
 
         function geoCodeTweet(tweet){
@@ -363,7 +359,8 @@ function ajaxFormSubmit(){
                       if (status == google.maps.GeocoderStatus.OK){
                           if (results[0].geometry != null && results[0].geometry.location != null){
                             center = results[0].geometry.location;
-                            drawTweetCircle(tweet, center, 'google');
+                            center = {'lat': center.lat(), 'lng': center.lng()};
+                            createTweetCircle(tweet, center, 'google');
                           }                     
                         } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
                           alert('Oh no! This app has maxed out its queries. Try again later.')
@@ -380,8 +377,8 @@ function ajaxFormSubmit(){
                         var response = JSON.parse(mapQuestXHR.responseText);
                         if (response.results[0]){
                           center = response.results[0].locations[0].latLng;
-                          if (center) {
-                            drawTweetCircle(tweet, center, 'mapQuest')
+                          if (center) {  
+                            createTweetCircle(tweet, center, 'mapQuest')
                           }
                         }  
                       } 
@@ -398,28 +395,24 @@ function ajaxFormSubmit(){
                         var response = JSON.parse(openCageXHR.responseText);
                         if(response.results[0]){
                           center = response.results[0].geometry;
-                          if (center) {
-                            drawTweetCircle(tweet, center,' openCage')
+                          if (center) {                       
+                            createTweetCircle(tweet, center,' openCage')
                           }
                         }
                       } 
                     };
                   case 3:
                     turnstileCount = 0; console.log('bing')
-
                     var geocodeRequest = 'http://dev.virtualearth.net/REST/v1/Locations?query=' + location
                       + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
-
                     bingScript.setAttribute('src', geocodeRequest);                                             
 
                     bingCallback = function(response){ 
                       if(response.resourceSets[0]){
                         center = response.resourceSets[0].resources[0].point.coordinates;
-                        console.log(center)
                         center = {'lat': Number(center[0]), 'lng': Number(center[1])}
-                        console.log(center)
                         if (center) {
-                          drawTweetCircle(tweet, center, 'bing')
+                          createTweetCircle(tweet, center, 'bing')
                         }
                       }
                     }
@@ -428,24 +421,25 @@ function ajaxFormSubmit(){
               break;
             }
           } else if (location == null || center == null){
-          // The middle of Iceland, for non-located tweets!
             center = DefaultCenter;
+            createTweetCircle(tweet, center,'default');
           }
-          drawTweetCircle(tweet, center,'default');   
         } 
 
-        function drawTweetCircle(tweet, center, source){
-          var radius      = setRadius();
+        function createTweetCircle(tweet, center, source){
+          var radius = setRadius();
+          var color = 'RGB(' + tweet.stats.mood.toString() + ')';                    
           var tweetCircle = initTweetCircle();
           tweetCircle.initListeners();
           tweetCircle._storeInMap(map);
+          linkToCircle();
 
           function setRadius(){
             var rad = tweet.stats.reach;
             if (rad){
-              rad > 300 ? rad *= 30 : rad = ((600 - rad) * rad);
+              rad > 50000 ? rad *= 20 : rad = ((500000 - 10 * rad) * .000095 * rad);
             } else {
-              rad = 90000;
+              rad = 4000;
             }
             return rad;
           }
@@ -453,10 +447,10 @@ function ajaxFormSubmit(){
           function initTweetCircle(){
               
             var circle = new google.maps.Circle({
-              'strokeColor'  : 'RGB(' + tweet.stats.mood.toString() + ')',
+              'strokeColor'  : color,
               'strokeOpacity': .8,
               'strokeWeight' : 2,
-              'fillColor'    : 'RGB(' + tweet.stats.mood.toString() + ')',
+              'fillColor'    : color,
               'fillOpacity'  : .35, 
               'map'          : map,
               'center'       : center,
@@ -524,6 +518,29 @@ function ajaxFormSubmit(){
             }
             return circle; 
           }
+
+          function linkToCircle(){
+
+            var a = document.createElement('a');
+            a.innerHTML = tweet.text + "<br><br>";
+            a.style.color = color;
+            a.style['text-decoration'] = 'none';
+            a.style['text-shadow'] = '1px 1px 1px rgb(220,220,220)';
+
+            panToCircle = function(latLng){
+              var lat = Number(latLng[0]);
+              var lng = Number(latLng[1]);
+              var zoomLevel = (lat.toFixed(0) == DefaultCenter.lat.toFixed(0) && lng.toFixed(0) == DefaultCenter.lng.toFixed(0)) 
+                            ? 5 : 6;     
+              var cen = {'lat': lat, 'lng': lng};
+              map.setZoom(zoomLevel);              
+              map.panTo(cen);
+            }
+
+            var centerString = center.lat.toString() + ',' + center.lng.toString();
+            a.href = 'javascript:panToCircle([' + centerString + ']);'
+            document.getElementById('text-div').appendChild(a);
+          }          
         }          
       }
     }         

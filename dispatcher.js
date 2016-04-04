@@ -9,14 +9,14 @@ var restServlet   = require('./restServlet.js'); // restServlet will will handle
 this.dispatch = function(request, response, wordBank) { // Note: The wordBank is received here, to be sent to the servlets. 
 
 	if (request.url == "/" || request.url == "/home") { // First, check if the user only wants to see the home page. If so, serve the home view.
-		viewPage('./public/index.html');			    // If not, let the switch statement figure out where the request needs to go. 
+		openFile('./public/index.html');			    // If not, let the switch statement figure out where the request needs to go. 
 	} else {											
 		var parts = request.url.split('/'); // The next 3 lines pull out the action of the request -- "action" being the indicator of where to 
 		var action = parts[1];				// send the request's data. "argument" contains any additional arguments that will define actions, wherever the query ends up. 
 		var argument = parts.slice(2, parts.length).join("/");
 		switch(action){ // The switch statement cases control the flow of non-home requests.
-			case 'resource': // If the request is for a resource, call the openPage function, feed in the local path (./public/) plus the file name (argument).
-				openPage('./public/' + argument); 
+			case 'resource': // If the request is for a resource, call the openFile function, feed in the local path (./public/) plus the file name (argument).
+				openFile('./public/' + argument); 
 				break;
 			case 'streamTweets': // Pull the data out from the request, convert it from a url-encoded string to JSON, pass it to streamServlet.makeQuery.
 				request.on('data', function(data){
@@ -43,7 +43,7 @@ this.dispatch = function(request, response, wordBank) { // Note: The wordBank is
 		response.end(content);
 	}
 
-	function openPage(filePath) { // Makes sure a file exists, has no error when it is read, and then renders a view. 
+	function openFile(filePath) { // Makes sure a file exists, has no error when it is read, and then renders a view. 
 		fs.exists(filePath, function(exists){ // If a file exists, continue to read it; if not, show a 404 error. 
 			if (exists){
 				fs.readFile(filePath, function(err, data){ // If there is an error, show a 404 error.
@@ -73,7 +73,6 @@ this.dispatch = function(request, response, wordBank) { // Note: The wordBank is
 	}
 
 	function pauseStream (){ // End the request that Twitter has been holding open. Respond with the appropriate message. 
-		request.end();	
 		response.writeHead(200,{'Content-Type': 'text/plain; charset=UTF-8'});
 		response.end("All connections closed.");
 		console.log("Streaming paused.")

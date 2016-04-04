@@ -78,7 +78,6 @@ div#text-div {
     margin-left: 75%;
     height: 750px;
     background: RGB(240,240,240);
-    overflow: scroll;
 }
 
 .textAr{

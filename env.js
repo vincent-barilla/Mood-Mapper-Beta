@@ -10,8 +10,6 @@ process.env['ENCODED_BEARER_TOKEN_CREDENTIALS'] = "VWFXSXFBZkFRcFZhQ1ZEQkgwMEo0c
 process.env['BEARER_ACCESS_TOKEN']              = "AAAAAAAAAAAAAAAAAAAAANazuAAAAAAAJEN7WlBpaEkjxSoBtqmT1FYAp2U%3DcAWPTNT0KWQddAuKhntfkiBgNy68EZLd0GxiylkpCemBiwBY3r";
 
 /* 
-
-
 	Code used to generate process.end['ENCODED_BEARER_TOKEN_CREDENTIALS'] = btoa(process.end['BEARER_TOKEN_CREDENTIALS']); // btoa == Javascript's base64 encoder
 	
 

@@ -84,12 +84,7 @@ function initMap(){
   function addCircleStorageToMap(){
 
     var listeners = ['click','dblclick','drag','dragend','mouseover','mouseout']; // The listeners every circle will have
-    google.maps.Map.prototype.circles = []; // Initialize the array that will store the circles
-    google.maps.Circle.prototype.id = [];
-
-    google.maps.Circle.prototype._getId = function(){
-      return this.id;
-    }; 
+    google.maps.Map.prototype.circles = []; // Initialize the array that will store the circles 
 
     google.maps.Map.prototype._getCircles = function(){ // Basic get function, returns the array of circles. 
       return this.circles;
@@ -105,14 +100,9 @@ function initMap(){
       this.circles = []; // This is the step that full removes the circles from future access.
     };
 
-    google.maps.Map.prototype._togCircVis = function(command){ // If the map is currently set to null (circle invisible), reset it to
+    google.maps.Map.prototype._togCircVis = function(){ // If the map is currently set to null (circle invisible), reset it to
       this.circles.forEach(function(circle){            // map (circle now shows on map), and vice versa.
-        if (command == 'Hide Circles' && circle.map == map){
-          circle.setMap(null);
-        }
-        if (command == 'Show Circles' && circle.map == null){
-          circle.setMap(map);
-        }
+        circle.getMap() != null ? circle.setMap(null) : circle.setMap(map);
       })
     }
 

@@ -25,37 +25,10 @@ var mainServer = http.createServer(function (request, response){
 });
 
 
-
-/*............initWordBank:...............
-
- Read in data from a local file path, then reformat it into a wordBank that is tailored to the 
- needs of tweetAnalyzer. A sample of the start product:
-
-		var wordFile = {'english':[ {'word': 'love',
-									'score': 4},
-								    {'word': 'hate',
-								    'score': -4} ],
-					    'spanish':[ {'word': 'amor',
-					    			'score': 4},
-					     			{'word': 'odio',
-					     			'score': -4} ] };
-
- And a sample of the end product:
-
-		var wordBank = {'english': {'love': 4,
-									'hate': -4},
-						'spanish': {'amor': 4,
-						 			'odio': -4}};
-
-This allows for tweetAnalyzer to make rapid checks to see if a word is in a wordBank, with the following: 
-
-		wordBank['english']['love']; // ==> 4  
-    OR 	wordBank['english']['odio']; // ==> undefined
-    OR  wordBank['spanish']['odio']; // ==> 4
-
-tweetAnalyzer checks the Tweet's language and assigns a wordBank accordingly every time it is called. 
-
-.........................................*/
+/* 
+	Refer to Readme.md: "I. initWordBank" in the github repo for a more detailed explanation of this function, including examples of both the format of the file
+ this loads, as well as the format of the word bank it creates. 
+*/
 
 function initWordBank(){
 	var data = fs.readFileSync('./public/AFINN/JSON/MasterList.json').toString(); // Sync used to make sure the wordBank is done readiing before requests come in. 
