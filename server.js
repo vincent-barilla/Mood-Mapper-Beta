@@ -1,5 +1,5 @@
 
-var util          = require('util'); // The first four required add-ons are core node scripts. 
+var util          = require('util'); 
 var http          = require('http');
 var url           = require('url');
 var fs            = require('fs');
@@ -7,11 +7,11 @@ var Dispatcher    = require('./dispatcher.js'); // Custom-made dispatcher script
 
 require('./env.js'); // The environment variables (Twitter authentication/access keys and tokens).
 
-var wordBank = {}; // Initialized the wordbank as an empty object for the convenience of not having to  
-initWordBank();    // return a variable from initWordBank.
+var wordBank = {}; 
+initWordBank();   
 
-// The server receives all the requests, passes them to Dispatcher.dispatch to sort out where the
-// request needs to go for further processing. Modeled after a Java Spring MVC dispatcher servlet. 
+// The server receives requests and passes them along to Dispatcher.dispatch for further processing. The
+// server will listen at a localhost port, if not launched on a hosting service.
 var mainServer = http.createServer(function (request, response){
 	try {
 		Dispatcher.dispatch(request, response, wordBank);
@@ -26,23 +26,29 @@ var mainServer = http.createServer(function (request, response){
 
 
 /* 
-	Refer to Readme.md: "I. initWordBank" in the github repo for a more detailed explanation of this function, including examples of both the format of the file
- this loads, as well as the format of the word bank it creates. 
+	Refer to Readme.md: "I. initWordBank" in the github repo for a more detailed explanation of this 
+	function, including examples of both the format of the file this loads, as well as the format of the 
+	word bank it creates. 
 */
 
+// This initializes the wordBank (effectively the app's database). Sync used to make sure the wordBank 
+// is done readiing before requests come in. 
 function initWordBank(){
-	var data = fs.readFileSync('./public/AFINN/JSON/MasterList.json').toString(); // Sync used to make sure the wordBank is done readiing before requests come in. 
-	data = JSON.parse(data); // data is now a big object, containing word banks (more big objects) with language names as their keys.
-	setWordBank(); // Call the helper function to do the work of setting the wordBank variable.
+	var data = fs.readFileSync('./public/AFINN/JSON/MasterList.json').toString(); 
+	data = JSON.parse(data); 
+	setWordBank(); 
 
+	// The end result will allow for the following use: wordBank['english']['love'] //==> 4. 
+	// (See Readme.md for details. )
 	function setWordBank(){
-		for (var key in data){ // key is, at this point, a language ('english', for example). 
-			wordBank[key] = {}; // Initialize wordBank('languageName') as an empty object.
-			var list = data[key]; // Pull 'languageName' from the original object. This is an array of objects (see wordFile in above example).
-			list.forEach(function(wordJson){ // Convert formats from the start product to the end product shown in the above example in a forEach loop. 
-				wordBank[key][wordJson['word']] = wordJson['score']; // An example of this action, with actual values: wordBank['english']['love'] = 4.
-			})													     // The forEach iterates this through the entire array, dynamically growing the 'english' wordbank. 									
-		}															 // Once this forEach loop is done, 'english' is finished, and the for(var key in data) loop will then repeat 
-	}																 // this process for as many language arrays are in your data object (I have 2, 'english' and 'spanish').
+		var key;
+		var list;
+		for (key in data){ 
+			wordBank[key] = {};
+			list = data[key];
+			list.forEach(function(wordJson){ 
+				wordBank[key][wordJson['word']] = wordJson['score']; 
+			})													     
+	}																 
 	console.log("MAIN SERVER: wordBank initialized.")
 }

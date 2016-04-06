@@ -1,12 +1,18 @@
 var util = require('util');
 
+// Receive a JSON tweet and the wordBanks object, perform a sentiment analysis on the tweet. Refer to 
+// Readme.md, "IV: Tweet Analysis Methodology" for a discussion on how I approached an inferred mood 
+// came from this function. In short: it uses the AFINN wordbank, plus considerations for punctuation,
+// and makes an RGB color array using negative words to increase R pixels, positive words to increase
+// GB pixels. Returns its results ready to be used on the front end. 
 this.analyze = function(tweet, wordBanks){
 	var wordBank = setWordBank();
 	var result = initResult();
 
 	return result;
 
-	// It hasn't been catching as many hits as I had been hoping, but there is a Spanish word list in wordBanks.
+	// It hasn't been catching as many hits as I had been hoping, but there is a Spanish word list 
+	// in wordBanks.
 	function setWordBank(){
 		var wordBank = {};
 		switch (tweet.lang){
@@ -23,8 +29,9 @@ this.analyze = function(tweet, wordBanks){
 	function initResult(){
 		var result = {};
 
-		// Note: 'text' MUST be first property of result to agree with front end string splitting & finding what part of a
-		// result represents an isolated Tweet object in JSON. (See index.html. It uses JSON.parse(result))
+		// Note: 'text' MUST be first property of result to agree with front end string splitting & finding
+		// what part of a result represents an isolated Tweet object in JSON. (See index.html. It uses 
+		// JSON.parse(result))
 		if (tweet.text){
 			result.text        = tweet.text;
 			result.stats       = analyzeMood();
@@ -38,7 +45,7 @@ this.analyze = function(tweet, wordBanks){
 		}
 		return result;
 
-		// Simple constructor. 
+		// Simple constructor to set the result.user field.
 		function setUser(){
 			var user         = {};
 			user.description = tweet.user.description;
@@ -48,7 +55,13 @@ this.analyze = function(tweet, wordBanks){
 			return user;
 		}
 
-		// Assign a location string to the result. The two-letter id's ('CO, ST, UL') will assist in geocoding on the front end.
+		// Assign a location string to the result. The two-letter id's ('CO, UL') will assist in 
+		// geocoding on the front end. Note that I prioritize the tweet.coordinates first, as 
+		// this is the least ambiguous, most useful for geocoding data. tweet.place has the next best 
+		// data. Location from a user's account is often pretty poor as data (i.e., people will write 
+	    // things like "waaaay out in $paaaace" for their location -- presumably not true, and definitely
+	    // not easy to geocode). Still, a user's location will usually produce some result on the front end, 
+		// and without this, very few tweets would be mappable. 
 		function setLocation(){
 			var location = null;
 			if (tweet.coordinates) {
@@ -68,61 +81,84 @@ this.analyze = function(tweet, wordBanks){
 			return location;
 		}
 
+ 		// RGB(127,127,127), or gray, means there's no mood detected. All tweets start at this point, 
+ 		// then the scoring increases or decreases R and GB in different amounts to represent positivity 
+ 		// vs. negativity, as well as extremeness of that sentiment. tweetBoost and wordBoost indicate 
+ 		// extremess of sentiment -- how many !'s occur, is it in all caps. They will amplify R,G, and B 
+ 		// equally (so you can get a very extreme, but not negative nor positive, tweet -- loud but 
+ 		// without content). R represents negativity, G and B, always equal to each other, represent
+		// positivity.
+ 		// The actual scoring is done in scoreIndividualWords and scoreEntireTweet.  
 		function analyzeMood(){
-			var R          = 127; // For (R,G,B) color array values, which represent mood on the front end. G = B below, in scoreEntireTweet().
-			var B          = 127; // 127 for R and B indicate neutral sentiment. High R values == negativity, High B values == positivity.
-			var stats      = {'mood': [], 'posWords': [], 'negWords': []}; // Track how each word has scored, store stats. 
-			var tweetBoost = 1; // Indicates extremess of a tweet -- how many !'s occur? Is it in all caps? Amplifies both R and B when applied.
-			var wordBoost; // Indicates extremeness of a specific word, boosts both R and B when applied. Amplifies on top of tweetBoost.
-			scoreIndividualWords(); // Loop through the current tweet word by word, add up scores and amplifiers as per scoring criteria.
-			scoreEntireTweet();  // The final step rolls all scoring back into the (R,G,B) array. If no sentiment/extremeness is detected,
-			stats.tweetEF = tweetBoost.toFixed(2);                         // then (127,127,127) is returned here: gray represents neutral. 
+			var R = 127;
+			var B = 127;
+			var stats = {'mood': [], 'posWords': [], 'negWords': []}; 
+			var tweetBoost = 1; 
+			var wordBoost; 
+			scoreIndividualWords(); 
+			scoreEntireTweet(); 
+			stats.tweetEF = tweetBoost.toFixed(2);                        
 			return stats;
 
+			// Split a tweet around ' ', run all words through a forEach loop, scoring them as it goes.
 			function scoreIndividualWords(){
 				var tweetWords = tweet.text.split(' ');
 				tweetWords.forEach(function(word, i){
-					// Gatekeeping conditions to cull irrelevant words. Separated from the if statement for readability.
+
+					// Gatekeeping conditions to cull irrelevant words. Separated from the if statement 
+					// for readability.
 					var conditions = (word.length > 2 				// Words must be 3 letters and up.
 								    && word[0] != '@' 				// No usernames
 								    && word.indexOf('http') == -1 	// No links
-									&& word.indexOf('@') == -1 		// Really, no usernames! (also catches emails)
+									&& word.indexOf('@') == -1 		// Really, no usernames! (nor emails)
 									&& word != "\n" 				// No newline characters
-									&& !(word.length == 3 && word[0] =='#')); // No 2-letter hashtags (state acryonyms, i.e., #MA)
+									&& !(word.length == 3 && word[0] =='#')); // No 2-letter hashtags
 
-					// If the conditions are met, see if the word fits db format. If not, normalize it, perform analyses, track scoring criteria.
+					// If the conditions are met, see if the word fits db format. If not, normalize it, 
+					// perform analyses, track scoring criteria.
 					if (conditions){
-						wordBoost = 1;
-						if (!/^[a-z']+$/.test(word)){ // If the word doesn't contain only valid characters, analyze it, reformat to be valid.
-			 				scorePunctuation(word); // "!", ":)",":(", etc., will effect the scoring of a word and the overall tweet.
-			 				word = scoreCasing(word); // ALL CAPS make a word and its tweet more extreme (amplify whatever sentiment is present).
-			 				word = suffixCheck(word); // Increase changes of making a hit against the wordBank by looking at suffixes.
+						wordBoost = 1; // Used as a multiplier later, so initialize it as 1.
+
+						// If the word doesn't contain only valid characters, analyze it, reformat to be valid.
+						if (!/^[a-z']+$/.test(word)){
+			 				scorePunctuation(word); 
+			 				word = scoreCasing(word); 
+			 				word = suffixCheck(word); 
 						}
-						if (wordBank[word]){ // Note that words that are already found in the wordBank won't be checked for suffixes
+
+						// Check to see if the word is in the database. If so, score it. 
+						if (wordBank[word]){
 							scoreWord(word, i);
 						}
 					}	
 				})
  			
- 				// Look at combinations of a word with common suffixes to see if a match can be found. Will reassign word if a match, 
- 				// with the suffix changes, is found.
+ 				// Look at combinations of a word with common suffixes to see if a match can be found. 
+ 				// Will reassign the variable word if a match, with the suffix changes, is found.
 				function suffixCheck(word){
-					var suffs = ['s', 'd', 'er', 'ing', 'ful', 'ous', 'fully', 'er', 'ier', 'less']; // Common suffixes to check.
+					var suffs = ['s', 'd', 'er', 'ing', 'ful', 'ous', 'fully', 'er', 'ier', 'less'];
 					var suf;
-					for (var i = 0; i < suffs.length; i++){
+					var i;
+					var suffsLen = suffs.length;
+					var wordLen = word.length;
+					var lastInd;
+					for (i = 0; i < suffLen; i++){
 						suf = suffs[i];
 						if (wordBank[word + suf]){ // Check if the word plus the suffix is present in the DB. 
 							word += suf; // If it is present, reassign word to what hit in the DB. Return true.
 							return word;
 						}
-						var lastInd = word.lastIndexOf(suf);
-						if (lastInd == word.length - suf.length){ // Check if the suffix is present in the word
-							if (wordBank[word.substring(0, lastInd)]){ // Check if the word minus the suffix is present in the database
-								word = word.substring(0, lastInd); // If it is present, reassign word to what hit in the DB. Return true.
+						lastInd = word.lastIndexOf(suf);
+						// Check if the word minus the suffix is present in the database. If it is present,
+						// reassign word to what hit in the DB. Return true.						
+						if (lastInd == wordLen - suf.length){
+							if (wordBank[word.substring(0, lastInd)]){ 
+								word = word.substring(0, lastInd); 
 								return word;
 							}
 						}
 					}
+					// If none of the above conditions were satisfied, return the word, unchanged.
 					return word;
 				}
 
@@ -139,7 +175,7 @@ this.analyze = function(tweet, wordBanks){
  					return bases; 					  
  				}	
 
- 				// Exclamation points or UTF-encoded emoticons will augment a word score. 
+ 				// "!", ":)",":(", etc., will effect the scoring of a word and the overall tweet.
  				function scorePunctuation(word){
  					punc = word.replace(/[a-z']/gi,''); // Take only the punctuation, other than ', for analysis.
 

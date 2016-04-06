@@ -9,7 +9,7 @@ var restServlet   = require('./restServlet.js');
 // in an MVC design. Note that the request, response, and wordBank are all accepted from the main
 // server and sent, as needed, to the appropriate location.
 this.dispatch = function(request, response, wordBank){
-	
+
 	// First, check if the user only wants to see the home page. If so, serve the home view. If not, 
 	// let the switch statement figure out where the request needs to go. 
 	if (request.url == "/" || request.url == "/home") { 
@@ -79,8 +79,8 @@ this.dispatch = function(request, response, wordBank){
 			}
 		})
 
-		// The mime.lookup grants flexibility, so any file can be passed through the preceding error checks, 
-		// and will then have their contents read. I use this both for HTML views and .js scripts.
+		// The mime.lookup grants flexibility, so any file can be passed through the preceding error 
+		// checks, and will then have their contents read. I use this both for HTML views and .js scripts.
 		function useFile(filePath, fileContents) {
 			response.writeHead(200, {'Content-Type': mime.lookup(path.basename(filePath))}); 
 			response.end(fileContents);														 
