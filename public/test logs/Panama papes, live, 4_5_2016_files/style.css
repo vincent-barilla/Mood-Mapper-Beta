@@ -101,10 +101,10 @@ div#map {
     width: 100%;
     height: 750px;
     float: left;
-    margin-right: 3%;
-}
-div#text {
     position: relative;
+}
+div#text-div {
+    margin-left: 76%;
     width: 23%;
     height: 750px;
     background: RGB(240,240,240);

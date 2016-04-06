@@ -27,18 +27,15 @@ this.analyze = function(tweet, wordBanks){
 		// result represents an isolated Tweet object in JSON. (See index.html. It uses JSON.parse(result))
 		if (tweet.text){
 			result.text        = tweet.text;
-			result.stats       = analyzeMood();				
+			result.stats       = analyzeMood();
+			result.stats.time  = tweet.created_at;				
 			result.stats.reach = tweet.user.followers_count;													
 			result.id          = tweet.id_str;
 			result.location    = setLocation();
 			result.user        = setUser();				 
 		} else {
-			result.text    	   = null;	
-			result.stats       = null;					
-			result.id          = tweet.id_str;				
-			result.location    = null;
-			result.user        = null;				 
-			}
+			result = null;			 
+		}
 		return result;
 
 		// Simple constructor. 
@@ -210,7 +207,7 @@ this.analyze = function(tweet, wordBanks){
 					}				     
 
 					function wordScoringWrapper(field){ // Wrapper stores words in either posWords or negWords, depending on score, then scores.
-						stats[field].push({'word': word, 'score': wordBank[word], 'EF': wordBoost * score}); // Word storage.
+						stats[field].push({'word': word, 'score': wordBank[word]});//, 'EF': wordBoost * score}); // Word storage.
 						var rbTemp = scoringTemplate([R, B], [-score, score]); // This is where scores go into the [R,B] arrray. Notice the role of
 						R = rbTemp[0];                                         // negatorCheck(), here: if a negator was found, the score values 
 						B = rbTemp[1];										   // are flipped, meaning that, what would have boosted blue, now 

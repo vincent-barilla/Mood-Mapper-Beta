@@ -3,19 +3,22 @@
    <link rel="stylesheet" type="text/css" href="resource/css/style.css">
    <meta charset="ISO-8859-1">
    <title>Insert title here</title>
-   <script src='resource/map_scripts/init.js'></script>   
+   <script src='resource/map_scripts/init.js'></script>
+   <script src='resource/buttonhandle.js'></script>                 
+   <script src='resource/formvalidate.js'></script>              
+   <script src='resource/map_scripts/geocode.js'></script>  
+   <script src='resource/map_scripts/circledraw.js'></script>      
+   <script src='resource/colorboxes.js'></script>           
    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
    <script id='bingScript' type='text/javascript'></script>
 </head>
 <body>
   <br>  
 <section>  
-  <div class="map" id="map" style="display:block-inline">
-   map goes here.
- </div>    
-  <div id="text-div" style='display:none' class = 'text'>
-  </div>
-</section>          
+  <div class="map" id="map" style="display:inline-block">map goes here.</div>    
+  <div id="text" style='display:none'></div>
+</section>
+
 <div id="hidden-div" style="display:none">
   <div class="div-color boxes">
       <div class="color-box" id="mood-div" style="background-color: RGB(127,127,127)">Current Tweet Mood</div>
@@ -29,7 +32,7 @@
     <table>
       <tr>
         <td>
-          <button type="button" id="pause-btn" name='pause' onclick="buttonHandler(this)" method="post">Pause Mapping
+          <button type="button" id="pause-btn" name='pause' onclick="buttonHandler(this)" method="post">
          </button>
         </td>
         <td> 
@@ -37,13 +40,18 @@
           </button>
         </td>
         <td>
-          <button type="button" id="togCircVis-btn" name='togCircVis' style='display: block' onclick="buttonHandler(this)" method="post">Hide Circles
+          <button type="button" id="togCircVis-btn" name='togCircVis' style='display: block' onclick="buttonHandler(this)" method="post">
           </button>
-        </td>    
+        </td>
+        <td> 
+          <button type="button" id="togTextVis-btn" name='mapOnly' onclick="buttonHandler(this)" method="post">
+          </button>
+        </td>            
       </tr>         
     </table>
     <br>      
-    <span> Note: You can always pause your streaming, change the parameters in your form, then click 'Resume Mapping'. This will show you your new  results on top of the current map. Hit 'Clear Map' to avoid overlapping results. </span>          
+    <span> Note: You can always pause your streaming, change the parameters in your form, then click 'Resume Mapping'. 
+      This will show you your new  results on top of the current map. Hit 'Clear Map' to avoid overlapping results. </span>          
     <br>                                         
   </div>  
     <br><br>       
@@ -53,39 +61,56 @@
 <!-- Note the use of a button rather than input to submit form; prevents
 page refresh, to preserve utility of ajax-->
 
-  <div class="form central" id="form-input">
-     <form id="form">
-       <fieldset>
-         <legend>Your guidelines:</legend>
-
-              What subject do you want to follow?<br>
-           <input type="text" id="subject" value="BernieSanders"><br>
-
-             Choose a start date for a search, up to one week ago: <br>
-           <input type="text" id="startdate" value="4/2/2016" placeholder="day/month/2016"><br>
-           <textarea name="error1" id="starterror" cols="100" rows="3" style="display:none">Not quite. Please correct the following: </textarea>   
-           
-             Choose an end date for your search: <br>
-           <input type="text" id="enddate" value="4/4/2016" placeholder="day/month/2016"><br>       
-           <textarea name="error2" id="enderror" cols="110" rows="4" style="display:none">Not quite. Please correct the following: </textarea>   
-           
-             Select your search mode.<br>   
-            <select name="modeOptions" form="form-input" id="modeOptions">
+<div id="form-input">
+   <form id="form">
+     <fieldset class='central'>
+       <legend class='form-text' style='font-size:20'>What would you like to watch?</legend>
+       <div id='grp1' style='display:inline-block' class='grp1'>
+         <label for='subject'style='display:block' class='label'>
+              Choose your subject.<br>
+           <input type="text" id="subject" name='subject' value="BernieSanders" style="display:block" class='form-text' onkeyup='buttonHandler(this)'><br>
+         </label>   
+         <label for='mode' style='display:block' class='label'>
+            Select your search mode.<br>   
+            <select name="mode" form="form-input" id="mode" class='form-text' onchange="buttonHandler(this)">
               <option value="/getTweets">Search Twitter</option>
               <option value="/streamTweets">Live Stream</option>
             </select>
-
-           <br><br>
-           <button type="button" id="submit-btn" onclick="buttonHandler(this)" name='submit' style='display: block'
-             method="post">Submit</button>  
-       </fieldset>
-     </form>
-  </div>
+          </label>
+        </div>
+        <div id='grp2' style='display:inline-block' class='grp2'>  
+         <label for='startdate' style='display:block' id='startlabel' class='label'>
+            Choose a start date for a search, up to one week ago: <br>
+            <input type="text" id="startdate" value="" placeholder="day/month/2016" style="display:block" class='form-text'><br>
+            <div name="error1" id="starterror" style="display:none" class='err'>Not quite. Please correct the following: </div>   
+         </label> 
+         <label for='enddate' style='display:block' id='endlabel' class='label'>
+            Choose an end date for your search: <br>
+            <input type="text" id="enddate" value="javascript:setDate()" placeholder="day/month/2016" style="display:block" class='form-text'><br>       
+            <div name="error2" id="enderror"  style="display:none" class='err'>Not quite. Please correct the following: </div>   
+         </label>
+        </div>
+         <br><br>
+         <button type="button" id="submit-btn" onclick="buttonHandler(this)" name='submit' style='display: block' class='form-text label submit' 
+                 method="post">Submit</button>  
+     </fieldset>
+   </form>
+</div>
 
 <script type="text/javascript">
 
 const DefaultCenter = {'lat': -3.8963, 'lng': -146.4255};
 const Week = xBrowserWeek();
+//document.getElementById('togCirVis-btn').firstChild.data = 'Hide Circles';
+(function setDates(){
+  var date = new Date();
+  var end = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+  var start = new Date(date - xBrowserWeek() + 86400 * 1000);
+  start = (start.getMonth() + 1) + '/' + start.getDate() + '/' + start.getFullYear();
+
+  document.getElementById('enddate').value = end;
+  document.getElementById('startdate').value = start;
+})()
 
 // Apparently cross-browser standardization of date construction is not so consistent, so I use this as a golden standard: 
 function xBrowserWeek(){
@@ -94,6 +119,10 @@ function xBrowserWeek(){
   return pointB - pointA;
 }
 
+document.getElementById('pause-btn').firstChild.data = 'Pause Mapping';
+document.getElementById('togCircVis-btn').firstChild.data = 'Hide Circles';
+document.getElementById('togTextVis-btn').firstChild.data = 'Hide Text Crawl';
+
 var bingCallback = function(){};
 var panToCircle = function(){};
 
@@ -101,161 +130,14 @@ var xhr = new XMLHttpRequest();
 var globalMood = {"mood" : [0,0,0], "count" : 1 };
 var geoCoder;
 var turnstileCount = 0;
-var tweetCount = -1;
 var map;  
 var startErrMsg;
 var endErrMsg;
 
-// Execute functions according to button clicks. Note the flexibility in the logic of clickWrapper(a,b,c,d,e,f) --
-// it MUST have the first 4 arguments, but also works with either 5 or 6 args (extras as optional callbacks).
-function buttonHandler(source){
-  var name  = source.name;
+// **buttonhandle.js**: See buttonhandle.js for the button handling function. All clicks fire this function. It operates on a switch statement, 
+// calling different functions according to the value in the button. 
 
-  switch (name){
-    case 'submit':
-      if (formValidates()){
-        onclickWrapper(document.getElementById('hidden-div').style, 'display', false, 'block', 'none', ajaxFormSubmit);
-        batchHide(['submit-btn','starterror','enderror','form']);
-        document.getElementById('text-div').style = 'display:block-inline';
-      } else {
-        showErrorMsgs();
-      }
-      break;
-    case 'pause':
-      if (formValidates()){
-        onclickWrapper(document.getElementById('pause-btn').firstChild, 'data', true,'Pause Mapping', 'Resume Mapping',ajaxPauseStream,ajaxFormSubmit);
-        onclickWrapper(document.getElementById('form').style, 'display', true, 'block', 'none');  
-      } else {
-        showErrorMsgs();
-      }
-      break;        
-    case 'togCircVis':
-      onclickWrapper(document.getElementById('togCircVis-btn').firstChild, 'data', true, 'Show Circles', 'Hide Circles', 
-                     map._togCircVis.call(map, document.getElementById('togCircVis-btn').firstChild.data));
-      break;
-    case 'clear':
-      resetGlobals();
-      break;       
-  }
-
-/*
-  Refer to Readme.md "III: onclickWrapper(elem, prop, toggleEnabled, newVal, oldVal, newOnClickMthd, oldOnClickMthd)" for an explanation of this 
-  function.
- */ 
-
-  function onclickWrapper(elem, prop, toggleEnabled, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
-    if(toggleEnabled) {
-      elem[prop] == oldVal ? clickAction(newVal, oldOnClickMthd) : clickAction(oldVal, newOnClickMthd);
-    } else {
-      elem[prop] = newVal;
-      if (newOnClickMthd){
-        newOnClickMthd();
-      }    
-    }
-
-    function clickAction(value, callback){
-      elem[prop] = value;
-      if (!callback && newOnClickMthd){
-        callback = newOnClickMthd;
-      }
-      if (callback){        
-        callback();
-      }
-    }
-  }
-
-  function resetGlobals(){
-    map._clearCircles();
-    tweetCount = -1;
-    globalMood = {"mood" : [0,0,0], "count" : 1 };
-    document.getElementById('text-div').innerHTML = '';
-    document.getElementById('togCircVis-btn').style.display = 'none';
-    document.getElementById('togCircVis-btn').firstChild.data = 'Hide Circles';    
-  }
-
-  function batchHide(toBeHidden){
-    toBeHidden.forEach(function(elem){
-      document.getElementById(elem).style.display = 'none';
-    })
-  }
-
-  function showErrorMsgs(){
-    if (startErrMsg.length > 0){      
-      document.getElementById('starterror').value = startErrMsg;
-      document.getElementById('starterror').style.display = 'block';          
-    }
-    if (endErrMsg.length > 0) {  
-      document.getElementById('enderror').value = endErrMsg;
-      document.getElementById('enderror').style.display = 'block';          
-    }
-  }  
-}
-
-function formValidates(){
-    var start    = document.getElementById('startdate').value;
-    var end      = document.getElementById('enddate').value;
-    var startObj = new Date(start);
-    var endObj   = new Date(end);
-    startErrMsg  = '';
-    endErrMsg    = '';
-
-    // & forces all to be checked; && would stop checking if first is invalidated. Needed to see all error messages.
-    return (withinWeek() & validStart() & hasFormat());
-
-    function withinWeek(){
-      var now = new Date();
-      if ((now - startObj) < Week){
-        return true; 
-      } else {
-         startErrMsg += 'That start date is too long ago. Twitter only allows searches for roughly a week back. ';
-        return false;
-      }
-    }
-
-    function validStart(){
-      if ((endObj - startObj) > 0){
-        return true;    
-      } else {
-          endErrMsg += 'Please make sure your end date is after your start date. '
-        return false;
-      }
-    }
-
-    function hasFormat(){
-
-      if (!checkSizes(start)){
-        if (startErrMsg.length > 0){
-          startErrMsg += 'Also: '
-        }
-        startErrMsg += 'Incorrect format. Please stick to day/month/year.'
-      }
-      if (!checkSizes(end)){
-        if (endErrMsg.length > 0){
-          endErrMsg += 'Also: '
-        }        
-        endErrMsg += 'Incorrect format. Please stick to day/month/year.' 
-      }
-
-      return (checkSizes(end) && checkSizes(start)) ? true : false;
-
-      function checkSizes(date){
-        date = date.split('/');
-        if (date.length != 3){
-          return false;
-        } else {
-          if ( (date[0].length > 0 && date[0].length < 3) 
-            && (date[1].length > 0 && date[1].length < 3)
-            && (date[2].length === 4)){
-            return true;
-          }
-        }  
-        return false;
-      }
-    }
-  }  
-
-function ajaxPauseStream(){
-
+function pauseStream(){
     // Abort should be sufficient. The request below is a fail safe measure to ensure twitter streaming stops.
   xhr.abort();      
   var pauseXhr = new XMLHttpRequest();
@@ -265,26 +147,23 @@ function ajaxPauseStream(){
 
   pauseXhr.onreadystatechange = function(){
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200){
-      document.getElementById("text-div").value = 'Streaming paused \n\n' + document.getElementById("text-div").value;
+      //document.getElementById("text-div").value = 'Streaming paused \n\n' + document.getElementById("text-div").value;
     } else {
         //alert('There was a problem with the request.')
     }
   }
 };         
 
-
-function ajaxFormSubmit(){
-
-  // Redundant check for validation (fail-safe)
-  if (formValidates()){
-    sendData(serializeForm());
-    document.getElementById('togCircVis-btn').style.display = 'block';        
-  } 
-
+function formSubmit(){
+  sendData(serializeForm());
+  document.getElementById('togCircVis-btn').style.display = 'block';        
+  
   function serializeForm(){
     var data = {'subject' : document.getElementById("subject").value,
                 'start'   : document.getElementById("startdate").value,
-                'end'     : document.getElementById("enddate").value}            
+                'end'     : document.getElementById("enddate").value};
+
+    data.id = map._getLastId.call(map);
 
     var urlEncodedData = "";
     var urlEncodedDataPairs = [];
@@ -292,256 +171,21 @@ function ajaxFormSubmit(){
     for (var name in data){
         urlEncodedDataPairs.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
     }
-    return [urlEncodedDataPairs.join('&').replace(/%20/g, '+'), document.getElementById("modeOptions").value];
+    return [urlEncodedDataPairs.join('&').replace(/%20/g, '+'), document.getElementById("mode").value];
   }
 
   function sendData(data){
-
-    if (tweetCount != -1){
-      var circs = map._getCircles(;
-      data.id = circs[circs.length]._getId();
-    }
     xhr.open('POST', data[1], true);
     xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     xhr.send(data[0]);
     xhr.onreadystatechange = function (){
-
-      if ((this.readyState === XMLHttpRequest.LOADING || this.readyState === XMLHttpRequest.DONE) 
-        && this.status === 200) {
-        tweetCount++;
-        parseResponse(this.responseText);
-      } 
-
-      function parseResponse(response){
+      if ((this.readyState === XMLHttpRequest.LOADING || this.readyState === XMLHttpRequest.DONE) && this.status === 200) {
+        var response = this.responseText;
         // '{"text":"'' delimits the start of a new tweet -- the flaw being, if '{"text":"' occurs
         // in a tweet, the code will think everything subsequent is a new tweet. 
         var jsonTweet = JSON.parse(response.substring(response.lastIndexOf('{"text":"'), response.length));
-        geoCodeTweet(jsonTweet);
-        updateMoodBoxes(jsonTweet.stats.mood);    
-          
-        function updateMoodBoxes(mood){
-          var RGB = [];
-          updateRGB();
-          colorBox(document.getElementById('mood-div'), mood)
-          colorBox(document.getElementById('globalMood-div'), RGB);
-          globalMood.count++;
-
-          function updateRGB(){
-            mood.forEach(function(value, i){
-              globalMood.mood[i] += Number(value);
-              RGB[i] = (globalMood.mood[i] / globalMood.count).toFixed(0);
-            })
-          }
-
-          function colorBox(html, mood){
-            mood = mood.toString();
-            html.style = 'background-color: RGB(' + mood + ')';  
-          }
-        }
-
-        function geoCodeTweet(tweet){
-          var center  = null;
-          if (tweet.location != null){
-            var location = tweet.location.substring(3, tweet.location.length);
-            var id       = tweet.location.substring(0, 3);
-            switch(id){
-              case 'CO:':
-                alert("~~~~ CO FOUND: Location is " + location)
-                var latLng = location.split(",");
-                center = {'lat': Number(latLng[0]), 'lng': Number(latLng[1])};
-                alert("CO center is " + center.lat + " " + center.lng);
-                break;
-              case 'UL:':
-                switch(turnstileCount){
-                  case 0:
-                    turnstileCount++;    console.log('google')
-                    geoCoder.geocode({'address':location}, function(results, status){
-                      if (status == google.maps.GeocoderStatus.OK){
-                          if (results[0].geometry != null && results[0].geometry.location != null){
-                            center = results[0].geometry.location;
-                            center = {'lat': center.lat(), 'lng': center.lng()};
-                            createTweetCircle(tweet, center, 'google');
-                          }                     
-                        } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
-                          alert('Oh no! This app has maxed out its queries. Try again later.')
-                        }  
-                      });
-                      break;
-                  case 1:  
-                    turnstileCount++; console.log('mapquest')                
-                    var mapQuestXHR = new XMLHttpRequest(); 
-                    mapQuestXHR.open('GET', 'http://www.mapquestapi.com/geocoding/v1/address?key=bTOgIMAbO4p0SvZmAgD9EIFVxqO2MocO&maxResults=1&location=' + location);
-                    mapQuestXHR.send();
-                    mapQuestXHR.onreadystatechange = function() {
-                      if (mapQuestXHR.readyState == XMLHttpRequest.DONE && mapQuestXHR.status == 200) {
-                        var response = JSON.parse(mapQuestXHR.responseText);
-                        if (response.results[0]){
-                          center = response.results[0].locations[0].latLng;
-                          if (center) {  
-                            createTweetCircle(tweet, center, 'mapQuest')
-                          }
-                        }  
-                      } 
-                    };
-                    break; 
-                  case 2:
-                    turnstileCount++; console.log('openCage')
-                    var openCageXHR = new XMLHttpRequest(); 
-                    openCageXHR.open('GET', 'http://api.opencagedata.com/geocode/v1/json?q=' + location + '&key=02b58331c3075f21b23ab96521c85d81&limit=1');
-                    openCageXHR.send();
-                     
-                    openCageXHR.onreadystatechange = function() {
-                      if (openCageXHR.readyState == XMLHttpRequest.DONE && openCageXHR.status == 200) {
-                        var response = JSON.parse(openCageXHR.responseText);
-                        if(response.results[0]){
-                          center = response.results[0].geometry;
-                          if (center) {                       
-                            createTweetCircle(tweet, center,' openCage')
-                          }
-                        }
-                      } 
-                    };
-                  case 3:
-                    turnstileCount = 0; console.log('bing')
-                    var geocodeRequest = 'http://dev.virtualearth.net/REST/v1/Locations?query=' + location
-                      + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
-                    bingScript.setAttribute('src', geocodeRequest);                                             
-
-                    bingCallback = function(response){ 
-                      if(response.resourceSets[0]){
-                        center = response.resourceSets[0].resources[0].point.coordinates;
-                        center = {'lat': Number(center[0]), 'lng': Number(center[1])}
-                        if (center) {
-                          createTweetCircle(tweet, center, 'bing')
-                        }
-                      }
-                    }
-                    break;
-                }    
-              break;
-            }
-          } else if (location == null || center == null){
-            center = DefaultCenter;
-            createTweetCircle(tweet, center,'default');
-          }
-        } 
-
-        function createTweetCircle(tweet, center, source){
-          var radius = setRadius();
-          var color = 'RGB(' + tweet.stats.mood.toString() + ')';                    
-          var tweetCircle = initTweetCircle();
-          tweetCircle.initListeners();
-          tweetCircle._storeInMap(map);
-          linkToCircle();
-
-          function setRadius(){
-            var rad = tweet.stats.reach;
-            if (rad){
-              rad > 50000 ? rad *= 20 : rad = ((500000 - 10 * rad) * .000095 * rad);
-            } else {
-              rad = 4000;
-            }
-            return rad;
-          }
-
-          function initTweetCircle(){
-              
-            var circle = new google.maps.Circle({
-              'strokeColor'  : color,
-              'strokeOpacity': .8,
-              'strokeWeight' : 2,
-              'fillColor'    : color,
-              'fillOpacity'  : .35, 
-              'map'          : map,
-              'center'       : center,
-              'radius'       : radius,
-              'draggable'    : true,
-              'clickable'    : true,
-              'geodesic'     : false,
-            });
-
-            circle.infoWindow = initInfoWindow(); 
-            circle.timer;
-
-            function initInfoWindow(){
-              var content = ("<p>"
-                            + "User:<br/> "     + tweet.user.name   + "<br/>" 
-                            + "Text:<br/> "     + tweet.text        + "<br/>" 
-                            + "Location:<br/> " + tweet.location    + "<br/>" 
-                            + "Mood:<br/> "     + tweet.stats.mood  + "<br/>" 
-                            + "Reach:<br/> "    + tweet.stats.reach + "<br/>" 
-                            + "Reach:<br/> "    + tweet.stats.reach + "<br/>"
-                            + "Provider:<br/> " + source            + "<br/>"
-                            + "</p>");
-              return new google.maps.InfoWindow({
-                'content'        : content,
-                'maxWidth'       : 325,
-                'disableAutoPan' : true,
-              });
-            }
-
-            circle.initListeners = function(){
-
-              this.addListener('mouseover', function(){
-                explodeView();
-                this.infoWindow.setPosition(this.getBounds().getNorthEast());
-                this.infoWindow.open(map);/*
-                this.timer = setInterval(function(){
-                    map.panTo(this.getCenter());
-                  }.bind(circle), 2500);*/
-
-                function explodeView(){
-                  circle.setRadius(radius * 1.15);
-                }  
-              });
-     
-              this.addListener('mouseout', function(){
-                this.setRadius(radius);
-                this.infoWindow.close(map);
-                clearTimeout(this.timer);
-              });
-
-              this.addListener('drag', function(){
-                this.infoWindow.setMap(null);
-              });
-
-              this.addListener('dragend', function(){
-                this.setMap(map);
-                this.infoWindow.setPosition(this.getBounds().getNorthEast());
-                this.infoWindow.setMap(map);
-              });
-
-              this.addListener('dblclick', function(){
-                this.infoWindow.setMap(null);
-                this.setMap(null);
-              });            
-            }
-            return circle; 
-          }
-
-          function linkToCircle(){
-
-            var a = document.createElement('a');
-            a.innerHTML = tweet.text + "<br><br>";
-            a.style.color = color;
-            a.style['text-decoration'] = 'none';
-            a.style['text-shadow'] = '1px 1px 1px rgb(220,220,220)';
-
-            panToCircle = function(latLng){
-              var lat = Number(latLng[0]);
-              var lng = Number(latLng[1]);
-              var zoomLevel = (lat.toFixed(0) == DefaultCenter.lat.toFixed(0) && lng.toFixed(0) == DefaultCenter.lng.toFixed(0)) 
-                            ? 5 : 6;     
-              var cen = {'lat': lat, 'lng': lng};
-              map.setZoom(zoomLevel);              
-              map.panTo(cen);
-            }
-
-            var centerString = center.lat.toString() + ',' + center.lng.toString();
-            a.href = 'javascript:panToCircle([' + centerString + ']);'
-            document.getElementById('text-div').appendChild(a);
-          }          
-        }          
+        geoCodeTweet(jsonTweet); //geoCodeTweet calls createTweetCircle. See circledraw.js to see the function.
+        updateMoodBoxes(jsonTweet.stats.mood);           
       }
     }         
   }

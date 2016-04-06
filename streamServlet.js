@@ -1,51 +1,79 @@
 var util 			 = require('util');
-var TweetAnalyzer    = require('./tweetAnalyzer.js');
 var Oauth 	         = require('oauth');
+var TweetAnalyzer    = require('./tweetAnalyzer.js');
+var stream; // Initialize stream here to give it global scope so it can be used across all functions.
 
 // Query the Twitter public stream API. Receive a sample of real-time tweets that match query parameters.
-this.makeQuery = function(data, response, request, wordBank){ // data, here, came from the front end, contains the parameters to define the
-															  // query to Twitter. response, request, are from the main server, so when 
-															  // response.write() is used, it goes back to the front end. 
-	response.writeHead(200,{'Content-Type': 'application/octet-stream'});// octet-stream alleviates a strange buffering issue I experience when writing to Chrome. 
+// data, here, came from the front end, contains the parameters to define the query to Twitter. response, 
+// request, are from the main server, so when response.write() is used, it goes back to the front end. 
+this.query = function(data, response, request, wordBank){ 
+
+	// octet-stream alleviates a strange buffering issue I experience when writing to Chrome. 
+	response.writeHead(200,{'Content-Type': 'application/octet-stream'});
 
 	// I used an npm module for the oauth 1.0 authentication, as it's a very involved and tricky process. 
+	// See env.js for the keys. If I don't show code for how I got the keys programmatically, then they 
+	// were generated in my Twitter account, then copied and pasted into env.js. 
 	var oauth = new Oauth.OAuth(
 		'https://api.twitter.com/oauth/request_token', 
 	  	'https://api.twitter.com/oauth/access_token',
-	  	process.env.TWITTER_CONSUMER_KEY, // See env.js for the keys. If I don't show code for how I got the keys programmatically, then they were generated
-	  	process.env.TWITTER_CONSUMER_SECRET, // in my Twitter account, then copied and pasted into env.js. 
+	  	process.env.TWITTER_CONSUMER_KEY, 
+	  	process.env.TWITTER_CONSUMER_SECRET, 
 	  	'1.0A',
 	  	null,
 	  	'HMAC-SHA1'
 	);
 
-	// Notice that the stream is really a long-lived get request. Twitter holds it open and states, in their documentation, that they prefer a client keep this 
-	// connection open for as long as possible, as disconnecting and reconnecting is more resource intensive for them. 
-	var stream = oauth.get('https://stream.twitter.com/1.1/statuses/filter.json?filter_level=none&track=' + data.subject, 
-								 process.env.TWITTER_ACCESS_TOKEN_KEY, // See env.js for these keys.
+	// Notice that the stream is really a long-lived get request. Twitter holds it open and states, in their 
+	// documentation, that they prefer a client keep this connection open for as long as possible, as disconnecting 
+	// and reconnecting is more resource intensive for them. 
+	stream = oauth.get('https://stream.twitter.com/1.1/statuses/filter.json?filter_level=none&track=' + data.subject, 
+								 process.env.TWITTER_ACCESS_TOKEN_KEY, 
 								 process.env.TWITTER_ACCESS_TOKEN_SECRET);
 
-	stream.end(); // Since the stream connection comes from a GET request, the request must be ended. 
+	// Since the stream connection comes from a GET request, the request must be ended. 
+	stream.end(); 
 
-/*
- Refer to Readme.md: "II. Concerns about Twitter" in the github repo for a consideration of stream usage limits for this app. 
-*/
+	/*
+	 Refer to Readme.md: "II. Concerns about Twitter" in the github repo for a consideration of stream usage limits 
+	 for this app. 	
+	*/
 
+	// This response will contain the incoming tweet data. The variables initialized here will be used to delimit
+	// complete tweets. Unlike the RESTful query, no 'end' event is generated with this response. 
 	stream.addListener('response', function (twitResponse){ 
- 
-		var startInd; // The next three lines intialize variables that handle the incoming data. Twitter does not respond with complete tweets, so the startInd and endInd
-		var endInd;   // variables will store the positions of a delimeter that I've found to perfectly distinguish tweet start/end points.  
-		var string = ""; // Data will be concatenated onto this empty string as it is detected in the response. 
-		
-		twitResponse.addListener('data', function(data){ // Data come in in chunks, NOT complete tweets (what a headache!).
-			string   += data; // Add the current chunk to the string. 
-			startInd = string.indexOf('\r\n{"created_at":"'); // This index indicates a new tweet's start point. indexOf ALWAYS returns the first index of the substring.
-			endInd   = string.lastIndexOf('\r\n{"created_at":"'); // This will indicate a tweet's end point. lastIndeOf ALWAYS returns the last index of the substring.
-			if (endInd > startInd){ // Precludes the possibility that the substring was not found (endInd == startInd == -1), or that the last index is the first index (endInd == startInd)
-				strSub = string.substring(startInd, endInd); // Return the substring delimited between startInd and endInd. This is a complete tweet. 
-				var result = TweetAnalyzer.analyze(JSON.parse(strSub), wordBank); // Parse the complete tweet, pass it, and wordBank, into TweetAnalyzer for analysis. 
-				string = ""; // MUST RESET THE STRING, for the above logic to work. Without this, using lastIndexOf with the delimiting substring will not necessarily return a complete tweet.
-				response.write(JSON.stringify(result)); // Write the result (in JSON format already, as per tweetAnalyzer) back to the front end for consumption. 
+		var startInd; 
+		var endInd;   
+		var string = "";
+		var discard = "";
+		var tweet; 
+		var result; 
+
+		// Data come in chunks, NOT complete tweets, so I use '\r\n{"created_at":"' to delimt the start and end 
+		// indices of new, whole tweets. I then take a the indexOf to get the first index of my delimiter, and 
+		// lastIndexOf to get its last index. Using endInd > startInd precludes the possibility that the substring 
+		// was not found or that the delimiter only appears once: if it appears once, both lastIndexOf and indexOf 
+		// will return the same thing; if it doesn't appear at all, both will equal -1. (This seemed dicey at first,
+		// to me, but it has held up very well. I've never, after thousands of trials, had the delimiters fail.)	
+		twitResponse.addListener('data', function(data){ 
+			string += data; 
+			startInd = string.indexOf('\r\n{"created_at":"'); 
+			endInd = string.lastIndexOf('\r\n{"created_at":"');
+
+			// Use startInd and endInd to pull out the entire tweet, pass it through tweetAnalyzer, reset the string 
+			// for the next incoming tweet, and write the result, in JSON,  back to the front end. Note that setting 
+			// string to "" wipes out the tail of the string, which could have been coupled with the start of the next 
+			// chunk to form another tweet. Because the streaming is already very close to maxing out the geocoders
+			// on the front end, this is ok for now, actually acting as a de facto throttling measure. If I can further
+			// boost the geocoders, it'll make sense to fix this. 
+			if (endInd > startInd){ 
+				tweet = string.substring(startInd, endInd); 
+				console.log("TWEET::"); console.log(tweet);
+				result = TweetAnalyzer.analyze(JSON.parse(tweet), wordBank);
+				response.write(JSON.stringify(result));
+				string = "";
+
+				console.log("~~~~~~~~~~END OF TWEET")
 				console.log(JSON.stringify(result));
 				console.log('\n')
 			}
@@ -53,4 +81,10 @@ this.makeQuery = function(data, response, request, wordBank){ // data, here, cam
 	})
 };
 
+// Twitter will keep the http responses flowing in until you manually abort the request.
+this.kill = function(response){
+	stream.abort();
+	response.writeHead(200,{'Content-Type': 'text/plain; charset=UTF-8'});
+	response.end("Stream ended.");
+}
 

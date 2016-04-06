@@ -6,11 +6,8 @@ function buttonHandler(source){
   switch (name){
     case 'mapOnly':
       onclickWrapper(document.getElementById('togTextVis-btn').firstChild, 'data', true, 'Show Text Crawl', 'Hide Text Crawl');
-      onclickWrapper(document.getElementById('text').style, 'display', true, 'none', 'inline-block');
-      var center = map.getCenter();
-      onclickWrapper(document.getElementById('map').style, 'width', true, '100%', '73%');
-      map.panTo(center);
-      break;
+      onclickWrapper(document.getElementById('text-div').style, 'display', true, 'none', 'block-inline');      
+      //onclickWrapper(document.getElementById('map').style, 'width', true, '100%', '73%');
     case 'subject':
       map._resetLastId.call(map, ""); 
       break;
@@ -22,8 +19,8 @@ function buttonHandler(source){
       if (formValidates(mode)){
         onclickWrapper(document.getElementById('hidden-div').style, 'display', false, 'block', 'none', formSubmit);
         batchHide(['submit-btn','starterror','enderror','form']);
-        document.getElementById('map').style.width = '73%'
-        document.getElementById('text').style.display = 'inline-block';
+        document.getElementById('map').style = 'width:73%'
+        document.getElementById('text-div').style = 'display:block-inline';
       } else {
         showErrorMsgs();
       }
@@ -51,6 +48,7 @@ function buttonHandler(source){
 */ 
 
   function onclickWrapper(elem, prop, toggleEnabled, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
+          console.log('old val is: ' + oldVal + ' and newVal is: ' + newVal); console.log (' and the actual value is: ' + document.getElementById('text-div').style.display)
     if(toggleEnabled) {
       elem[prop] == oldVal ? clickAction(newVal, oldOnClickMthd) : clickAction(oldVal, newOnClickMthd);
     } else {
@@ -74,7 +72,7 @@ function buttonHandler(source){
   function resetGlobals(){
     map._clearCircles();
     globalMood = {"mood" : [0,0,0], "count" : 1 };
-    document.getElementById('text').innerHTML = '';
+    document.getElementById('text-div').innerHTML = '';
     document.getElementById('togCircVis-btn').style.display = 'none';
     document.getElementById('togCircVis-btn').firstChild.data = 'Hide Circles';    
   }

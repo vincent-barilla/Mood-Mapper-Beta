@@ -42,10 +42,10 @@ function createTweetCircle(tweet, center, source){
           '<div class="info-content">' +
             '<p>' + tweet.text + '</p>' + 
             '<p>Location: ' + tweet.location + 
-            '<br>Created At: ' + tweet.stats.time +             
+            '<br>Created At: ' + tweet.time +             
             '<br>Inferred Mood: ' + tweet.stats.mood + 
-            '<br>Positive Words: ' + JSON.stringify(tweet.stats.posWords) + 
-            '<br>Negitive Words: ' + JSON.stringify(tweet.stats.negWords) +                         
+            '<br>Negative Words: ' + tweet.stats.posWords.join(', ') + 
+            '<br>Positive Words: ' + tweet.stats.negWords.join(', ') +                         
             '<br>Reach: ' + tweet.stats.reach + '</p>'+
           '</div>' +
       '</div>';
@@ -141,6 +141,6 @@ function createTweetCircle(tweet, center, source){
 
     var centerString = center.lat.toString() + ',' + center.lng.toString();
     a.href = 'javascript:panToCircle([' + centerString + ']);'
-    document.getElementById('text').appendChild(a);
+    document.getElementById('text-div').appendChild(a);
   }          
 }
