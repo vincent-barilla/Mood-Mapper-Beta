@@ -48,7 +48,8 @@ function initWordBank(){
 			list = data[key];
 			list.forEach(function(wordJson){ 
 				wordBank[key][wordJson['word']] = wordJson['score']; 
-			})													     
-	}																 
+			})
+		}	
+	}														 
 	console.log("MAIN SERVER: wordBank initialized.")
 }

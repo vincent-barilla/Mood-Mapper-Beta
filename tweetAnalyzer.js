@@ -142,7 +142,7 @@ this.analyze = function(tweet, wordBanks){
 					var suffsLen = suffs.length;
 					var wordLen = word.length;
 					var lastInd;
-					for (i = 0; i < suffLen; i++){
+					for (i = 0; i < suffsLen; i++){
 						suf = suffs[i];
 						if (wordBank[word + suf]){ // Check if the word plus the suffix is present in the DB. 
 							word += suf; // If it is present, reassign word to what hit in the DB. Return true.
@@ -162,107 +162,129 @@ this.analyze = function(tweet, wordBanks){
 					return word;
 				}
 
- 				// Flexible scoring template; works with either array or single number arguments, with a constant for ever member of the 
- 				// object array. Presumes object.length == constant.length and constant[i] logically pairs with object[i].
+ 				// Flexible scoring template; presumes bases.length == constants.length and the logic 
+ 				// of constants[i] pairs with bases[i]. bases will be an array of the starting score 
+ 				// of some value (like R,G, or B), constants add to bases to boost the starting score. 
+ 				// For example: scoringTemplate(R, -50) would mean, "decrease R by 50." Or, 
+ 				// scoringTemplate([R,B],[-50,50]) would mean, "decrease R by 50, then increase B by 50."
  				function scoringTemplate(bases, constants){
- 					if (bases.constructor === Array){ // If an array is passed, presume bases[0] goes with constants[0], etc. 
+ 					if (bases.constructor === Array){
  						for (var i = 0; i < bases.length; i++){
- 							bases[i] += constants[i]; // Adjust base up or down, according to how a word has scored in the analyses.
+ 							bases[i] += constants[i];
  						}
  					} else {
- 						bases += constants;// This catches when a single value is passed to both arguments. 
+ 						bases += constants;
  					}
  					return bases; 					  
  				}	
 
- 				// "!", ":)",":(", etc., will effect the scoring of a word and the overall tweet.
+ 				// Punctuation, '!', ':)',':(', etc., will effect the scoring of a word and the overall tweet.
  				function scorePunctuation(word){
  					punc = word.replace(/[a-z']/gi,''); // Take only the punctuation, other than ', for analysis.
 
- 					var temp = puncScoringWrapper(/!/g, [wordBoost, tweetBoost], [.15, .1]); // Boost extremeness of both word and overall tweet.
- 					if (temp){ // Notice the need to use temp, as [A, B] = returnArrayFn(); is an invalid assignment.  						
-	 					wordBoost  = temp[0]; 
+ 					// puncScoringWrapper invokes scoringTemplate, forms the constants argument for 
+ 					// scoringTemplate from multiplying both its third arguments by the number of '!' found.
+ 					var temp = puncScoringWrapper(/!/g, [wordBoost, tweetBoost], [.15, .1]);
+ 					if (temp){ 
+ 						// I tried an assignment like [wordBoost,tweetBoost] = puncScoring.... , but the 
+ 						// assignment was illegal, thus the need to split temp, here.	
+	 					wordBoost = temp[0]; 
 	 					tweetBoost = temp[1];
  					}
- 					temp = puncScoringWrapper(/\:\)|\=\)|\:,|\:\D|\<\3/g, [B, R], [50, -50]); // Increase blue, decrease red, for happies.
- 					if (temp){	// if needed due to possible null returns.
+ 					// Repeat the same for happy emojis.
+ 					temp = puncScoringWrapper(/\:\)|\=\)|\:,|\:\D|\<\3/g, [B, R], [50, -50]); 
+ 					if (temp){	
 	 					B = temp[0]; 
 	 					R = temp[1];
  					}
- 					temp = puncScoringWrapper(/\:\(|\=\(/g, [B, R], [-50, 50]); // Decrease blue, increase red, for sads.
- 					if (temp){	// if needed due to possible null returns.
+ 					// Repeat for sad emojis.
+ 					temp = puncScoringWrapper(/\:\(|\=\(/g, [B, R], [-50, 50]); 
+ 					if (temp){	
 	 					B = temp[0]; 
 	 					R = temp[1];
  					}
 
- 					// This wrapper implements the scoring template, using the length of the regEx (length == how many matches were made 
- 				    // against the regEx emoticons for a given word) as a multiplier for the constant, which will then be multiplied with 
-                    // the numArray argument (which would be, for example, a [B, R] array).
+ 					// The wrapper which checks the length of the regEx, uses it to incrase the constants
 	 				function puncScoringWrapper(regEx, numArray, constArray){
 	 					var matches = punc.match(regEx);
 	 					if (matches){
 	 						return scoringTemplate(numArray, [constArray[0] * matches.length, constArray[1] * matches.length]);
 	 					} else {
-	 						return null; // If no regEx matches are made (very common), return null. This is why the if checks are needed
-	 					}                // in scorePunctuationon when assigning temp via returns from puncScoringWrapper.
+	 						return null; 
+	 					}              
 	 				}
  				}
 
- 				// After a word is changed to only its letters and ', see if it is all caps. If so, increase scores for sentiment extremity.
+ 				// After a word is changed to only its letters and ', see if it is all caps. If so, increase
+ 				// scores for extremeness
  				function scoreCasing(word){
-	 				word = word.match(/[a-z']+/gi); // Pull out only letters and ' from the word (returns null if none).
+	 				word = word.match(/[a-z']+/gi); 
 	 				if (word){
-	 					word = word.join(''); // Chaining .join('') after .match() above looks nice, but possible null return from match == bad.	
- 						var caps = word.match(/[A-Z']+/g); // Take only the all-caps letters from word (returns null if none.)
+	 					word = word.join(''); 	
+ 						var caps = word.match(/[A-Z']+/g); 
 	 					if (caps && caps.length == word.length){ // This means it's all-caps.
-	 						var temp   = scoringTemplate([wordBoost, tweetBoost], [(.05 * caps.length), (.02 * caps.length)]); //See next line...
-	 						wordBoost  = temp[0];   // ...scoringTemplate here increases both word and tweet score boosters proportional to the 
-	 						tweetBoost = temp[1];   // length of the all-cap word found. 
+	 						// Scoring template uses caps.length in incrase the constants passed to 
+	 						// scoring Template, identical to puncScoringWrapper above.
+	 						var temp   = scoringTemplate([wordBoost, tweetBoost], [(.05 * caps.length), (.02 * caps.length)]); 
+	 						wordBoost  = temp[0];   
+	 						tweetBoost = temp[1];   
 		 					word = word.toLowerCase(); 							
 	 					}
 	 				} else {
-	 					word = "SKIP NULL." // A dummy setting. Makes sure a null value of word isn't scored in scoreWord below. 
+	 					word = "SKIP NULL." // A dummy setting. Makes sure a null value of word isn't scored. 
 	 				}
 	 				return word; 						
  				}
 
- 				// By the time a word has reached scoreWord, it's in the database, and all lowercased and with apostrophes. 
+ 				// By the time a word has reached scoreWord, it's in the database, and is all lowercased
+ 				// letters and possibly one or more apostrophes. 
  				function scoreWord(word, i){
  					var score = 1;
+
+ 					// Present of "n't" indicates the reverse sentiment of a word coming after it -- 
+ 					// For example: wordBank['hate'] //==> -4, but if 'doesn't' comes before 'hate', 
+ 					// now wordBank['hate'] //==> 4.
  					negatorCheck();
-					score *= wordBank[word] * 25 * wordBoost; // This where the scoring criteria get amalgamated into one score. 
+					score *= wordBank[word] * 25 * wordBoost; // Scoring criteria get amalgamated into one score. 
 					wordBank[word] > 0 ? wordScoringWrapper('posWords') : wordScoringWrapper('negWords'); 
 
+					// Flip the sign of a given score, if a negator precedes the word that generated it.
 					function negatorCheck(){
-						if (i > 0){ // This checks a previous array entry, so make sure it doesn't look at an invalid index of -1 when i == 0
+						if (i > 0){
 							var prevWord = tweetWords[i - 1];
-							if (prevWord.substring(prevWord.length - 3, prevWord.length) == "n't"){ // For now, hard code "n't" as the negator.
-								score *= -1; // Flip the score of a given word, if a negator precedes it.
+							// For now, hard code "n't" as the negator.			
+							if (prevWord.substring(prevWord.length - 3, prevWord.length) == "n't"){
+								score *= -1; 
 							}
 						}
-					}				     
+					}		
 
-					function wordScoringWrapper(field){ // Wrapper stores words in either posWords or negWords, depending on score, then scores.
-						stats[field].push({'word': word, 'score': wordBank[word]});//, 'EF': wordBoost * score}); // Word storage.
-						var rbTemp = scoringTemplate([R, B], [-score, score]); // This is where scores go into the [R,B] arrray. Notice the role of
-						R = rbTemp[0];                                         // negatorCheck(), here: if a negator was found, the score values 
-						B = rbTemp[1];										   // are flipped, meaning that, what would have boosted blue, now 
-					}				                                           // reduces it, and vice versa for red. 
+					// wordScoringWrapper accepts either 'posWords' or 'negWords' as a field into stats, 
+					// and pushes a word into stats[field].
+					function wordScoringWrapper(field){ 
+						stats[field].push({'word': word, 'score': wordBank[word]});
+						var rbTemp = scoringTemplate([R, B], [-score, score]); 
+						R = rbTemp[0]; // Note: R and B values are assigned here.                                        
+						B = rbTemp[1];										 
+					}				                                        
 				}
 			}
  					
- 				// Note that B is used for green pixels
+ 			// The final scoring occurs here. wordBoost Representing mood via RGB means the range 
+ 			// uwill represented in theint8 range, so I cap the scores between 0 and 255. The end 
+ 			// result: A fully negative sentiment is expressed as [255,0,0], fully positive sentiment 
+ 			// is [0,255,255], and ambiguous sentiments form the grey/red/blue/purple spectra. 
 			function scoreEntireTweet(){
-				stats.mood = [R,B,B] // I considered using the ANEW wordbank, as it has trinary scoring, but simplified it to the binary AFINN.
-				for (var i = 0; i < stats.mood.length; i++){                             // So, G gets lumped in with B as "positive sentiment."
-					stats.mood[i] = (stats.mood[i] * tweetBoost).toFixed(0); // The final scoring occurs here. wordBoost has already been             
-					if (stats.mood[i] > 255){								 // included in the final score within scoreWord. Representing 
-						stats.mood[i] = 255;                                 // mood via RGB means the range will represented in the uint8 range, 
-					}                                                        // so I cap the scores between 0 and 255. 
+				stats.mood = [R,B,B]
+				for (var i = 0; i < stats.mood.length; i++){
+					stats.mood[i] = (stats.mood[i] * tweetBoost).toFixed(0);            
+					if (stats.mood[i] > 255){								  
+						stats.mood[i] = 255;                                 
+					}                                                        
 					if (stats.mood[i] < 0){
-						stats.mood[i] = 0;                                   // The end result: A fully negative sentiment is expressed as [255,0,0],
-					}                                                        // fully positive sentiment is [0,255,255], and ambiguous sentiments 
-				}                                                            // form the grey/red/blue spectra. 
+						stats.mood[i] = 0;                                    
+					}                                                         
+				}                                                            
 			}
 		}
 	}

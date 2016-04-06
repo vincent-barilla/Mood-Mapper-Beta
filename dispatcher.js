@@ -15,7 +15,8 @@ this.dispatch = function(request, response, wordBank){
 	if (request.url == "/" || request.url == "/home") { 
 		openFile('./public/index.html');			   
 	} else {			
-
+		// Initialize this to receive data from the user in ajax requests below. 
+		var dataJson;
 		// The next 3 lines pull out the action of the request -- "action" being the indicator of where 
 		// to send the request's data. "argument" contains any additional values.						
 		var parts = request.url.split('/'); 
@@ -33,7 +34,7 @@ this.dispatch = function(request, response, wordBank){
 			// to streamServlet.query to connect to Twitter Public Streaming API
 			case 'streamTweets': 
 				request.on('data', function(data){
-					var dataJson = jsonifyRequest(data.toString());
+					dataJson = jsonifyRequest(data.toString());
 					streamServlet.query(dataJson, response, request, wordBank); 
 				});
 				break;
@@ -41,15 +42,21 @@ this.dispatch = function(request, response, wordBank){
 			// to restServlet.query to get a batch of data from a Twitter GET request.
 			case 'getTweets':
 				request.on('data', function(data){			
-					var dataJson = jsonifyRequest(data.toString()); 
+					dataJson = jsonifyRequest(data.toString()); 
 					restServlet.query(dataJson, response, request, wordBank);
 				});
 				break;
 			// Cut off the current request. Note: requests to the Twitter streaming API are held open on 
 			// Twitter's end until this is called. This is a very dicey solution to pausing Twitter's 
-			// streaming API. Read the entry in Readme.md about streaming concerns for more details.			
+			// streaming API. Read the entry in Readme.md about streaming concerns for more details.
+			// Do nothing if the request came from GET mode.			
 			case 'pauseStream': 
-				streamServlet.kill(response); 
+				request.on('data', function(data){			
+					dataJson = jsonifyRequest(data.toString());
+					if(dataJson.mode == '/streamTweets'){
+						streamServlet.kill(response);
+					} 					 
+				});
 				break;
 			// In case the request action doesn't match any of my cases, give a 404 error view.	                           
 			default:  
@@ -71,7 +78,7 @@ this.dispatch = function(request, response, wordBank){
 					if (err){
 						serverError(404, "Resource not found.")
 					} else {
-						useFile(filePath, data); /
+						useFile(filePath, data); 
 					}
 				}); 
 			} else {

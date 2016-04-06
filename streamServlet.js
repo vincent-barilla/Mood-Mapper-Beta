@@ -68,12 +68,9 @@ this.query = function(data, response, request, wordBank){
 			// boost the geocoders, it'll make sense to fix this. 
 			if (endInd > startInd){ 
 				tweet = string.substring(startInd, endInd); 
-				console.log("TWEET::"); console.log(tweet);
 				result = TweetAnalyzer.analyze(JSON.parse(tweet), wordBank);
 				response.write(JSON.stringify(result));
 				string = "";
-
-				console.log("~~~~~~~~~~END OF TWEET")
 				console.log(JSON.stringify(result));
 				console.log('\n')
 			}

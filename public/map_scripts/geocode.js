@@ -1,4 +1,5 @@
 function geoCodeTweet(tweet){
+  var turnstileCount = 0;
   var center  = null;
   if (tweet.location != null){
     var location   = tweet.location.substring(3, tweet.location.length);

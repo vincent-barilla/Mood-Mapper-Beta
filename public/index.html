@@ -4,15 +4,17 @@
    <meta charset="ISO-8859-1">
    <title>Insert title here</title>
    <script src='resource/map_scripts/init.js'></script>
-   <script src='resource/buttonhandle.js'></script>                 
-   <script src='resource/formvalidate.js'></script>              
+   <script src='resource/js/buttonhandle.js'></script>                 
+   <script src='resource/js/formvalidate.js'></script>
+   <script src='resource/js/formsubmit.js'></script>
+   <script src='resource/js/pause.js'></script>                                                
    <script src='resource/map_scripts/geocode.js'></script>  
    <script src='resource/map_scripts/circledraw.js'></script>      
-   <script src='resource/colorboxes.js'></script>           
+   <script src='resource/js/colorboxes.js'></script>           
    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
    <script id='bingScript' type='text/javascript'></script>
 </head>
-<body>
+<body >
   <br>  
 <section>  
   <div class="map" id="map" style="display:inline-block">map goes here.</div>    
@@ -96,100 +98,13 @@ page refresh, to preserve utility of ajax-->
      </fieldset>
    </form>
 </div>
-
+<script src='resource/initGlobals.js'></script>   
 <script type="text/javascript">
 
-const DefaultCenter = {'lat': -3.8963, 'lng': -146.4255};
-const Week = xBrowserWeek();
-//document.getElementById('togCirVis-btn').firstChild.data = 'Hide Circles';
-(function setDates(){
-  var date = new Date();
-  var end = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
-  var start = new Date(date - xBrowserWeek() + 86400 * 1000);
-  start = (start.getMonth() + 1) + '/' + start.getDate() + '/' + start.getFullYear();
+  /* All javascript traffic is directed through buttonhandler.js, the de facto front-end dispatcher. 
 
-  document.getElementById('enddate').value = end;
-  document.getElementById('startdate').value = start;
-})()
+  */
 
-// Apparently cross-browser standardization of date construction is not so consistent, so I use this as a golden standard: 
-function xBrowserWeek(){
-  var pointA = new Date('3/3/2016');
-  var pointB = new Date('3/10/2016'); 
-  return pointB - pointA;
-}
-
-document.getElementById('pause-btn').firstChild.data = 'Pause Mapping';
-document.getElementById('togCircVis-btn').firstChild.data = 'Hide Circles';
-document.getElementById('togTextVis-btn').firstChild.data = 'Hide Text Crawl';
-
-var bingCallback = function(){};
-var panToCircle = function(){};
-
-var xhr = new XMLHttpRequest();
-var globalMood = {"mood" : [0,0,0], "count" : 1 };
-var geoCoder;
-var turnstileCount = 0;
-var map;  
-var startErrMsg;
-var endErrMsg;
-
-// **buttonhandle.js**: See buttonhandle.js for the button handling function. All clicks fire this function. It operates on a switch statement, 
-// calling different functions according to the value in the button. 
-
-function pauseStream(){
-    // Abort should be sufficient. The request below is a fail safe measure to ensure twitter streaming stops.
-  xhr.abort();      
-  var pauseXhr = new XMLHttpRequest();
-  pauseXhr.open('POST','../pauseStream', true);
-  pauseXhr.setRequestHeader('Content-Type','text/plain');
-  pauseXhr.send();
-
-  pauseXhr.onreadystatechange = function(){
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 200){
-      //document.getElementById("text-div").value = 'Streaming paused \n\n' + document.getElementById("text-div").value;
-    } else {
-        //alert('There was a problem with the request.')
-    }
-  }
-};         
-
-function formSubmit(){
-  sendData(serializeForm());
-  document.getElementById('togCircVis-btn').style.display = 'block';        
-  
-  function serializeForm(){
-    var data = {'subject' : document.getElementById("subject").value,
-                'start'   : document.getElementById("startdate").value,
-                'end'     : document.getElementById("enddate").value};
-
-    data.id = map._getLastId.call(map);
-
-    var urlEncodedData = "";
-    var urlEncodedDataPairs = [];
-
-    for (var name in data){
-        urlEncodedDataPairs.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
-    }
-    return [urlEncodedDataPairs.join('&').replace(/%20/g, '+'), document.getElementById("mode").value];
-  }
-
-  function sendData(data){
-    xhr.open('POST', data[1], true);
-    xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    xhr.send(data[0]);
-    xhr.onreadystatechange = function (){
-      if ((this.readyState === XMLHttpRequest.LOADING || this.readyState === XMLHttpRequest.DONE) && this.status === 200) {
-        var response = this.responseText;
-        // '{"text":"'' delimits the start of a new tweet -- the flaw being, if '{"text":"' occurs
-        // in a tweet, the code will think everything subsequent is a new tweet. 
-        var jsonTweet = JSON.parse(response.substring(response.lastIndexOf('{"text":"'), response.length));
-        geoCodeTweet(jsonTweet); //geoCodeTweet calls createTweetCircle. See circledraw.js to see the function.
-        updateMoodBoxes(jsonTweet.stats.mood);           
-      }
-    }         
-  }
-}
 
 </script>
 
