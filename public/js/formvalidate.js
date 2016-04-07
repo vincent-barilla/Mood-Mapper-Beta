@@ -1,13 +1,14 @@
+// Fairly simple form validation, on submission. 
 function formValidates(mode){
 
   // The stream mode operates without dates and any subject is searchable, so no validation needs to be done
-  // if the mode == '/streamTweets'. Always return true.
+  // if the "mode" = "/streamTweets". Always return true.
   if (mode == '/streamTweets'){ 
     return true;               
   }                        
   
   // There's only one other mode, so if the above condition wasn't satisified, the user is using the RESTful search.
-  // As this search is date-dependent, user entries for dates must be validated. These variables will set up the 
+  // As this search is date-dependent, user entries for dates must be validated. These next six variables will set up the 
   // below functions to check differences between current time, user-entered start and end dates, and update error
   // messages as any of the conditions fail.
   var start = document.getElementById('startdate').value; 
@@ -22,7 +23,7 @@ function formValidates(mode){
   return (withinWeek() & validStart() & hasFormat()); 
 
   // Use JS date subtraction to verify that the gap between now (current time) and the entered start date is less than 
-  // 7 days (a week as per Week, which is assigned in index.html). Add an error message if the condition fails. 
+  // 7 days (a week as per "Week", which is assigned in "initGlobals"). Add an error message if the condition fails. 
   function withinWeek(){ 
     var now = new Date(); 
     if ((now - startObj) < Week){ 
@@ -33,7 +34,7 @@ function formValidates(mode){
     }
   }
 
-  // For a date range to be valid, the end can't be earlier than the start. Use Date subtraction to check this. 
+  // For a date range to be valid, the end can't be earlier than the start. Use "Date" subtraction to check this. 
   function validStart(){ 
     if ((endObj - startObj) > 0){ 
       return true; 
@@ -43,14 +44,19 @@ function formValidates(mode){
     }
   }
 
-  // validStart and withinWeek already validate the date numerically. This makes sure it's in the format 
-  // month/day/year (single digit month and day values are fine.). 
+  // "validStart" and "withinWeek" already validate the date numerically. This makes sure it's in the format 
+  // month/day/year (single digit month and day values are fine). 
   function hasFormat(){ 
+    // Use the helper function "checkFormat" to see if both end and start dates have the valid format. 
     var startIsValid = checkFormat(start);
     var endIsValid = checkFormat(end);
-    var formatError = 'Your format is incorrect. Please stick to month/day/year.';
+    // This error message is standard to both input boxes, so given scope outside the helper "setMsg".
+    var formatErrMsg = 'Your format is incorrect. Please stick to month/day/year.';
+    // Call the "setMsg" helper to set the error messages for both input boxes. The error messages will 
+    // have been elongated throughout all the previous validation methods, if any conditions failed. 
     startErrMsg = setMsg(startIsValid, startErrMsg)
     endErrMsg = setMsg(endIsValid, endErrMsg)
+    // If both formats are ok, return true; if either fails, return false.
     return (startIsValid && endIsValid) ? true : false;
 
     // Validate the format by splitting around '/', making sure there are three string chunks in the returned
@@ -69,14 +75,14 @@ function formValidates(mode){
       return false;
     }
 
-    // If the condition is false, see if the error message already is started, add 'Also: ' if so, then always 
-    // add the format string. Note that, if the condition is true, the errMsg is returned unchanged. 
+    // If the condition is false, see if the error message already is started, and if so, add 'Also: '. 
+    // Add "errMsg". Note that, if the condition is true, the "errMsg" is returned unchanged. 
     function setMsg(condition, errMsg){
       if (!condition){
         if(errMsg.length > 0){
           errMsg += 'Also: ';
         }
-        errMsg += formatError;
+        errMsg += formatErrMsg;
       }
       return errMsg;
     }

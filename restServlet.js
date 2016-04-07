@@ -28,7 +28,7 @@ this.query = function(data, response, request, wordBank){
 		'headers'  : {'Authorization': ('Bearer ' + process.env.BEARER_ACCESS_TOKEN)},
 	};
 
-	// Must use https, as per Twitter application-only requirements. 
+	// Must use https, as per Twitter application-only request requirements. 
 	var req = new https.request(options, function(res){
 		var responseString = ""; 
 
@@ -40,7 +40,7 @@ this.query = function(data, response, request, wordBank){
 		// 'end' indicates all the data from the query is done sending. responseString can now be parsed 
 		// into an object which contains 'statuses', which contains an array of the individual tweets as 
 		// JSON objects. Loop through that array, pass each tweet to tweetAnalyzer, then write the result 
-		// to the front end. Use a timeout to throttle the writing, so the geocoders don't fail.
+		// to the front end. Use a timeout to throttle the writing, to avoid overtaxing the geocoders.
 		res.on('end', function(){ 
 			var tweets = JSON.parse(responseString).statuses;
 			var i;
@@ -67,7 +67,7 @@ this.query = function(data, response, request, wordBank){
 	// A request must be ended in order to be sent to the API. 
 	req.end();
 	
-	// Helper function for the above formation of queryString; takes 'month/day/year' format, returns
+	// Helper function for the above formation of queryString. Takes 'month/day/year' format, returns
 	// what Twitter needs: 'YYYY-MM-DD'
 	function parseDate(date){
 		date = date.split('%2F');

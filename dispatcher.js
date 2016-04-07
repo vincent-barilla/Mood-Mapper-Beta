@@ -2,34 +2,36 @@ var fs            = require('fs');
 var path          = require('path');
 var mime          = require('mime');
 var util          = require('util');
+// The next two modules will handle the streaming and RESTful requests to Twitter. 
 var streamServlet = require('./streamServlet.js'); 
 var restServlet   = require('./restServlet.js'); 
 
 // Check the address of a request, send it to the appropriate function. Like a forward controller, 
-// in an MVC design. Note that the request, response, and wordBank are all accepted from the main
-// server and sent, as needed, to the appropriate location.
+// in an MVC design. 
 this.dispatch = function(request, response, wordBank){
 
 	// First, check if the user only wants to see the home page. If so, serve the home view. If not, 
-	// let the switch statement figure out where the request needs to go. 
+	// let the switch statement below figure out where the request needs to go. 
 	if (request.url == "/" || request.url == "/home") { 
 		openFile('./public/index.html');			   
 	} else {			
 		// Initialize this to receive data from the user in ajax requests below. 
 		var dataJson;
 		// The next 3 lines pull out the action of the request -- "action" being the indicator of where 
-		// to send the request's data. "argument" contains any additional values.						
+		// to send the request's data. "argument" contains the user's parameters.						
 		var parts = request.url.split('/'); 
 		var action = parts[1];				
 		var argument = parts.slice(2, parts.length).join("/");
 
 		// The switch statement cases control the flow of non-home requests.
 		switch(action){
+
 			// If the request is for a resource, call the openFile function, feed in the local path 
 			// (./public/) plus the file name (argument).
 			case 'resource': 
 				openFile('./public/' + argument); 
 				break;
+
 			// Pull the data out from the request, convert it from a url-encoded string to JSON, pass it
 			// to streamServlet.query to connect to Twitter Public Streaming API
 			case 'streamTweets': 
@@ -38,6 +40,7 @@ this.dispatch = function(request, response, wordBank){
 					streamServlet.query(dataJson, response, request, wordBank); 
 				});
 				break;
+
 			// Pull the data from the request, convert it from a url-encoded string to JSON, pass it 
 			// to restServlet.query to get a batch of data from a Twitter GET request.
 			case 'getTweets':
@@ -46,18 +49,14 @@ this.dispatch = function(request, response, wordBank){
 					restServlet.query(dataJson, response, request, wordBank);
 				});
 				break;
+
 			// Cut off the current request. Note: requests to the Twitter streaming API are held open on 
-			// Twitter's end until this is called. This is a very dicey solution to pausing Twitter's 
-			// streaming API. Read the entry in Readme.md about streaming concerns for more details.
-			// Do nothing if the request came from GET mode.			
+			// Twitter's end until this is called. Read the entry in Readme.md about streaming concerns
+			//  for more details. 
 			case 'pauseStream': 
-				//request.on('data', function(data){			
-					//dataJson = jsonifyRequest(data.toString());
-					//if(dataJson.mode == '/streamTweets'){
-						streamServlet.kill(response);
-					//} 					 
-				//});
+				streamServlet.kill(response);
 				break;
+
 			// In case the request action doesn't match any of my cases, give a 404 error view.	                           
 			default:  
 				serverError(404, '404 Error: Resource not found.');
@@ -70,7 +69,7 @@ this.dispatch = function(request, response, wordBank){
 		response.end(content);
 	}
 
-	// Makes sure a file exists, has no error when it is read, and sends it to useFile to have its data used.
+	// Makes sure a file exists, has no error, then writes the file back to the front end.
 	function openFile(filePath) { 
 		fs.exists(filePath, function(exists){ 
 			if (exists){
@@ -78,20 +77,17 @@ this.dispatch = function(request, response, wordBank){
 					if (err){
 						serverError(404, "Resource not found.")
 					} else {
-						useFile(filePath, data); 
+						// The mime.lookup grants flexibility, so any file can be passed through
+						// the preceding error checks, and will then have their contents read. 
+						// I use this both for HTML views and .js scripts.						
+						response.writeHead(200, {'Content-Type': mime.lookup(path.basename(filePath))}); 
+						response.end(data);	
 					}
 				}); 
 			} else {
 				serverError(404, "Resource not found.")
 			}
-		})
-
-		// The mime.lookup grants flexibility, so any file can be passed through the preceding error 
-		// checks, and will then have their contents read. I use this both for HTML views and .js scripts.
-		function useFile(filePath, fileContents) {
-			response.writeHead(200, {'Content-Type': mime.lookup(path.basename(filePath))}); 
-			response.end(fileContents);														 
-		}																					
+		})																				
 	}
 
  	// Take url-encodded key-value pairs (like 'pet=cat&name=Fluffy'), return a JSON object (like

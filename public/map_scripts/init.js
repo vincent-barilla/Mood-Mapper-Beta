@@ -1,12 +1,11 @@
-// The Google Maps API works with a callback, named in the parameters of the url query, 
-// to initialize the map on the page's load. See the header of index.html for where this is 
-// included.
+// The Google Maps API works with a callback to initialize the map on the page's load. 
+// "initMap" is that callback. 
 function initMap(){
 
   // Natively, a Map object does not give the user a way to access polygons that are 
   // drawn on it. I added some methods to the Map and Circle prototypes that give 
   // this functionality. It supports the hide/show options, as well as keeping track
-  // of the most recently shown circle's id, which supports the subsequent query to 
+  // of the most recently shown circle's id, which gives context to the subsequent query to 
   // Twitter. 
   addCircleStorageToMap(); 
 
@@ -32,8 +31,8 @@ function initMap(){
     'bounds'       : {
       north:  6.393879233, // The area is just south of Hawaii (sorry, French Polynesia!)
       south: -16.186677698,
-      east:  -131.8916015625,
-      west:  -160.9599609375
+      east :  -131.8916015625,
+      west :  -160.9599609375
     }
   });
 
@@ -50,7 +49,7 @@ function initMap(){
     };
   }
 
-  // Styles which were set with the very helpful Google Styled Maps Wizard
+  // Styles which were set with the very helpful Google Styled Maps Wizard.
   function setStyles(){
     return [
       {
@@ -92,7 +91,7 @@ function initMap(){
   // Give the map a way to store circles, so I can later toggle their visibility, store data, etc.
   function addCircleStorageToMap(){
 
-    // All circles will have listeners of these events 
+    // All circles will have listeners of these events. 
     var listeners = ['click','dblclick','drag','dragend','mouseover','mouseout']; 
 
     // Store all circles in an array.
@@ -107,11 +106,11 @@ function initMap(){
     google.maps.Map.prototype.lastId = "";
 
     // Track whether or not the user has reset a search parameter. When the user does change one 
-    // (.reset = true), the lastId will be reset to "", to the Twitter querying begins anew, 
+    // (".reset" = "true"), the "lastId" will be reset to "", so the Twitter querying begins anew, 
     // with ids only respective of the current search parameters. 
     google.maps.Map.prototype.reset = false;
 
-    // The method to reset lastId. 
+    // The method to reset "lastId". 
     google.maps.Map.prototype._resetLastId = function(str){
       this.lastId = str;
       this.reset = true;
@@ -150,7 +149,7 @@ function initMap(){
     };
 
     // If the map is currently set to null (circle invisible), reset it to map (circle now shows
-    // on map), and vice versa. command tracks the current text showing on the button, ensuring that 
+    // on map), and vice versa. "command" tracks the current text showing on the button, ensuring that 
     // the toggling between visibility makes sense to what the user sees on the button -- no circles
     // should be showing, if the user has clicked 'Hide Circles'. 
     // Note: Circles that were "erased" via the double click event will only have their map set to null, 
@@ -168,20 +167,19 @@ function initMap(){
     }
 
     // Note that, every time this is called, it checks the length of the circles array in the map. If that array
-    // is populated (has length > 0), and a user reset was not activated via changing the form fields, the 
-    // id of the last circle in the array is the value of the map's lastId property. If those conditions fail, 
-    // the currently stored lastId is used. This makes sure a user is getting new data, any time they make
-    // a new query with the same parameters (in that case, the condition in the ternary is true), or a new 
-    // query with different parameters (the condition is false). 
+    // is populated (has length > 0), and a user has not changed the form fields, the id of the last circle in the array
+    // is the value of the map's "lastId" property. If those conditions fail, the currently stored "lastId" is used. This makes 
+    // sure a user is getting new data, any time they make a new query to Twitter. (If you don't keep track of the last id 
+    // that Twitter returned in a previous query, then the next query will give you the same thing, if you make a new query
+    // with the same parameters).
     google.maps.Map.prototype._getLastId = function(){
       var id = (this.circles.length > 0) && (!this.reset) ? this.circles[this.circles.length - 1]._getId() : this.lastId;
       this.reset = false;
       return id;
     }
 
-    // Called when circles are initialized in createTweetCircle, this uses .push to populate the map's 
-    // array of circles -- and, implicitly, the last circle drawn has the id of the last tweet returned 
-    // from the server. 
+    // Called when circles are initialized in "createTweetCircle", this uses .push to populate the map's array of circles
+    //  -- and, implicitly, the last circle drawn has the id of the last tweet returned from the server. 
     google.maps.Circle.prototype._storeInMap = function(map){ 
       if(map){                                               
         map.circles.push(this);

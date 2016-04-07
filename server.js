@@ -11,7 +11,7 @@ var wordBank = {};
 initWordBank();   
 
 // The server receives requests and passes them along to Dispatcher.dispatch for further processing. The
-// server will listen at a localhost port, if not launched on a hosting service.
+// server will listen at a local port, if not launched on a hosting service.
 var mainServer = http.createServer(function (request, response){
 	try {
 		Dispatcher.dispatch(request, response, wordBank);
@@ -24,11 +24,9 @@ var mainServer = http.createServer(function (request, response){
 	console.log('Server running at ' + process.env.PORT || 3000);
 });
 
-
 /* 
-	Refer to Readme.md: "I. initWordBank" in the github repo for a more detailed explanation of this 
-	function, including examples of both the format of the file this loads, as well as the format of the 
-	word bank it creates. 
+	Refer to Readme.md: "I. initWordBank" in the github repo for a more detailed explanation of initWordBank,
+	including examples of both the format of the file this loads, as well as the format of the word bank it creates. 
 */
 
 // This initializes the wordBank (effectively the app's database). Sync used to make sure the wordBank 
@@ -41,6 +39,8 @@ function initWordBank(){
 	// The end result will allow for the following use: wordBank['english']['love'] //==> 4. 
 	// (See Readme.md for details. )
 	function setWordBank(){
+		// Separating the initialization of variables from the loop, to prevent re-initializing a variable
+		// over and over (there are around 5k lines to parse in the original file).  
 		var key;
 		var list;
 		for (key in data){ 
@@ -51,5 +51,4 @@ function initWordBank(){
 			})
 		}	
 	}														 
-	console.log("MAIN SERVER: wordBank initialized.")
 }

@@ -4,7 +4,7 @@ function pauseStream(){
   // to Twitter. An ajax request to the server is thus sent, telling the streaming connection to 
   // also be aborted.
 
-  // Abort the client-server connection within this app. 
+  // Abort the client-server connection within the app. 
   xhr.abort();      
   var pauseXhr = new XMLHttpRequest();
   pauseXhr.open('POST','../pauseStream', true);
@@ -14,6 +14,7 @@ function pauseStream(){
   pauseXhr.send();
 
   pauseXhr.onreadystatechange = function(){
+    // This state will indicate the Twitter streaming connection was successfully severed. 
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200){
       console.log(this.responseText)
     } else {
