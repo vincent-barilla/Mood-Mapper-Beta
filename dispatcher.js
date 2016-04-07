@@ -51,12 +51,12 @@ this.dispatch = function(request, response, wordBank){
 			// streaming API. Read the entry in Readme.md about streaming concerns for more details.
 			// Do nothing if the request came from GET mode.			
 			case 'pauseStream': 
-				request.on('data', function(data){			
-					dataJson = jsonifyRequest(data.toString());
-					if(dataJson.mode == '/streamTweets'){
+				//request.on('data', function(data){			
+					//dataJson = jsonifyRequest(data.toString());
+					//if(dataJson.mode == '/streamTweets'){
 						streamServlet.kill(response);
-					} 					 
-				});
+					//} 					 
+				//});
 				break;
 			// In case the request action doesn't match any of my cases, give a 404 error view.	                           
 			default:  

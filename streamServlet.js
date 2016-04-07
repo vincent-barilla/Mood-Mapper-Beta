@@ -45,7 +45,6 @@ this.query = function(data, response, request, wordBank){
 		var startInd; 
 		var endInd;   
 		var string = "";
-		var discard = "";
 		var tweet; 
 		var result; 
 
@@ -69,8 +68,8 @@ this.query = function(data, response, request, wordBank){
 			if (endInd > startInd){ 
 				tweet = string.substring(startInd, endInd); 
 				result = TweetAnalyzer.analyze(JSON.parse(tweet), wordBank);
+				string = "";				
 				response.write(JSON.stringify(result));
-				string = "";
 				console.log(JSON.stringify(result));
 				console.log('\n')
 			}

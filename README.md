@@ -48,16 +48,25 @@ All other solutions that I can think of would similarly ask Twitter's public str
 	
 	
 	
-III.     onclickWrapper(elem, prop, toggleEnabled, newVal, oldVal, newOnClickMthd, oldOnClickMthd)
+III.     onclickWrapper(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd)
 
-  elem is the html element being changed, prop is what property of elem is being changed, oldVal is what prop starts as, newVal is what it finishes as, toggleEnabled is a boolean value, and the last two inputs are optional callbacks. 
+  elem is the html element being changed, prop is what property of elem is being changed, oldVal is what prop starts as, newVal is what it finishes as, snd the last two inputs are optional callbacks. 
 
-  If toggleEnabled is true, elem.prop will toggle back and for between oldVal and newVal. Zero, one, or two callbacks may also be accepted. With zero, no callbacks are fired. With one callback given, clickAction uses that callback for both toggle states. If two are, clickAction uses the first callback when elem.prop == newVal, and the second callback when elem.prop == oldVal.
+  elem.prop will toggle back and for between oldVal and newVal. Zero, one, or two callbacks may also be accepted. With zero, no callbacks are fired. With one callback given, clickAction uses that callback for both toggle states. If two are, clickAction uses the first callback when elem.prop = newVal, and the second callback when elem.prop = oldVal.
 
-  If toggleEnabled is false, zero, one, or two callbacks may be accepted. With zero, no callbacks are fired. With one, clickAction uses that action for both toggle states. If two are, clickAction uses the first callback when elem.prop == oldVal, and the second callback when elem.prop == newval. If none are, no callbacks are fired. 
 
-  Note: At the point that you would use this to change one value to another, with no callback, you're duplicating the logic of 
-document.getElementById.property = value. When I encountered that case, I used the native JS code. I wrote this, in the first place, because of how space-intensive toggling the values was getting. Using it when it's not serving that purpose would make that all wasted effort. 
+IV.      Comments on geocoding usage
+
+ I've found that geocoders are not very well-suited for streaming live data.  They'll briefly stop working if you exceed some per-second query limit which is not clearly stated in the 
+ documentation. To work around this, I spread the workload over four geocoders: Google, mapQuest, Open Cage, and bing. This alleviates the issue of maxing out the per-second limit
+ for most instances, the exception being when you're tracking a massively trending topic (recently, Villanova won the NCAA championship in dramatic fashion -- the four geocoders couldn't
+ keep up for very long, immediately after the game).
+
+ I implement the group of geocoders with a 'turnstileCount' variable in a switch statement. 'turnstileCount' has four possible values, 0-3, each representing one of the geocoders. In 
+ the case for the current geocoder, it increments 'turnstileCount' by one, so that, the next time this function is called, the next case in line will be used. When it hits the end of the line, 
+ case 3, 'turnstileCount' is reset to 0, and the process begins again.  
+
+ Google comes equipped with a geocoder constructor, which I utilize, and Open Cage and mapQuest are similar enough that I pass them both to the same helper function. bing rejected my CORS query attempt, so I use the request url as the src to a script, and include a callback in the request, such that the src script will grab the data from the page and pass it to createTweetCircle.
 	
 
 
