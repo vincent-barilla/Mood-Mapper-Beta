@@ -21,7 +21,7 @@ function initMap(){
 
   // This rectangle defines an area where tweets go when their location field is 
   // null, when they come out of tweetAnalyzer. Basically, it's a tweet dump. 
-  var rectangle = new google.maps.Rectangle({
+  var tweetDump = new google.maps.Rectangle({
     'strokeColor'  :   'RGB(85,85,85)', 
     'strokeOpacity': 0.25, 
     'strokeWeight' :  2,
@@ -35,6 +35,24 @@ function initMap(){
       west :  -160.9599609375
     }
   });
+
+  // This label will tell the user why there is a gray, blurry rectangle floating around 
+  // below Hawaii.
+  var label = new google.maps.InfoWindow({
+        'content'        : '<p>Tweets Without Location Go Here</p>',
+        'maxWidth'       : 100,
+        'disableAutoPan' : true,
+        'position'       : {'lat': 6.393879233, 'lng': -146.42578125}
+  });
+
+  // Use these listeners to show the label for non-located tweets only when the cursor 
+  // is over the rectangle (it's pretty distracting, having it open when the page loads.)
+  tweetDump.addListener('mouseover', function(){
+    label.open(map);
+  })
+  tweetDump.addListener('mouseout', function(){
+    label.close(map);
+  })
 
   // Define the map's properties.
   function setProperties(){

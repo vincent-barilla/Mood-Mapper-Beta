@@ -48,11 +48,14 @@ All other solutions that I can think of would similarly ask Twitter's public str
 	
 	
 	
-III.     onclickWrapper(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd)
+III.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd)
 
   elem is the html element being changed, prop is what property of elem is being changed, oldVal is what prop starts as, newVal is what it finishes as, snd the last two inputs are optional callbacks. 
 
   elem.prop will toggle back and for between oldVal and newVal. Zero, one, or two callbacks may also be accepted. With zero, no callbacks are fired. With one callback given, clickAction uses that callback for both toggle states. If two are, clickAction uses the first callback when elem.prop = newVal, and the second callback when elem.prop = oldVal.
+
+  This is a dense bit of coding; I used it because of how space intensive it was getting, to keep toggling all the different html element properties. Giving the optional callbacks was a way to 
+  avoid if statements around every re-assignment of the elements. 
 
 
 IV.      Comments on geocoding usage

@@ -25,13 +25,20 @@ const Week = function (){
   	document.getElementById(html).value = date;
   }
 
-  buttonDisp('pause-btn', 'Pause Mapping');
-  buttonDisp('togCircVis-btn', 'Hide Circles');
-  buttonDisp('togTextVis-btn', 'Hide Text Crawl');
-
+  // All the buttons to initialize, and the value to set as their view text (firstChild.data).
+  var buttons = {'newSearchBtn': 'New Search', 
+                 'pauseBtn': 'Pause',
+                 'togCircVisBtn': 'Hide Circles',
+                 'togTextVisBtn': 'Hide Text Crawl',
+                 'instrButton': 'Map How-To'}
+  buttonDisp(buttons);               
+                 
   // Set a given string to appear on a given button. 
-  function buttonDisp(html, text){
-	document.getElementById(html).firstChild.data = text;
+  function buttonDisp(htmls){
+    var key;
+    for (key in htmls){
+      document.getElementById(key).firstChild.data = htmls[key];
+    }
   }
 })()
 
@@ -46,6 +53,9 @@ var xhr = new XMLHttpRequest();
 
 // Used to show the current text color and average text color in the boxes below the map.
 var globalMood = {"mood" : [0,0,0], "count" : 1 };
+
+
+
 
 // the googleGeocoder, set in initMap, used in geoCodeTweet.
 var geoCoder;

@@ -3,10 +3,11 @@ body {
 }
 
 td{
-    padding-left: 40px;
-
+  padding-left: 4px;
+  padding-bottom: 6px;
 }
-/* color box elements */
+
+/*... color box elements.... */
 .div-color {
     position: relative;
     padding-left: 20px;
@@ -33,7 +34,7 @@ td{
 }
 
 
-/*.............Form ..........*/
+/*............ Main form ..........*/
 .central{
     margin-left:14%;
     width:70%;
@@ -41,6 +42,10 @@ td{
 
 legend{
     font-color: RGB(25, 115, 115);
+}
+
+.sml{
+  font-size: 16 !important;
 }
 
 .label {
@@ -110,6 +115,29 @@ div#text {
     background: RGB(240,240,240);
     overflow: scroll;
 }
+
+/*..... The button table, shows below the map ....*/
+
+.buttonCol{
+    text-align: center;
+    width: 12%;
+}
+
+.button{
+  text-align: center;
+  width: 90%;
+}
+
+.buttonRow{
+  width: 100%;
+}
+
+/*...........the instructions table ......*/
+
+.instr{
+    margin-left:10%;
+    width:80%;
+  }
 
 /*...... info indicates infoWindow styles ...... */
 #info .info-title {

@@ -3,6 +3,12 @@
    <link rel="stylesheet" type="text/css" href="resource/css/style.css">
    <meta charset="ISO-8859-1">
    <title>Insert title here</title>
+   <!-- All front end JS scripts are in these scripts. Minus comments, there was around 600 lines of code here, 
+        so I figured a modularized approach would be a lot more readable. The order in which these scripts is 
+        important; I did not make inputs/returns as needed, for this to be able to be shuffled around in any
+        order. If one of the scripts uses variables defined in a previous script, I mention where the original
+        initialization of that variable is. Most global variables are in initGlobals.js, found at the bottom of this 
+        HTML block. -->
    <script src='resource/map_scripts/init.js'></script>
    <script src='resource/js/buttonhandle.js'></script>                 
    <script src='resource/js/formvalidate.js'></script>
@@ -16,57 +22,92 @@
 </head>
 <body >
   <br>  
+
+<!-- The top of the page, with the map and the text crawl. -->  
 <section>  
   <div class="map" id="map" style="display:inline-block">map goes here.</div>    
   <div id="text" style='display:none'></div>
 </section>
 
-<div id="hidden-div" style="display:none">
+<!-- The mood color boxes, plus the buttons which relate to interacting with the map. These are below the map, 
+     and start out invisible. -->
+<div id="hiddenDiv" style="display:none">
   <div class="div-color boxes">
-      <div class="color-box" id="mood-div" style="background-color: RGB(127,127,127)">Current Tweet Mood</div>
+      <div class="color-box" id="moodDiv" style="background-color: RGB(127,127,127)">Current Tweet Mood</div>
   </div>
   <div class="div-color">
-      <div class="color-box2" id="globalMood-div" style="background-color: RGB(127,127,127)">Average Tweet Mood</div>
+      <div class="color-box2" id="globalMoodDiv" style="background-color: RGB(127,127,127)">Average Tweet Mood</div>
   </div>
-    <br><br>
+    <br>
 
-  <div id='button-div'>
-    <table>
-      <tr>
-        <td>
-          <button type="button" id="pause-btn" name='pause' onclick="buttonHandler(this)" method="post">
-         </button>
-        </td>
-        <td> 
-          <button type="button" id="clear-btn" name='clear' onclick="buttonHandler(this)" method="post">Clear Map
-          </button>
-        </td>
-        <td>
-          <button type="button" id="togCircVis-btn" name='togCircVis' style='display: block' onclick="buttonHandler(this)" method="post">
-          </button>
-        </td>
-        <td> 
-          <button type="button" id="togTextVis-btn" name='mapOnly' onclick="buttonHandler(this)" method="post">
-          </button>
-        </td>            
-      </tr>         
-    </table>
-    <br>      
-    <span> Note: You can always pause your streaming, change the parameters in your form, then click 'Resume Mapping'. 
-      This will show you your new  results on top of the current map. Hit 'Clear Map' to avoid overlapping results. </span>          
-    <br>                                         
+  <div id='buttonDiv'>
+    </fieldset>          
+      <div id="instructions" style="display:none" class='instrDiv'> 
+        <br>
+        <fieldset class='instr'>
+          <legend class='form-text' style='font-size:20'>When you...</legend>
+          <table class='form-text'>
+            <tr><td class='label sml'>move the cursor over a circle:</td>   <td class='sml'>its info window opens until you move the cursor away.</td></tr>
+            <tr><td class='label sml'>click once on a circle:</td>          <td class='sml'>its info window stays open.</td></tr>
+            <tr><td class='label sml'>double-click on a circle:</td>        <td class='sml'>it hides.</td></tr>
+            <tr><td class='label sml'>move the cursor off a circle:</td>    <td class='sml'>its info window hides -- unless you clicked the circle. If you want the info window to go away after
+                                                                                          you previously clicked its circle, move the<br> cursor over the circle again, then move it off. When the
+                                                                                          cursor leaves, the info window goes back into hiding.</td></tr>
+            <tr><td class='label sml'>drag the circle:</td>                 <td class='sml'>the info window hides, but is following the circle behind the scenes.</td></tr>
+            <tr><td class='label sml'>release the circle, after a drag:</td><td class='sml'>the info window reappears at the circle's new location.</td></tr>
+            <tr><td class='label sml'>click a tweet in the text crawl: </td><td class='sml'>the map pans and zooms over that tweet's circle.</td></tr>        
+          </table>
+      </div>
+    </fieldset>            
+    <br>    
+    <fieldset class='central'>
+      <br>
+      <table>
+        <tr class="buttonRow">
+          <td class="buttonCol">
+            <button type="button" id="newSearchBtn" name='newSearch' class="label sml button" onclick="buttonHandler(this)" method="post">
+           </button>
+          </td>
+          <td class="buttonCol">
+            <button type="button" id="pauseBtn" name='pause' class="label sml button" onclick="buttonHandler(this)" method="post">
+           </button>
+          </td>          
+          <td class="buttonCol"> 
+            <button type="button" id="clearBtn" name='clear' class="label sml button" onclick="buttonHandler(this)" method="post">Clear Map
+            </button>
+          </td>
+          <td class="buttonCol">
+            <button type="button" id="togCircVisBtn" name='togCircVis'  class="label sml button" onclick="buttonHandler(this)" method="post">
+            </button>
+          </td>
+          <td class="buttonCol"> 
+            <button type="button" id="togTextVisBtn" name='mapOnly' class="label sml button"onclick="buttonHandler(this)" method="post" >
+            </button>
+          </td>
+          <td class="buttonCol"> 
+            <button type="button" id="instrButton" name='instructions' class="label sml button" onclick="buttonHandler(this)" method="post">
+            </button>
+          </td>                       
+        </tr>         
+      </table>   
+      <span id='searchInstruct' class='form-text sml' style='display:none'> 
+        Click 'Resume', or click 'Submit' without changing your form, to see more tweets about your current settings. Change just the dates to see
+        more tweets on the same subject, or change everything to see all new results. New tweets will overlap on the map unless you click 'Clear Map' 
+        prior to resuming or submitting. 
+      </span>
+      <br>                                                         
   </div>  
-    <br><br>       
 </div>
-  <br>
 
-<!-- Note the use of a button rather than input to submit form; prevents
-page refresh, to preserve utility of ajax-->
-
+<!-- The form and all its labels and inputs. All inputs trigger 'buttonHandler', which sorts out what to do based on the name 
+     of the element which triggered the callback. Note that visibilities will be toggled on and off, depending on the current
+     activity of the user. All inputs are handled asynchonously in the 'buttonHandler' function, thus the lack of a "submit" 
+     action for the form.-->
 <div id="form-input">
+   <br>        
    <form id="form">
      <fieldset class='central'>
-       <legend class='form-text' style='font-size:20'>What would you like to watch?</legend>
+       <legend class='form-text' style='font-size:20'>Define your search here:</legend>
        <div id='grp1' style='display:inline-block' class='grp1'>
          <label for='subject'style='display:block' class='label'>
               Choose your subject.<br>
@@ -93,16 +134,18 @@ page refresh, to preserve utility of ajax-->
          </label>
         </div>
          <br><br>
-         <button type="button" id="submit-btn" onclick="buttonHandler(this)" name='submit' style='display: block' class='form-text label submit' 
+         <button type="button" id="submitBtn" onclick="buttonHandler(this)" name='submit' style='display: block' class='form-text label submit' 
                  method="post">Submit</button>  
      </fieldset>
    </form>
 </div>
+
+<!--I initialize the global variables here to make sure all the DOM elements above are defined, before this sets some of their starting views. --> 
 <script src='resource/js/initGlobals.js'></script>   
 <script type="text/javascript">
 
-  /* All javascript traffic is directed through buttonhandler.js, the de facto front-end dispatcher. 
-
+  /* 
+   All javascript traffic is directed through buttonhandler.js, the de facto front-end dispatcher. 
   */
 
 

@@ -6,8 +6,8 @@ function updateMoodBoxes(mood){
   // "RGB" represents the overall mood of the current session. 
   var RGB = [];
   updateRGB();
-  colorBox(document.getElementById('mood-div'), mood)
-  colorBox(document.getElementById('globalMood-div'), RGB);
+  colorBox(document.getElementById('moodDiv'), mood)
+  colorBox(document.getElementById('globalMoodDiv'), RGB);
   globalMood.count++;
 
   // The heper function to update the mood of the session. 

@@ -34,8 +34,8 @@ function createTweetCircle(tweet, center){
     if (rad){
       rad > 50000 ? rad *= 20 : rad = ((500000 - 10 * rad) * .000095 * rad);
     } else {
-      // 4000 meters is the default, for a user with no followers. 
-      rad = 4000;
+      // 40 meters is the default, for a user with no followers. 
+      rad = 40;
     }
     return rad;
   }
@@ -191,7 +191,10 @@ function createTweetCircle(tweet, center){
       var zoomLevel = (lat.toFixed(0) == DefaultCenter.lat.toFixed(0) && lng.toFixed(0) == DefaultCenter.lng.toFixed(0)) 
                     ? 5 : 6;     
       var cen = {'lat': lat, 'lng': lng};
-      map.setZoom(zoomLevel);              
+      map.setZoom(zoomLevel); 
+      // Scroll the window back to the map, as the user may have been clicking a button lower in the page, 
+      // and may miss the updates to the text crawl and map.
+      window.scrollTo(0, document.getElementById('map').style.height + 20);                         
       map.panTo(cen);
     }
 

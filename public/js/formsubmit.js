@@ -1,12 +1,14 @@
 // Sends data from the form to the server, so that it can form queries to Twitter. 
 function formSubmit(){
 
+  // For DOM settings that do not toggle in buttonhandle, but rather occur only when the form submits, 
+  // their commands go here. 
+  window.scrollTo(0, document.getElementById('map').style.height + 20);      
+  document.getElementById('pauseBtn').firstChild.data = 'Pause';
+
   // Send data to the server that has been serialized (i.e., put in url key-value pairs, in a string.)
   sendData(serializeForm());
 
-  // Once the form is sent, show the button that has 'Hide Circles' and 'Show Circles' on it. 
-  document.getElementById('togCircVis-btn').style.display = 'block';        
-  
   // Grab the data from the input fields in the form, convert them into the url-encoded pairs. 
   // "data.id" is storing the id of the last tweet from the previous GET request.  This is used in the 
   // GET request query to Twitter, telling it to send tweet data with an id SMALLER than this 
