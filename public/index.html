@@ -45,8 +45,8 @@
       <div id="instructions" style="display:none" class='instrDiv'> 
         <br>
         <fieldset class='instr'>
-          <legend class='form-text' style='font-size:20'>When you...</legend>
-          <table class='form-text'>
+          <legend class='formText' style='font-size:20'>When you...</legend>
+          <table class='formText'>
             <tr><td class='label sml'>move the cursor over a circle:</td>   <td class='sml'>its info window opens until you move the cursor away.</td></tr>
             <tr><td class='label sml'>click once on a circle:</td>          <td class='sml'>its info window stays open.</td></tr>
             <tr><td class='label sml'>double-click on a circle:</td>        <td class='sml'>it hides.</td></tr>
@@ -90,7 +90,7 @@
           </td>                       
         </tr>         
       </table>   
-      <span id='searchInstruct' class='form-text sml' style='display:none'> 
+      <span id='searchInstruct' class='formText sml' style='display:none'> 
         Click 'Resume', or click 'Submit' without changing your form, to see more tweets about your current settings. Change just the dates to see
         more tweets on the same subject, or change everything to see all new results. New tweets will overlap on the map unless you click 'Clear Map' 
         prior to resuming or submitting. 
@@ -103,19 +103,19 @@
      of the element which triggered the callback. Note that visibilities will be toggled on and off, depending on the current
      activity of the user. All inputs are handled asynchonously in the 'buttonHandler' function, thus the lack of a "submit" 
      action for the form.-->
-<div id="form-input">
+<div id="formInput">
    <br>        
    <form id="form">
      <fieldset class='central'>
-       <legend class='form-text' style='font-size:20'>Define your search here:</legend>
+       <legend class='formText' style='font-size:20'>Define your search here:</legend>
        <div id='grp1' style='display:inline-block' class='grp1'>
          <label for='subject'style='display:block' class='label'>
               Choose your subject.<br>
-           <input type="text" id="subject" name='subject' value="BernieSanders" style="display:block" class='form-text' onkeyup='buttonHandler(this)'><br>
+           <input type="text" id="subject" name='subject' value="BernieSanders" style="display:block" class='formText' onkeyup='buttonHandler(this)'><br>
          </label>   
          <label for='mode' style='display:block' class='label'>
             Select your search mode.<br>   
-            <select name="mode" form="form-input" id="mode" class='form-text' onchange="buttonHandler(this)">
+            <select name="mode" form="formInput" id="mode" class='formText' onchange="buttonHandler(this)">
               <option value="/getTweets">Search Twitter</option>
               <option value="/streamTweets">Live Stream</option>
             </select>
@@ -124,17 +124,17 @@
         <div id='grp2' style='display:inline-block' class='grp2'>  
          <label for='startdate' style='display:block' id='startlabel' class='label'>
             Choose a start date for a search, up to one week ago: <br>
-            <input type="text" id="startdate" value="" placeholder="day/month/2016" style="display:block" class='form-text'><br>
+            <input type="text" id="startdate" value="" placeholder="day/month/2016" style="display:block" class='formText'><br>
             <div name="error1" id="starterror" style="display:none" class='err'>Not quite. Please correct the following: </div>   
          </label> 
          <label for='enddate' style='display:block' id='endlabel' class='label'>
             Choose an end date for your search: <br>
-            <input type="text" id="enddate" value="javascript:setDate()" placeholder="day/month/2016" style="display:block" class='form-text'><br>       
+            <input type="text" id="enddate" value="javascript:setDate()" placeholder="day/month/2016" style="display:block" class='formText'><br>       
             <div name="error2" id="enderror"  style="display:none" class='err'>Not quite. Please correct the following: </div>   
          </label>
         </div>
          <br><br>
-         <button type="button" id="submitBtn" onclick="buttonHandler(this)" name='submit' style='display: block' class='form-text label submit' 
+         <button type="button" id="submitBtn" onclick="buttonHandler(this)" name='submit' style='display: block' class='formText label submit' 
                  method="post">Submit</button>  
      </fieldset>
    </form>

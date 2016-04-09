@@ -30,7 +30,7 @@ const Week = function (){
                  'pauseBtn': 'Pause',
                  'togCircVisBtn': 'Hide Circles',
                  'togTextVisBtn': 'Hide Text Crawl',
-                 'instrButton': 'Map How-To'}
+                 'instrButton': 'How to Use This Map'}
   buttonDisp(buttons);               
                  
   // Set a given string to appear on a given button. 

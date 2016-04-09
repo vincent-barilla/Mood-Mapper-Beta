@@ -58,7 +58,7 @@ legend{
   font-family: 'Open Sans Condensed', sans-serif;    
 }
 
-.form-text{
+.formText{
     color: RGB(100,100,100);
     font-size: 15;
     font-weight: 6;
@@ -140,32 +140,48 @@ div#text {
   }
 
 /*...... info indicates infoWindow styles ...... */
-#info .info-title {
-   font-family: 'Open Sans Condensed', sans-serif;
-   font-size: 22px;
-   font-weight: 400;
-   padding: 2px;
-   background-color: #48b5e9;
-   color: white;
-   margin: 1px;
-   border-radius: 2px 2px 0 0;
+
+div#info {
+  background: RGB(240,240,240);  
+  max-height: 140px;
+  overflow-y: auto;
+  overflow-x: hidden;  
 }
 
-#info .info-content {
 
-    font-size: 13px;
-    line-height: 18px;
-    font-weight: 400;
-    margin-right: 1px;
-    padding: 5px 5px 10px 12px;
-    max-height: 140px;
-    overflow-y: auto;
-    overflow-x: hidden;
+.infoTitle {
+  font-family: Helvetica, Arial;
+  font-size: 22px;
+  font-weight: 400;
+  padding: 2px;
+  background: RGB(220,220,255);    
+  color: RGB(80,80,90);
+  margin: 1px;
+  border-radius: 2px 2px 0 0;
 }
 
+.tweText{
+  font-size: 16px;
+  font-weight: 500;
+  margin-right: 1px;
+  padding: 5px 5px 5px 6px;
+}
+
+.tweData{
+  color: RGB(80,80,90);  
+  font-size: 14px;
+  font-weight: 400;
+  margin-right: 1px;
+}
+
+/*..... Override the default styles for Google Map Info Windows ....*/
 .gm-style-iw {
    width: 350px !important;
    top: 10 !important;
    left: 10 !important;
    border-radius: 3px 3px 3px 3px;
+   background: RGB(240,240,240);    
 }
+
+
+

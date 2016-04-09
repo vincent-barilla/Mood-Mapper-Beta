@@ -133,9 +133,14 @@ this.analyze = function(tweet, wordBanks){
 				})
  			
  				// Look at combinations of "word" with common suffixes to see if a match can be found. 
- 				// Will reassign "word" if a match, with the suffix changes, is found.
+ 				// Will reassign "word" if a match, with the suffix changes, is found. 
 				function suffixCheck(word){
-					var suffs = ['s', 'd', 'er', 'ing', 'ful', 'ous', 'fully', 'er', 'ier', 'less'];
+					// If the word is already in "wordBank", there is no need for the following checks. 
+					// Return the word as-is.
+					if (wordBank[word]){
+						return word;
+					}
+					var suffs = ['s', 'd', 'er', 'ing', 'ful', 'ous', 'fully', 'er', 'ier'];
 					var suf;
 					var i;
 					var suffsLen = suffs.length;
@@ -143,10 +148,12 @@ this.analyze = function(tweet, wordBanks){
 					var lastInd;
 					for (i = 0; i < suffsLen; i++){
 						suf = suffs[i];
-						if (wordBank[word + suf]){ // Check if "word" plus the suffix is present in the DB. 
-							word += suf; // If it is present, reassign "word" to what hit in the DB.
-							return word;
-						}
+						if (wordLen > 2){ // I had 'as' be scored as 'ass.' This should prevent that. 
+							if (wordBank[word + suf]){ // Check if "word" plus the suffix is present in the DB. 
+								word += suf; // If it is present, reassign "word" to what hit in the DB.
+								return word;
+							}
+						}	
 						lastInd = word.lastIndexOf(suf);
 						// Check if "word" minus the suffix is present in the database. If it is present,
 						// reassign "word" to what hit in the DB. Return true.						

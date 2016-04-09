@@ -32,7 +32,7 @@ function createTweetCircle(tweet, center){
   function setRadius(){
     var rad = tweet.stats.reach;
     if (rad){
-      rad > 50000 ? rad *= 20 : rad = ((500000 - 10 * rad) * .000095 * rad);
+      rad > 50000 ? rad *= 20 : rad = ((500000 - 10 * rad) * .000095 * rad) ;
     } else {
       // 40 meters is the default, for a user with no followers. 
       rad = 40;
@@ -61,18 +61,18 @@ function createTweetCircle(tweet, center){
     circle.infoWindow = initInfoWindow(); 
 
     // Set the Info Window with xml from the tweet's stats/info.
-    function initInfoWindow(){           
+    function initInfoWindow(){
+
       var content = 
       '<div id="info">' +
-          '<div class="info-title">' + tweet.user.name + '</div>' +
-          '<div class="info-content">' +
-            '<p>' + tweet.text + '</p>' + 
-            '<p>Location: ' + tweet.location + 
-            '<br>Created At: ' + tweet.stats.time +             
-            '<br>Inferred Mood: ' + tweet.stats.mood + 
-            '<br>Positive Words: ' + JSON.stringify(tweet.stats.posWords) + 
-            '<br>Negitive Words: ' + JSON.stringify(tweet.stats.negWords) +                         
-            '<br>Reach: ' + tweet.stats.reach + '</p>'+
+          '<div class="infoTitle">@' + tweet.user.name + '</div>' +
+          '<div class>' +
+            '<p class="tweText" style="color:' + color + '">' + tweet.text + '</p>' +
+            '<table class="tweData"><tr><td> Location:</td><td>' + tweet.location + '</td></tr>' +
+                     '<tr><td> Time:</td><td>' + tweet.stats.time + '</td></tr>' +
+                     wordsToRow(tweet.stats.posWords.concat(tweet.stats.negWords)) + 
+                     '<tr><td> Followers:</td><td>' + tweet.stats.reach + '</td></tr>' +
+            '</table>' +
           '</div>' +
       '</div>';
 
@@ -81,6 +81,27 @@ function createTweetCircle(tweet, center){
         'maxWidth'       : 350,
         'disableAutoPan' : true,
       });
+
+      // If there are words inside either posWords or negWords, both of which are an array of JSON objects 
+      // with the format {'word': 'love', 'score': 4}, make a row for the "content" table out of an xml 
+      // string. It'll be formatted as such: "love(4), win(3)"
+      function wordsToRow(words){
+        if (words.length > 0){
+          var str = '';
+          // "str" will become a comma-separated string of all words that were scored in "tweet".
+          words.forEach(function(word, i){
+            if (word.score > 0){
+              word.score = '+' + word.score;
+            }
+            i < words.length - 1 ? str += (word.word + ' (' + word.score +'), ') : str += (word.word + ' (' + word.score +')');
+          })
+          return '<tr><td>Scoring Words:</td><td>' + str + '</td></tr>';          
+        } else {
+          // If there aren't any words in this array, return an empty string. No row will show in "content"
+          // for this type.
+          return '';
+        }
+      };
     }
 
     // The circle has its own listeners, detecting events such as "drag", "mouseover", etc.
@@ -178,6 +199,12 @@ function createTweetCircle(tweet, center){
   function linkToCircle(){
     var a = document.createElement('a');
     a.innerHTML = tweet.text + "<br><br>";
+    // Setting display to 'block' helps to stabilize the animation. Without it, the only clickable part
+    // of "a" is the href text. That means that the cursor triggers a 'mouseout' and then another 
+    // 'mouseon' event every time it goes between characters. This happens often, causing a bunch of animations
+    // to start before the previous one has finished. 'block' display makes the entire rectangle which the
+    // href text occupies clickable -- greatly reducing unwanted 'mouseout's. 
+    a.style.display = 'block';
     a.style.color = color;
     a.style['text-decoration'] = 'none';
     a.style['text-shadow'] = '1px 1px 1px rgb(220,220,220)';
@@ -204,6 +231,57 @@ function createTweetCircle(tweet, center){
     // in the DOM (then seems like it's doing something like an eval on that string, when clicked). 
     var centerString = center.lat.toString() + ',' + center.lng.toString();
     a.href = 'javascript:panToCircle([' + centerString + ']);'
+
+    var haloRad = radius * 1.3;
+    var hrefHalo = new google.maps.Circle({
+      'strokeColor'  : 'RGB(255,255,100)',
+      'strokeOpacity': 1,
+      'strokeWeight' : 3,
+      'fillColor'    : 'RGB(255,255,100)',
+      'fillOpacity'  : 0, 
+      'map'          : null,
+      'center'       : center,
+      'radius'       : haloRad,
+    });
+
+    var haloTimer;
+
+    // Help the user see what circle corresponds to the href by drawing a yellow ring around it. The ring will 
+    // disappear when the cursor leaves the href. The for loop with a delay animates the ring, so it radiates 
+    // out from 'this' circle (makes it very clear where 'this' circle is on the map). Notice the bounds of 
+    // "haloChange": it starts at .17 and increases till it hits 5. "haloIncr" then flips from true to false, 
+    // which means that "haloChange" will decrement till it hits .17. Then, "haloIncr" flips back -- and so on, 
+    // so that the ring zooms in and out twice, before staying still around the "this" circle. Increasing "i"
+    // creates more animations -- but, it's possible to trigger this event more than once before a previous
+    // loop has finished, which creates several rings animating around "this" circle. Keeping "i" low mitigates
+    // this aesthetic issue. 
+    a.addEventListener('mouseover', function(){
+      hrefHalo.setMap(map); 
+      var i = 1;
+      var haloChange = .17;     
+      var haloIncr = true;
+      for (; i <= 100; i++){
+        (function animateHalo(i){
+          haloTimer = setTimeout(function(){
+            haloIncr ? haloChange += .17 : haloChange -= .17;
+            if (haloChange >= 5){
+              haloIncr = false;
+            }
+            if (haloChange <= .17){
+              haloIncr = true;
+            }
+            hrefHalo.setRadius(haloRad * (1 + haloChange));
+          }, i * 30)
+        })(i)
+      }
+    });
+
+    // Hide the ring on a 'mouseout' from the href link. 
+    a.addEventListener('mouseout', function(){
+      clearTimeout(haloTimer);
+      hrefHalo.setMap(null);
+    });    
+
     document.getElementById('text').appendChild(a);
   }          
 }

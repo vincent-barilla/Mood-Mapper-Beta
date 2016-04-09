@@ -9,7 +9,7 @@ function buttonHandler(source){
     case 'instructions':
       // Give the user the option to see these instructions, in an xml table. Also change the text of the
       // button, to correspond to the view state.
-      toggleWithOptCb(document.getElementById('instrButton').firstChild, 'data', 'Hide Map How-To', 'Map How-To')      
+      toggleWithOptCb(document.getElementById('instrButton').firstChild, 'data', 'Hide Map How-To', 'How to Use This Map')      
       toggleWithOptCb(document.getElementById('instructions').style, 'display', 'block', 'none')
       break; 
 
