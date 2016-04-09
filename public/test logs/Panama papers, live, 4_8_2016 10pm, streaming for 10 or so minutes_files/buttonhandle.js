@@ -5,23 +5,11 @@ function buttonHandler(source){
   var mode = document.getElementById('mode').value;
   switch (name){
 
-    // Show background info about the app, namely how the mood sentiment scoring is performed (read: concocted).
-    case 'about':
-      toggleWithOptCb(document.getElementById('banFrame').style,'visibility','visible','hidden');
-      break;
-
-    // Jump from the banner on down to the search form.   
-    case 'scrlToForm':
-      var yOffset = document.getElementById('bannerDiv').getBoundingClientRect().height + 
-                    document.getElementById('map').getBoundingClientRect().height;  
-      window.scrollTo(0, yOffset);                   
-      break;
-
     // Show the instructions on how to interact with the app. 
     case 'instructions':
       // Give the user the option to see these instructions, in an xml table. Also change the text of the
       // button, to correspond to the view state.
-      toggleWithOptCb(document.getElementById('instrBtn').firstChild, 'data', 'Hide Map How-To', 'Map Tips')      
+      toggleWithOptCb(document.getElementById('instrButton').firstChild, 'data', 'Hide Map How-To', 'How to Use This Map')      
       toggleWithOptCb(document.getElementById('instructions').style, 'display', 'block', 'none')
       break; 
 

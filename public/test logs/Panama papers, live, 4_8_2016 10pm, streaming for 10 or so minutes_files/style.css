@@ -1,6 +1,5 @@
 body {
 	font-family: Helvetica, Arial;
-  background-color: RGB(245,245,245);
 }
 
 td{
@@ -8,86 +7,32 @@ td{
   padding-bottom: 6px;
 }
 
-.sml{
-  font-size: 16 !important;
-}
-
-.med{
-  font-size: 18 !important;
-}
-
-.lrg{
-  font-size: 20 !important;
-}
-/*... banner ..... */
-
-div#bannerDiv{
-  width: 100%;
-  background-image: url('banner19.png');     
-}
-
-div#bannerDiv > img{
-    vertical-align: top;
-    width: 100%; /* max width */
-    opacity: 0;  /* make it transparent */
-}
-
-#bannerContentDiv{
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%; 
-    overflow-y: auto;
-    overflow-x: hidden;         
-}
-
-div#bannerContentDiv > iframe {
-  margin-left: 15%;
-  margin-top: 2%;
-  height: 86%;
-  max-height: 230px;
-  width: 70%;
-  overflow-y: auto;
-  overflow-x: hidden;   
-  border: 1px solid;  
-  border-color: RGB(100,100,100);
-  position:absolute;
-}
-
-#contentBtns{
-  width: 100%;
-  position: absolute;
-  bottom:0;
-}
-
-div#contentBtns > button{
-  text-align:center;
-  width: 15%;
-  position: relative;
-  left: 20px;
-  bottom: 0px;
-  margin-left: 13%;
-  display: inline-block;
-}
-
-
 /*... color box elements.... */
-.colorBoxGrp{
-  width: 100%;
+.div-color {
+    position: relative;
+    padding-left: 20px;
 }
 
-.colorBoxDiv{
-  text-align: center;
-  margin-left: 20%;
-  width: 60%;
-  height: 25px;
-  display: block;
-  background-color: RGB(127,127,127);
-  border: 2px solid;  
-  border-color: RGB(100,100,100);
-  color: RGB(250,250,250);
-  margin-top: 6px;
+.div-color .color-box {
+    width: 700px;
+    height: 15px;
+    display: inline-block;
+    background-color: #ccc;
+    position: relative;
+    left: 180px;
+    top: 15px;
 }
+
+.div-color .color-box2 {
+    width: 700px;
+    height: 15px;
+    display: inline-block;
+    background-color: #ccc;
+    position: relative;
+    left: 180px;
+    top: 18px;
+}
+
 
 /*............ Main form ..........*/
 .central{
@@ -99,7 +44,9 @@ legend{
     font-color: RGB(25, 115, 115);
 }
 
-
+.sml{
+  font-size: 16 !important;
+}
 
 .label {
   float:left;
@@ -176,6 +123,10 @@ div#text {
     width: 12%;
 }
 
+.button{
+  text-align: center;
+  width: 90%;
+}
 
 .buttonRow{
   width: 100%;
@@ -225,6 +176,7 @@ div#info {
 
 /*..... Override the default styles for Google Map Info Windows ....*/
 .gm-style-iw {
+   width: 350px !important;
    top: 10 !important;
    left: 10 !important;
    border-radius: 3px 3px 3px 3px;

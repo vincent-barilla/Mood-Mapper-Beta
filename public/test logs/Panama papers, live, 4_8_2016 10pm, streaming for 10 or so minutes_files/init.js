@@ -1,8 +1,3 @@
-// This will be a rectangle on the map, south of Hawaii, that will mark a location for 
-// tweets that do not have location ("tweet.location" = null). Made global so that it 
-// can later be used in drawTweetCircle.  
-var tweetDump
-
 // The Google Maps API works with a callback to initialize the map on the page's load. 
 // "initMap" is that callback. 
 function initMap(){
@@ -26,12 +21,12 @@ function initMap(){
 
   // This rectangle defines an area where tweets go when their location field is 
   // null, when they come out of tweetAnalyzer. Basically, it's a tweet dump. 
-  tweetDump = new google.maps.Rectangle({
-    'strokeColor'  : 'RGB(85,85,85)', 
+  var tweetDump = new google.maps.Rectangle({
+    'strokeColor'  :   'RGB(85,85,85)', 
     'strokeOpacity': 0.25, 
-    'strokeWeight' : 2,
-    'fillColor'    : 'RGB(85,85,85)',
-    'fillOpacity'  : 0.05,
+    'strokeWeight' :  2,
+    'fillColor'    :     'RGB(85,85,85)',
+    'fillOpacity'  :   0.05,
     'map'          : map,
     'bounds'       : {
       north:  6.393879233, // The area is just south of Hawaii (sorry, French Polynesia!)
@@ -43,7 +38,7 @@ function initMap(){
 
   // This label will tell the user why there is a gray, blurry rectangle floating around 
   // below Hawaii.
-  var dumpLabel = new google.maps.InfoWindow({
+  var label = new google.maps.InfoWindow({
         'content'        : '<p>Tweets Without Location Go Here</p>',
         'maxWidth'       : 100,
         'disableAutoPan' : true,
@@ -53,12 +48,10 @@ function initMap(){
   // Use these listeners to show the label for non-located tweets only when the cursor 
   // is over the rectangle (it's pretty distracting, having it open when the page loads.)
   tweetDump.addListener('mouseover', function(){
-    dumpLabel.open(map);
+    label.open(map);
   })
   tweetDump.addListener('mouseout', function(){
-    dumpLabel.close(map);
-    // Only have "dumpLabel"show once, then clear the listener that would re-trigger it.
-    google.maps.event.clearListeners(tweetDump,'mouseover');
+    label.close(map);
   })
 
   // Define the map's properties.
@@ -192,19 +185,19 @@ function initMap(){
     }
 
     // Note that, every time this is called, it checks the length of the circles array in the map. If that array
-    // is populated (has length > 0), and a user has not changed the form fields, the id of the last circle in 
-    // the array is the value of the map's "lastId" property. If those conditions fail, the currently stored 
-    // "lastId" is used. This makes sure a user is getting new data, any time they make a new query to Twitter. 
-    // (If you don't keep track of the last id that Twitter returned in a previous query, then the next query
-    // will give you the same thing, if you make a new query with the same parameters).
+    // is populated (has length > 0), and a user has not changed the form fields, the id of the last circle in the array
+    // is the value of the map's "lastId" property. If those conditions fail, the currently stored "lastId" is used. This makes 
+    // sure a user is getting new data, any time they make a new query to Twitter. (If you don't keep track of the last id 
+    // that Twitter returned in a previous query, then the next query will give you the same thing, if you make a new query
+    // with the same parameters).
     google.maps.Map.prototype._getLastId = function(){
       var id = (this.circles.length > 0) && (!this.reset) ? this.circles[this.circles.length - 1]._getId() : this.lastId;
       this.reset = false;
       return id;
     }
 
-    // Called when circles are initialized in "createTweetCircle", this uses .push to populate the map's array of
-    // circles -- and, implicitly, the last circle drawn has the id of the last tweet returned from the server. 
+    // Called when circles are initialized in "createTweetCircle", this uses .push to populate the map's array of circles
+    //  -- and, implicitly, the last circle drawn has the id of the last tweet returned from the server. 
     google.maps.Circle.prototype._storeInMap = function(map){ 
       if(map){                                               
         map.circles.push(this);

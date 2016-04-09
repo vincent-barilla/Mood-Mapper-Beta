@@ -12,14 +12,6 @@ const Week = function (){
 }();
 
 (function onLoadDisplays(){
-  // In index.html, I put an invisible image into 'bannerDiv' in order to auto-scale it to the 
-  // dimenensions of that image. This next line sets the height of 'bannerContentDiv' to that 
-  // auto-scaled height. I do this to avoid hard-coding a pixel value to the 'bannerContentDiv's
-  // height, in case I want to change that banner later. Without this step, 'bannerContentDiv' has
-  // no defind height, and its content may spill over onto other elements. 
-  document.getElementById('bannerContentDiv').style.height = document.getElementById('bannerDiv').getBoundingClientRect().height;
-  document.getElementById('contentBtns').style.display = 'block';
-  
   // Since Twitter will only search back a week or so, set the default values of the input 
   // boxes to 6 (ish) days ago. 
   var end = new Date();
@@ -38,15 +30,13 @@ const Week = function (){
                  'pauseBtn': 'Pause',
                  'togCircVisBtn': 'Hide Circles',
                  'togTextVisBtn': 'Hide Text Crawl',
-                 'instrBtn': 'Map Tips',
-                 'banInstrBtn': 'Map Tips'}
+                 'instrButton': 'How to Use This Map'}
   buttonDisp(buttons);               
                  
   // Set a given string to appear on a given button. 
   function buttonDisp(htmls){
     var key;
     for (key in htmls){
-      console.log(key)
       document.getElementById(key).firstChild.data = htmls[key];
     }
   }
@@ -63,6 +53,9 @@ var xhr = new XMLHttpRequest();
 
 // Used to show the current text color and average text color in the boxes below the map.
 var globalMood = {"mood" : [0,0,0], "count" : 1 };
+
+
+
 
 // the googleGeocoder, set in initMap, used in geoCodeTweet.
 var geoCoder;

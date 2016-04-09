@@ -2,7 +2,7 @@
 // color, the tweet's location as its coordinates, and the tweet user's
 // number of followers to set its radius (more followers = a bigger radius,
 // or "reach".)
-function createTweetCircle(tweet, center, source){
+function createTweetCircle(tweet, center){
   var radius = setRadius();
   var color = 'RGB(' + tweet.stats.mood.toString() + ')';                    
   var tweetCircle = setTweetCircle();
@@ -215,12 +215,13 @@ function createTweetCircle(tweet, center, source){
     panToCircle = function(latLng){
       var lat = Number(latLng[0]);
       var lng = Number(latLng[1]);
-      var zoomLevel = source == 'default' ? 5 : 6;     
+      var zoomLevel = (lat.toFixed(0) == DefaultCenter.lat.toFixed(0) && lng.toFixed(0) == DefaultCenter.lng.toFixed(0)) 
+                    ? 5 : 6;     
       var cen = {'lat': lat, 'lng': lng};
       map.setZoom(zoomLevel); 
       // Scroll the window back to the map, as the user may have been clicking a button lower in the page, 
       // and may miss the updates to the text crawl and map.
-      window.scrollTo(0, document.getElementById('bannerDiv').getBoundingClientRect().height);      
+      window.scrollTo(0, document.getElementById('map').style.height + 20);                         
       map.panTo(cen);
     }
 
@@ -230,77 +231,57 @@ function createTweetCircle(tweet, center, source){
     // in the DOM (then seems like it's doing something like an eval on that string, when clicked). 
     var centerString = center.lat.toString() + ',' + center.lng.toString();
     a.href = 'javascript:panToCircle([' + centerString + ']);'
-  
-    // Creates a gold ring to go around 'this' circle when the cursor hovers over 'a.href'.
-    highlightHalo();
+
+    var haloRad = radius * 1.3;
+    var hrefHalo = new google.maps.Circle({
+      'strokeColor'  : 'RGB(255,255,100)',
+      'strokeOpacity': 1,
+      'strokeWeight' : 3,
+      'fillColor'    : 'RGB(255,255,100)',
+      'fillOpacity'  : 0, 
+      'map'          : null,
+      'center'       : center,
+      'radius'       : haloRad,
+    });
+
+    var haloTimer;
+
+    // Help the user see what circle corresponds to the href by drawing a yellow ring around it. The ring will 
+    // disappear when the cursor leaves the href. The for loop with a delay animates the ring, so it radiates 
+    // out from 'this' circle (makes it very clear where 'this' circle is on the map). Notice the bounds of 
+    // "haloChange": it starts at .17 and increases till it hits 5. "haloIncr" then flips from true to false, 
+    // which means that "haloChange" will decrement till it hits .17. Then, "haloIncr" flips back -- and so on, 
+    // so that the ring zooms in and out twice, before staying still around the "this" circle. Increasing "i"
+    // creates more animations -- but, it's possible to trigger this event more than once before a previous
+    // loop has finished, which creates several rings animating around "this" circle. Keeping "i" low mitigates
+    // this aesthetic issue. 
+    a.addEventListener('mouseover', function(){
+      hrefHalo.setMap(map); 
+      var i = 1;
+      var haloChange = .17;     
+      var haloIncr = true;
+      for (; i <= 100; i++){
+        (function animateHalo(i){
+          haloTimer = setTimeout(function(){
+            haloIncr ? haloChange += .17 : haloChange -= .17;
+            if (haloChange >= 5){
+              haloIncr = false;
+            }
+            if (haloChange <= .17){
+              haloIncr = true;
+            }
+            hrefHalo.setRadius(haloRad * (1 + haloChange));
+          }, i * 30)
+        })(i)
+      }
+    });
+
+    // Hide the ring on a 'mouseout' from the href link. 
+    a.addEventListener('mouseout', function(){
+      clearTimeout(haloTimer);
+      hrefHalo.setMap(null);
+    });    
 
     document.getElementById('text').appendChild(a);
-
-
-    // When the user hovers the cursor over the href link created below, this circle will highlight around
-    // the circle connected to that href. It helps clarify which circle belongs to which href link, in the 
-    // tweet crawl.   
-    function highlightHalo(){  
-
-      var haloRad = radius * 1.3;
-
-      // Set up a new Circle object to be the highlight halo around 'this' circle.
-      var hrefHalo = new google.maps.Circle({
-        'strokeColor'  : 'RGB(255,255,100)',
-        'strokeOpacity': 1,
-        'strokeWeight' : 3,
-        'fillColor'    : 'RGB(255,255,100)',
-        'fillOpacity'  : 0, 
-        'map'          : null,
-        'center'       : center,
-        'radius'       : haloRad,
-      });
-
-      // A timeout will be used to animate the halo expanding and contracting. 
-      var haloTimer;
-
-      // Help the user see what circle corresponds to the href by drawing a yellow ring around it. The ring will 
-      // disappear when the cursor leaves the href. Notice the bounds of "haloChange": it starts at .17 and increases till
-      // it hits 5. "haloIncr" then flips from true to false, which means that "haloChange" will decrement till it
-      // hits .17. Then, "haloIncr" flips back -- and so on, so that the ring zooms in and out, before staying still 
-      // around the "this" circle. 
-      a.addEventListener('mouseover', function(){
-        if (source == 'default'){
-          tweetDump.setOptions({'strokeColor': 'RGB(255,255,100)',
-                                'strokeOpacity': .4 });      
-        }  
-        hrefHalo.setMap(map); 
-        var i = 1;
-        var haloChange = .17;     
-        var haloIncr = true;
-        for (; i <= 110; i++){
-          (function animateHalo(i){
-            // As "i" increments, so does "haloChange", with either positive or negative growth, according to the boolean 
-            // "haloIncr" -- when "haloIncr" is true, increase "haloChange", when false, decrease "haloChange".
-            haloTimer = setTimeout(function(){
-              haloIncr ? haloChange += .17 : haloChange -= .17;
-              if (haloChange >= 5){
-                haloIncr = false;
-              }
-              if (haloChange <= .17){
-                haloIncr = true;
-              }
-              // Setting the radius to a variable which is alternately increasing then decreasing causes the zoom-in, 
-              // zoom-out animation. 
-              hrefHalo.setRadius(haloRad * (1 + haloChange));
-            }, i * 30)
-          })(i)
-        }
-      });
-
-      // Hide the ring on a 'mouseout' from the href link. 
-      a.addEventListener('mouseout', function(){
-        clearTimeout(haloTimer);
-        hrefHalo.setMap(null);
-        // These are the original values from "mapInit".
-        tweetDump.setOptions({'strokeColor': 'RGB(85,85,85)',
-                              'strokeOpacity': .25});      
-      });    
-    } 
-  };
+  }          
 }

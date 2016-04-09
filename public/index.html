@@ -21,7 +21,18 @@
    <script id='bingScript' type='text/javascript'></script>
 </head>
 <body >
-  <br>  
+
+<div id='bannerDiv' class='banDiv' >
+  <img id='bannerImg' src='resource/banner/banner19.png' style='visibility:hidden'> 
+  <div id='bannerContentDiv' style='display:block'>
+    <iframe id='banFrame' style='visibility:hidden' src='resource/aboutThis.html'></iframe>    
+    <div id='contentBtns'> 
+      <button type="button" id="aboutBtn" name='about' class="label sml" onclick="buttonHandler(this)" method="post">About This App</button>
+      <button type="button" id="scrlBtn" name='scrlToForm' class="label sml" onclick="buttonHandler(this)" method="post">Go to Search Form</button>
+      <button type="button" id="banInstrBtn" name='instructions' class="label sml" onclick="buttonHandler(this)" method="post"> </button>
+    </div>
+  </div>
+</div>  
 
 <!-- The top of the page, with the map and the text crawl. -->  
 <section>  
@@ -32,34 +43,29 @@
 <!-- The mood color boxes, plus the buttons which relate to interacting with the map. These are below the map, 
      and start out invisible. -->
 <div id="hiddenDiv" style="display:none">
-  <div class="div-color boxes">
-      <div class="color-box" id="moodDiv" style="background-color: RGB(127,127,127)">Current Tweet Mood</div>
+  <div class="colorBoxGrp">
+      <div class="colorBoxDiv" id="moodDiv">Current Tweet Mood</div>
+      <div class="colorBoxDiv" id="globalMoodDiv">Average Tweet Mood</div>
   </div>
-  <div class="div-color">
-      <div class="color-box2" id="globalMoodDiv" style="background-color: RGB(127,127,127)">Average Tweet Mood</div>
-  </div>
-    <br>
-
   <div id='buttonDiv'>
-    </fieldset>          
-      <div id="instructions" style="display:none" class='instrDiv'> 
-        <br>
-        <fieldset class='instr'>
-          <legend class='formText' style='font-size:20'>When you...</legend>
-          <table class='formText'>
-            <tr><td class='label sml'>move the cursor over a circle:</td>   <td class='sml'>its info window opens until you move the cursor away.</td></tr>
-            <tr><td class='label sml'>click once on a circle:</td>          <td class='sml'>its info window stays open.</td></tr>
-            <tr><td class='label sml'>double-click on a circle:</td>        <td class='sml'>it hides.</td></tr>
-            <tr><td class='label sml'>move the cursor off a circle:</td>    <td class='sml'>its info window hides -- unless you clicked the circle. If you want the info window to go away after
-                                                                                          you previously clicked its circle, move the<br> cursor over the circle again, then move it off. When the
-                                                                                          cursor leaves, the info window goes back into hiding.</td></tr>
-            <tr><td class='label sml'>drag the circle:</td>                 <td class='sml'>the info window hides, but is following the circle behind the scenes.</td></tr>
-            <tr><td class='label sml'>release the circle, after a drag:</td><td class='sml'>the info window reappears at the circle's new location.</td></tr>
-            <tr><td class='label sml'>click a tweet in the text crawl: </td><td class='sml'>the map pans and zooms over that tweet's circle.</td></tr>        
-          </table>
-      </div>
-    </fieldset>            
-    <br>    
+    <div id="instructions" style="display:none" class='instrDiv'> 
+      <br>
+      <fieldset class='instr'>
+        <legend class='formText' style='font-size:20'>When you...</legend>
+        <table class='formText'>
+          <tr><td class='label sml'>move the cursor over a circle:</td>   <td class='sml'>its info window opens until you move the cursor away.</td></tr>
+          <tr><td class='label sml'>click once on a circle:</td>          <td class='sml'>its info window stays open.</td></tr>
+          <tr><td class='label sml'>double-click on a circle:</td>        <td class='sml'>it hides.</td></tr>
+          <tr><td class='label sml'>move the cursor off a circle:</td>    <td class='sml'>its info window hides -- unless you clicked the circle. If you want the info window to go away after
+                                                                                        you previously clicked its circle, move the<br> cursor over the circle again, then move it off. When the
+                                                                                        cursor leaves, the info window goes back into hiding.</td></tr>
+          <tr><td class='label sml'>drag the circle:</td>                 <td class='sml'>the info window hides, but is following the circle behind the scenes.</td></tr>
+          <tr><td class='label sml'>release the circle, after a drag:</td><td class='sml'>the info window reappears at the circle's new location.</td></tr>
+          <tr><td class='label sml'>click a tweet in the text crawl: </td><td class='sml'>the map pans and zooms over that tweet's circle.</td></tr>
+          <tr><td class='label sml'>cursor over a tweet in the crawl: </td><td class='sml'>a yellow ring will zoom in and out around the circle, showing you where it is on the map.</td></tr>
+        </table>
+    </div>
+    <br> 
     <fieldset class='central'>
       <br>
       <table>
@@ -85,7 +91,7 @@
             </button>
           </td>
           <td class="buttonCol"> 
-            <button type="button" id="instrButton" name='instructions' class="label sml button" onclick="buttonHandler(this)" method="post">
+            <button type="button" id="instrBtn" name='instructions' class="label sml button" onclick="buttonHandler(this)" method="post">
             </button>
           </td>                       
         </tr>         

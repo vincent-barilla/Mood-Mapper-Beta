@@ -78,7 +78,7 @@ function geoCodeTweet(tweet){
             // This callback fires as soon as the geocodeRequest is set to bingScript's 'src' attribute. Note the repeat
             // of the pattern of handling its data, despite needing a different request protocol. 
             bingCallback = function(response){ 
-              if(response.resourceSets[0].resources[0]){
+              if(response.resourceSets[0]){
                 center = response.resourceSets[0].resources[0].point.coordinates;
                 center = {'lat': Number(center[0]), 'lng': Number(center[1])}
                 if (center) {
@@ -93,7 +93,7 @@ function geoCodeTweet(tweet){
   // If the tweet didn't have a location, give it the default center (just south of Hawaii, in the ocean).   
   } else if (location == null){
     center = DefaultCenter;
-    createTweetCircle(tweet, center, 'default');
+    createTweetCircle(tweet, center);
   }
 
   // This helper function makes an ajax GET query to either Open Cage or mapQuest.
