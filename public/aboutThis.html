@@ -6,18 +6,17 @@
 <body style="background-color:RGB(245,245,245); margin-left:2%; margin-right:2%">
 	<p class='formText lrg' style='line-height:125%'>
 	<br>
-		MyUnnamedApp shows you a color-coded map of all tweets on any subject you'd like, using mood analysis to translate tweets into colors, then drawing circles of those colors, centered at the tweet's origin and sized according to number of followers, on the map below.</p>
+		MyUnnamedApp translates tweets into colors based on their mood, then draws circles of those colors, centered at the tweet's origin and sized according to the tweeter's number of followers, on the map below. You'll have your choice of live streaming or searching tweets from up to a week old. </p>
 <p class='formText lrg'style='line-height:125%'> 
-		Determining when a tweet is positive vs. negative relies on matchings its words against the AFINN list. AFINN words have a score between -5 and 5, not including 0, where a score below 0 indicates a negative word, and above 0, a positive word. These scores are used to create red, blue, and green pixel values between 0 and 255 for every tweet. Red represents a negative mood, while blue and green represent a positive mood. How bright a color is, or how close it gets to 255, indicates the extremeness of the emotion: bright red means very negative, bright blue/green means very positive. All the grays and purples in between show some mix. All tweets begin as gray, then have their color pushed one way or the other as their words are scored. </p>
+		Determing a word's mood relies on the AFINN list. AFINN words have a score between -5 and 5, not including 0, where a score below 0 indicates a negative word, and above 0, a positive word. This app uses these scores to create red, blue, and green pixels for every tweet. Red represents a negative mood, while blue/green represents a positive mood. How bright a color is indicates the extremeness of the emotion: bright red means very negative, bright blue/green means very positive. All the grays and purples in between show some mix, or ambiguity, of emotion. All tweets begin as gray, then have their color pushed one way or the other as their words are scored. </p>
 <p class='formText lrg'style='line-height:125%'> 
 		Punctuation and capitalization are also taken into account. For instance, if a tweeter says, "I LOVE PUPPIES!!!!!", that will be scored as more strongly positive than "I love puppies.". Basic emojis are also detected, and are scored as words rather than punctuation. So, ":) :) :) :D PUPPIES." will also be a big scorer. </p>
 <p class='formText lrg'style='line-height:125%'> 
-		To keep pace with the live streaming mode, the analysis must be lightweight and quite basic. You'll be able to see which words from every tweet led to the scoring; give each one a look to see how well the analysis is doing.</p>
+		To learn more about the AFINN list, check out this research article, written by AFINN's creator: <a style='text-decoration:none' href='http://arxiv.org/pdf/1103.2903.pdf -- courtesy of Cornell University Library.'>A new ANEW: Evaluation of a word list for sentiment analysis in microblogs</a>.  </p> 
+<p class='formText lrg'style='line-height:125%'> 		
+		Or, if you'd like to see the list used in this app, which includes several additions to the original AFINN list, click 
+		<a style='text-decoration:none' href='AFINN/JSON/MasterList.json'> here.</a> Heads up: NSFW. F-bombs and such. </p>
 <p class='formText lrg'style='line-height:125%'> 
-		To learn more about the AFINN list, check out this article, written by the AFINN's creator: <a style='text-decoration:none' href='http://arxiv.org/pdf/1103.2903.pdf -- courtesy of Cornell University Library.'>A new ANEW: Evaluation of a word list for sentiment analysis in microblogs</a> </p>
-<p class='formText lrg'style='line-height:125%'> 
-		Click 'Go to Search' to start, click 'Mapping Tips' for help with navigating the map results -- and, enjoy! </p>
-
-
+		Click 'Go to Search' to start, click 'Mapping Tips' for help with navigating the map -- and, enjoy! </p>
 </body>	
 </html>

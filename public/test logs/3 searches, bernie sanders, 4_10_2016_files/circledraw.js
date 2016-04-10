@@ -215,10 +215,9 @@ function createTweetCircle(tweet, center, source){
     panToCircle = function(latLng){
       var lat = Number(latLng[0]);
       var lng = Number(latLng[1]);
-      var zoomLevel = (lat == DefaultCenter.lat && lng == DefaultCenter.lng) ? 5 : 6;     
+      var zoomLevel = source == 'default' ? 5 : 6;     
       var cen = {'lat': lat, 'lng': lng};
       map.setZoom(zoomLevel); 
-      map.setCenter(cen);
       // Scroll the window back to the map, as the user may have been clicking a button lower in the page, 
       // and may miss the updates to the text crawl and map.
       window.scrollTo(0, document.getElementById('bannerContentDiv').getBoundingClientRect().height + 15);      

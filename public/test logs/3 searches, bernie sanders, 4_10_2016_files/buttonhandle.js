@@ -25,7 +25,9 @@ function buttonHandler(source){
 
     // Jump from the banner on down to the search form.   
     case 'scrlToForm':
-      window.scrollTo(0, yOffsetForm);                   
+      var yOffset = document.getElementById('bannerContentDiv').getBoundingClientRect().height + 
+                    document.getElementById('map').getBoundingClientRect().height;  
+      window.scrollTo(0, yOffset);                   
       break;
 
     // This case toggles between seeing only the map, and seeing the map with the href crawl beside it. 
@@ -85,9 +87,6 @@ function buttonHandler(source){
 
     // Stop the current mapping and re-offer the form. 
     case 'newSearch':
-      // Jump the view down to the form.
-      window.scrollTo(0, yOffsetForm);                   
-
       // The "formValidates" is only relevant to when the 'pause' button toggles to showing 'Submit',
       // in which case, the user input needs to be re-validated, as he/she may have entered new 
       // search parameters. 

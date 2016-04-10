@@ -11,9 +11,6 @@ const Week = function (){
   return pointB - pointA;
 }();
 
-const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClientRect().height + 
-              document.getElementById('map').getBoundingClientRect().height;  
-
 (function onLoadDisplays(){
   // In order to use the toggle function in "buttonHandler", the pixels must be set to
   // strings. Setting them in the css file gives them a Style Object class. 
