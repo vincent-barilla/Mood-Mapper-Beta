@@ -7,23 +7,28 @@ function buttonHandler(source){
 
     // Show background info about the app, namely how the mood sentiment scoring is performed (read: concocted).
     case 'about':
-      toggleWithOptCb(document.getElementById('banFrame').style,'visibility','visible','hidden');
-      break;
-
-    // Jump from the banner on down to the search form.   
-    case 'scrlToForm':
-      var yOffset = document.getElementById('bannerDiv').getBoundingClientRect().height + 
-                    document.getElementById('map').getBoundingClientRect().height;  
-      window.scrollTo(0, yOffset);                   
+      toggleWithOptCb(document.getElementById('aboutBtn').firstChild, 'data', 'Got it.', 'What Does This App Do?');          
+      document.getElementById('banFrame').src = 'resource/aboutThis.html';    
+      preventCrossToggling(name);                           
       break;
 
     // Show the instructions on how to interact with the app. 
-    case 'instructions':
+    case 'mapHowTo':
       // Give the user the option to see these instructions, in an xml table. Also change the text of the
       // button, to correspond to the view state.
-      toggleWithOptCb(document.getElementById('instrBtn').firstChild, 'data', 'Hide Map How-To', 'Map Tips')      
-      toggleWithOptCb(document.getElementById('instructions').style, 'display', 'block', 'none')
+      toggleWithOptCb(document.getElementById('instrBtn').firstChild, 'data', 'Hide Map Tips', 'See Map Tips');      
+      document.getElementById('banFrame').src = 'resource/mapTips.html';
+      // Because the 'about' case is also toggling the height and visibility, this function is needed to make 
+      // sure the logic of the below toggles is intact. 
+      preventCrossToggling(name);                 
       break; 
+
+    // Jump from the banner on down to the search form.   
+    case 'scrlToForm':
+      var yOffset = document.getElementById('bannerContentDiv').getBoundingClientRect().height + 
+                    document.getElementById('map').getBoundingClientRect().height;  
+      window.scrollTo(0, yOffset);                   
+      break;
 
     // This case toggles between seeing only the map, and seeing the map with the href crawl beside it. 
     case 'mapOnly':
@@ -145,6 +150,19 @@ function buttonHandler(source){
       if (callback){        
         callback();
       }
+    }
+  }
+
+  // If 'banFrame' is hidden and minimized, maximize and show it. This will contain how-to info for the app.
+  function preventCrossToggling(source){
+    togSources.push(source);
+    if (togSources.length == 1 || togSources[0] == togSources[1]){
+      toggleWithOptCb(document.getElementById('bannerContentDiv').style, 'height', '500px','60px');
+      toggleWithOptCb(document.getElementById('contentBtns').style, 'bottom', '3.5%','5px');      
+      toggleWithOptCb(document.getElementById('banFrame').style,'visibility','visible','hidden');
+    }
+    if (togSources.length == 2){
+      togSources = [];
     }
   }
 

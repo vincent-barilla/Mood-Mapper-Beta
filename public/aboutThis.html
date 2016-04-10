@@ -1,21 +1,21 @@
 <html>
 <head>  
-	   <link rel="stylesheet" type="text/css" href="css/style.css">
-
-   <meta charset="ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<meta charset="ISO-8859-1">
 </head>     
-<body style="background-color:RGB(245,245,245)">
-	<p class='formText lrg'> 
+<body style="background-color:RGB(245,245,245); margin-left:2%; margin-right:2%">
+	<p class='formText lrg' style='line-height:125%'>
+	<br>
 		MyUnnamedApp shows you a color-coded map of all tweets on any subject you'd like, using mood analysis to translate tweets into colors, then drawing circles of those colors, centered at the tweet's origin and sized according to number of followers, on the map below.</p>
-<p class='formText lrg'> 
+<p class='formText lrg'style='line-height:125%'> 
 		Determining when a tweet is positive vs. negative relies on matchings its words against the AFINN list. AFINN words have a score between -5 and 5, not including 0, where a score below 0 indicates a negative word, and above 0, a positive word. These scores are used to create red, blue, and green pixel values between 0 and 255 for every tweet. Red represents a negative mood, while blue and green represent a positive mood. How bright a color is, or how close it gets to 255, indicates the extremeness of the emotion: bright red means very negative, bright blue/green means very positive. All the grays and purples in between show some mix. All tweets begin as gray, then have their color pushed one way or the other as their words are scored. </p>
-<p class='formText lrg'> 
+<p class='formText lrg'style='line-height:125%'> 
 		Punctuation and capitalization are also taken into account. For instance, if a tweeter says, "I LOVE PUPPIES!!!!!", that will be scored as more strongly positive than "I love puppies.". Basic emojis are also detected, and are scored as words rather than punctuation. So, ":) :) :) :D PUPPIES." will also be a big scorer. </p>
-<p class='formText lrg'> 
+<p class='formText lrg'style='line-height:125%'> 
 		To keep pace with the live streaming mode, the analysis must be lightweight and quite basic. You'll be able to see which words from every tweet led to the scoring; give each one a look to see how well the analysis is doing.</p>
-<p class='formText lrg'> 
+<p class='formText lrg'style='line-height:125%'> 
 		To learn more about the AFINN list, check out this article, written by the AFINN's creator: <a style='text-decoration:none' href='http://arxiv.org/pdf/1103.2903.pdf -- courtesy of Cornell University Library.'>A new ANEW: Evaluation of a word list for sentiment analysis in microblogs</a> </p>
-<p class='formText lrg'> 
+<p class='formText lrg'style='line-height:125%'> 
 		Click 'Go to Search' to start, click 'Mapping Tips' for help with navigating the map results -- and, enjoy! </p>
 
 

@@ -22,17 +22,14 @@
 </head>
 <body >
 
-<div id='bannerDiv' class='banDiv' >
-  <img id='bannerImg' src='resource/banner/banner19.png' style='visibility:hidden'> 
-  <div id='bannerContentDiv' style='display:block'>
-    <iframe id='banFrame' style='visibility:hidden' src='resource/aboutThis.html'></iframe>    
-    <div id='contentBtns'> 
-      <button type="button" id="aboutBtn" name='about' class="label sml" onclick="buttonHandler(this)" method="post">About This App</button>
-      <button type="button" id="scrlBtn" name='scrlToForm' class="label sml" onclick="buttonHandler(this)" method="post">Go to Search Form</button>
-      <button type="button" id="banInstrBtn" name='instructions' class="label sml" onclick="buttonHandler(this)" method="post"> </button>
-    </div>
+<div id='bannerContentDiv' style='display:block'>
+  <iframe id='banFrame' style='visibility:hidden'></iframe>    
+  <div id='contentBtns'> 
+    <button type="button" id="aboutBtn" name='about' class="label sml" onclick="buttonHandler(this)" method="post">About This App</button>
+    <button type="button" id="scrlBtn" name='scrlToForm' class="label sml" onclick="buttonHandler(this)" method="post">Go to Search Form</button>
+    <button type="button" id="instrBtn" name='mapHowTo' class="label sml" onclick="buttonHandler(this)" method="post"> </button>
   </div>
-</div>  
+</div>
 
 <!-- The top of the page, with the map and the text crawl. -->  
 <section>  
@@ -48,23 +45,6 @@
       <div class="colorBoxDiv" id="globalMoodDiv">Average Tweet Mood</div>
   </div>
   <div id='buttonDiv'>
-    <div id="instructions" style="display:none" class='instrDiv'> 
-      <br>
-      <fieldset class='instr'>
-        <legend class='formText' style='font-size:20'>When you...</legend>
-        <table class='formText'>
-          <tr><td class='label sml'>move the cursor over a circle:</td>   <td class='sml'>its info window opens until you move the cursor away.</td></tr>
-          <tr><td class='label sml'>click once on a circle:</td>          <td class='sml'>its info window stays open.</td></tr>
-          <tr><td class='label sml'>double-click on a circle:</td>        <td class='sml'>it hides.</td></tr>
-          <tr><td class='label sml'>move the cursor off a circle:</td>    <td class='sml'>its info window hides -- unless you clicked the circle. If you want the info window to go away after
-                                                                                        you previously clicked its circle, move the<br> cursor over the circle again, then move it off. When the
-                                                                                        cursor leaves, the info window goes back into hiding.</td></tr>
-          <tr><td class='label sml'>drag the circle:</td>                 <td class='sml'>the info window hides, but is following the circle behind the scenes.</td></tr>
-          <tr><td class='label sml'>release the circle, after a drag:</td><td class='sml'>the info window reappears at the circle's new location.</td></tr>
-          <tr><td class='label sml'>click a tweet in the text crawl: </td><td class='sml'>the map pans and zooms over that tweet's circle.</td></tr>
-          <tr><td class='label sml'>cursor over a tweet in the crawl: </td><td class='sml'>a yellow ring will zoom in and out around the circle, showing you where it is on the map.</td></tr>
-        </table>
-    </div>
     <br> 
     <fieldset class='central'>
       <br>
@@ -89,11 +69,7 @@
           <td class="buttonCol"> 
             <button type="button" id="togTextVisBtn" name='mapOnly' class="label sml button"onclick="buttonHandler(this)" method="post" >
             </button>
-          </td>
-          <td class="buttonCol"> 
-            <button type="button" id="instrBtn" name='instructions' class="label sml button" onclick="buttonHandler(this)" method="post">
-            </button>
-          </td>                       
+          </td>                    
         </tr>         
       </table>   
       <span id='searchInstruct' class='formText sml' style='display:none'> 
@@ -114,7 +90,7 @@
    <form id="form">
      <fieldset class='central'>
        <legend class='formText' style='font-size:20'>Define your search here:</legend>
-       <div id='grp1' style='display:inline-block' class='grp1'>
+       <div id='grp1' class='grp1'>
          <label for='subject'style='display:block' class='label'>
               Choose your subject.<br>
            <input type="text" id="subject" name='subject' value="BernieSanders" style="display:block" class='formText' onkeyup='buttonHandler(this)'><br>
@@ -127,7 +103,7 @@
             </select>
           </label>
         </div>
-        <div id='grp2' style='display:inline-block' class='grp2'>  
+        <div id='grp2' class='grp2'>  
          <label for='startdate' style='display:block' id='startlabel' class='label'>
             Choose a start date for a search, up to one week ago: <br>
             <input type="text" id="startdate" value="" placeholder="day/month/2016" style="display:block" class='formText'><br>

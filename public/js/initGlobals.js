@@ -12,13 +12,10 @@ const Week = function (){
 }();
 
 (function onLoadDisplays(){
-  // In index.html, I put an invisible image into 'bannerDiv' in order to auto-scale it to the 
-  // dimenensions of that image. This next line sets the height of 'bannerContentDiv' to that 
-  // auto-scaled height. I do this to avoid hard-coding a pixel value to the 'bannerContentDiv's
-  // height, in case I want to change that banner later. Without this step, 'bannerContentDiv' has
-  // no defind height, and its content may spill over onto other elements. 
-  document.getElementById('bannerContentDiv').style.height = document.getElementById('bannerDiv').getBoundingClientRect().height;
-  document.getElementById('contentBtns').style.display = 'block';
+  // In order to use the toggle function in "buttonHandler", the pixels must be set to
+  // strings. Setting them in the css file gives them a Style Object class. 
+  document.getElementById('bannerContentDiv').style.height = "60px";
+  document.getElementById('contentBtns').style.bottom = "5px";
   
   // Since Twitter will only search back a week or so, set the default values of the input 
   // boxes to 6 (ish) days ago. 
@@ -33,13 +30,16 @@ const Week = function (){
   	document.getElementById(html).value = date;
   }
 
-  // All the buttons to initialize, and the value to set as their view text (firstChild.data).
+  // All the buttons to initialize, and the value to set as their view text (firstChild.data). 
+  // Without this, the toggles in "buttonHandler" will not recognize the "firstChild.data" as a
+  // string. 
   var buttons = {'newSearchBtn': 'New Search', 
                  'pauseBtn': 'Pause',
                  'togCircVisBtn': 'Hide Circles',
                  'togTextVisBtn': 'Hide Text Crawl',
-                 'instrBtn': 'Map Tips',
-                 'banInstrBtn': 'Map Tips'}
+                 'instrBtn': 'See Map Tips',
+                 'aboutBtn': 'What Does This App Do?',
+               };
   buttonDisp(buttons);               
                  
   // Set a given string to appear on a given button. 
@@ -76,4 +76,8 @@ var map;
 // Error messages to be set in formvalidate, used in buttonhandle
 var startErrMsg;
 var endErrMsg;
+
+// Two toggle buttons act on the same DOM element in "buttonHandler". This array stores the 
+// sources of the toggle, to make sure one toggler doesn't untoggle the other one's states.
+var togSources = [];
 

@@ -19,33 +19,25 @@ td{
 .lrg{
   font-size: 20 !important;
 }
+
+.lft{
+  width:22%;
+}
+
 /*... banner ..... */
-
-div#bannerDiv{
+#bannerContentDiv{  
+  background-color: #b2d0fe;
+  position: relative;
+  top: 0;
   width: 100%;
-  background-image: url('banner19.png');     
-}
-
-div#bannerDiv > img{
-    vertical-align: top;
-    width: 100%; /* max width */
-    opacity: 0;  /* make it transparent */
-}
-
-#bannerContentDiv{
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%; 
-    overflow-y: auto;
-    overflow-x: hidden;         
+  display: block !important;         
 }
 
 div#bannerContentDiv > iframe {
   margin-left: 15%;
   margin-top: 2%;
   height: 86%;
-  max-height: 230px;
+  max-height: 400px;
   width: 70%;
   overflow-y: auto;
   overflow-x: hidden;   
@@ -57,19 +49,21 @@ div#bannerContentDiv > iframe {
 #contentBtns{
   width: 100%;
   position: absolute;
-  bottom:0;
 }
 
 div#contentBtns > button{
   text-align:center;
   width: 15%;
   position: relative;
-  left: 20px;
   bottom: 0px;
-  margin-left: 13%;
+  margin-left: 13.75%;
   display: inline-block;
 }
 
+table#mapTable tr td{
+  padding-left: 4px;
+  padding-bottom: 15px !important;
+}
 
 /*... color box elements.... */
 .colorBoxGrp{
@@ -99,8 +93,6 @@ legend{
     font-color: RGB(25, 115, 115);
 }
 
-
-
 .label {
   float:left;
   margin-top: 5px;
@@ -127,15 +119,20 @@ legend{
 }
 
 .grp1{
+    margin-top: 4%;
     margin-left: 10%;
     width: 25%;
     margin-right:4%;
     position: relative;
+    display:inline-block;    
 }
 .grp2{
-    position: relative;
-    width: 60%;
+    position: absolute;
+    width: 35%;
+    margin-top: 2.8%;
+    display:inline-block;
 }
+
 
 select{
     margin-bottom: 29px;
@@ -176,16 +173,18 @@ div#text {
     width: 12%;
 }
 
-
 .buttonRow{
   width: 100%;
 }
 
+.button{
+  width:100%;
+}
 /*...........the instructions table ......*/
 
 .instr{
-    margin-left:10%;
-    width:80%;
+    margin-left:.5%;
+    width:98.5%;
   }
 
 /*...... info indicates infoWindow styles ...... */

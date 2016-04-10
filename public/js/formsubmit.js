@@ -3,7 +3,7 @@ function formSubmit(){
 
   // For DOM settings that do not toggle in buttonhandle, but rather occur only when the form submits, 
   // their commands go here. 
-  window.scrollTo(0, document.getElementById('bannerDiv').getBoundingClientRect().height);      
+  window.scrollTo(0, document.getElementById('bannerContentDiv').getBoundingClientRect().height);      
   document.getElementById('pauseBtn').firstChild.data = 'Pause';
 
   // Send data to the server that has been serialized (i.e., put in url key-value pairs, in a string.)
@@ -15,9 +15,9 @@ function formSubmit(){
   // (smaller meaning, made previous to this), so the user will keep getting new tweets, even if 
   // he/she keeps submitting the same form. 
   function serializeForm(){
-    var data = {'subject' : document.getElementById("subject").value,
-                'start' : document.getElementById("startdate").value,
-                'end' : document.getElementById("enddate").value};
+    var data = {'subject': document.getElementById("subject").value,
+                'start': document.getElementById("startdate").value,
+                'end': document.getElementById("enddate").value};
 
     // Get the id for the Twitter request. 
     data.id = map._getLastId.call(map);

@@ -220,7 +220,7 @@ function createTweetCircle(tweet, center, source){
       map.setZoom(zoomLevel); 
       // Scroll the window back to the map, as the user may have been clicking a button lower in the page, 
       // and may miss the updates to the text crawl and map.
-      window.scrollTo(0, document.getElementById('bannerDiv').getBoundingClientRect().height);      
+      window.scrollTo(0, document.getElementById('bannerContentDiv').getBoundingClientRect().height);      
       map.panTo(cen);
     }
 
