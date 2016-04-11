@@ -50,7 +50,6 @@ function formSubmit(){
         // '{"text":"'' delimits the start of a new tweet -- the flaw being, in theory, that if '{"text":"' occurs
         // in a tweet, the code will think everything subsequent is a new tweet. Luckily, I have not encountered that error
         // in practice, after thousands of trials.
-        console.log(response); 
         var jsonTweet = JSON.parse(response.substring(response.lastIndexOf('{"text":"'), response.length));
         
         // Calling "geoCodeTweet" chains "createTweetCircle". Those two take the data from response all the way to the 
