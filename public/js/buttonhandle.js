@@ -1,10 +1,10 @@
 // All button "onclick" events get processed here. Essentially, a front-end dispatcher/router.  
 function buttonHandler(source){
   
-  // Check which button was clicked.
+  // Check which button was clicked. Its name will indicate what case to use in the switch below.
   var name = source.name;
   var mode = document.getElementById('mode').value;
-  // Every button name has an action associated with it. Find all actions in the cases below. 
+
   switch (name){
 
     // Show background info about the app, namely how the mood sentiment scoring is performed.
@@ -26,8 +26,13 @@ function buttonHandler(source){
       preventCrossToggling(name);                 
       break; 
 
-    // Jump from the banner down to the search form.   
+    // Close the information iFrame, reset the banner buttons to start values, and jump from the banner down to the search form.   
     case 'scrlToForm':
+      document.getElementById('bannerContentDiv').style.height = '60px';
+      document.getElementById('contentBtns').style.bottom = '5px';      
+      document.getElementById('banFrame').style.visibility = 'hidden'; 
+      document.getElementById('instrBtn').firstChild.data = 'See Map Tips';
+      document.getElementById('aboutBtn').firstChild.data = 'What Does This App Do?';                                    
       window.scrollTo(0, yOffsetForm);                   
       break;
 
@@ -48,13 +53,13 @@ function buttonHandler(source){
       map._resetLastId.call(map, ""); 
       break;
 
-    // Dates are only needed if 'mode' is 'Search Tweets'. Hide the date inputs if 'Stream Tweets' is chosen.
+    // Dates are only needed if "mode" is "Search Tweets". Hide the date inputs if "Stream Tweets" is chosen.
     case 'mode': 
       toggleWithOptCb(document.getElementById('startlabel').style, 'display', 'none','block');
       toggleWithOptCb(document.getElementById('endlabel').style, 'display', 'none','block');      
       break;
 
-    // Execute all actions for the first form submission.
+    // Execute all actions for the form submission.
     case 'submit':
       // Only execute all those action IF the form validates. 
       if (formValidates(mode)){
@@ -63,11 +68,13 @@ function buttonHandler(source){
         // Send the user's choices to the server.
         formSubmit();
         // Hide the form and all related elements.
-        batchHide(['submitBtn','starterror','enderror','form']);
+        batchHide(['starterror','enderror']);
         // Shrink the map.
         document.getElementById('map').style.width = '73%'
         // Show the crawl.
         document.getElementById('text').style.display = 'inline-block';
+        // Make scroll able to zoom in on the map. Disabled upon initialization to allow easier page scrolling.
+        map.set('scrollwheel', true);
       } else {
         // Validation fails, show the error messages. 
         showErrorMsgs();
@@ -88,24 +95,10 @@ function buttonHandler(source){
       }              
       break;  
 
-    // Stop the current mapping and re-offer the form. 
+    // Jump down to the form. The map makes scrolling down the page annoying; this helps make it easier.  
     case 'newSearch':
-      // Jump the view down to the form.
+      // Jump the view down to the form. The 'submit' case will be triggered from clicking 'Submit' button. 
       window.scrollTo(0, yOffsetForm);                   
-      // Re-validate. 
-      if (formValidates(mode)){
-        // Set 'togCircVisBtn' to 'Hide Circles', so a 'show' option isn't given when they're already visible.        
-        document.getElementById('togCircVisBtn').firstChild.data = 'Hide Circles';
-        // Resent form submission/pause stream requests.    
-        toggleWithOptCb(document.getElementById('newSearchBtn').firstChild, 'data', 'Submit', 'New Search', formSubmit, pauseStream);
-        // On a successful submit, hide the form. Show it again when the button says 'Submit'.
-        toggleWithOptCb(document.getElementById('form').style, 'display', 'block', 'none'); 
-        // Show/hide some basic directions on how to use the search.  
-        toggleWithOptCb(document.getElementById('searchInstruct').style, 'display', 'block','none');
-      } else {
-        // Show error messages if validation fails.
-        showErrorMsgs();
-      }
       break;
 
     // Toggle text of 'togCircVis', always fire "._togCircVis" -- shows hidden circles, hides shown circles. 
@@ -186,8 +179,8 @@ function buttonHandler(source){
 
   // Show error messages. They were set in "formValidates" and will be blank if the validation succeeded. 
   function showErrorMsgs(){
-    show(startErrMsg, starterror);
-    show(endErrMsg, enderror);
+    show(startErrMsg, 'starterror');
+    show(endErrMsg, 'enderror');
 
     // Show the error message, if it's not an empty string. 
     function show(msg, html){

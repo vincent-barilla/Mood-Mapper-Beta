@@ -29,6 +29,7 @@ function initMap(){
       'minZoom'                : 2,
       'maxZoom'                : 12,
       'mapTypeId'              : [google.maps.MapTypeId.ROADMAP, 'map_style'],
+      'scrollwheel'            : false,
     };
   }
 

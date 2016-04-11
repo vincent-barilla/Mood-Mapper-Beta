@@ -1,16 +1,19 @@
+// This sets all the global variables that will be used in subsequent functions. 
+
+
 // Because so many tweets don't have a location, I use a default latLng position on the map to anchor 
-// the non-locatable tweets. This is outlined with a gray box, just south of Hawaii. 
+// the non-locatable tweets. This is outlined with a gray box, just south of Hawaii, defined as 
+// "tweetDump" in "initMap" in "init.js" 
 const DefaultCenter = {'lat': -3.8963, 'lng': -146.4255};
 
-// Apparently cross-browser standardization of date construction is not so consistent, so I use
-// this as a standard: 
+// Make a week that will not be subject to cross-browser variances. 
 const Week = function (){
   var pointA = new Date('3/3/2016');
   var pointB = new Date('3/10/2016'); 
   return pointB - pointA;
 }();
 
-// This gives a y-coordinate which allows scrollTo calls that will jump the user to the form. 
+// This gives a y-coordinate which allows "scrollTo" calls to jump the user to the form. 
 const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClientRect().height + 
               document.getElementById('map').getBoundingClientRect().height;  
 
@@ -34,9 +37,8 @@ const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClien
   // them in the css file gives them a Style Object class, confusing the toggle action.
   document.getElementById('bannerContentDiv').style.height = "60px";
   document.getElementById('contentBtns').style.bottom = "5px";
-  // All these follow the pattern used in "buttonDisp": set the firstChild.data of the key to its value. 
-  var buttons = {'newSearchBtn': 'New Search', 
-                 'pauseBtn': 'Pause',
+  // All these follow the pattern used in "buttonDisp": set the "firstChild.data" of the key to its value. 
+  var buttons = {'pauseBtn': 'Pause',
                  'togCircVisBtn': 'Hide Circles',
                  'togTextVisBtn': 'Hide Text Crawl',
                  'instrBtn': 'See Map Tips',
@@ -44,7 +46,7 @@ const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClien
                };
   buttonDisp(buttons);               
                  
-  // Set a given string to appear on a given button; ensures the class of the property is ok for the toggling in "buttonHandler". 
+  // Set a given string to appear on a given button; ensures it is ok for the toggling in "buttonHandler". 
   function buttonDisp(htmls){
     var key;
     for (key in htmls){
@@ -57,14 +59,14 @@ const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClien
 var bingCallback = function(){};
 var panToCircle = function(){};
 
-// Making this global allows for aborting it, outside of the function in which it is used to send its first query.
-// See "pauseStream" for where this is aborted, "formSubmit" for where it is sent to the server. 
+// Making this global allows for aborting it outside of the function in which it is used to send its first query.
+// See "pauseStream" for where this is aborted, "formSubmit" for where it sends a query to the server. 
 var xhr = new XMLHttpRequest();
 
 // Used to show the current text color and average text color in the boxes below the map.
 var globalMood = {"mood" : [0,0,0], "count" : 1 };
 
-// the googleGeocoder, set in initMap, used in "geoCodeTweet".
+// the googleGeocoder, set in "initMap", used in "geoCodeTweet".
 var geoCoder;
 
 // Determines which geocoder to use in "geoCodeTweet", out of a group of 4.
@@ -73,7 +75,7 @@ var turnstileCount = 0;
 // The Google Map
 var map;  
 
-// Error messages to be set in formvalidate, used in buttonhandle
+// Error messages to be set in "formvalidate", used in "buttonhandler"
 var startErrMsg;
 var endErrMsg;
 

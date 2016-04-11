@@ -103,19 +103,23 @@ legend{
     margin-left:33%;
 }
 
+/*..Contains the subject choice and mode select in the form..*/
 .grp1{
     margin-top: 4%;
     margin-left: 10%;
-    width: 25%;
-    margin-right:4%;
+    width: 27%;
+    margin-right:2%;
     position: relative;
     display:inline-block;    
 }
+
+/*... date entry inputs in the form...*/
 .grp2{
-    position: absolute;
-    width: 35%;
-    margin-top: 2.8%;
+    position: relative;
+    width: 58%;
     display:inline-block;
+    margin-bottom: .80%;
+    margin-left: 2%;
 }
 
 
@@ -173,7 +177,6 @@ div#hiddenDiv{
 /*..... The button table, shows below the map ....*/
 
 div#buttonDiv{
-
   left:0;
   width: 73%;
   height: 100%;

@@ -1,4 +1,4 @@
-// Fairly simple form validation, on submission. 
+// Simple form validation, on form submission. 
 function formValidates(mode){
 
   // The stream mode operates without dates and any subject is searchable, so no validation needs to be done.
@@ -6,12 +6,12 @@ function formValidates(mode){
     return true;               
   }                        
   
-  // Set these up to validate the date for the RESTful Twitter search.
   var start = document.getElementById('startdate').value; 
   var end = document.getElementById('enddate').value; 
+  // The form dates must be used with the "Date" constructor to later do subtraction between dates.
   var startObj = new Date(start); 
   var endObj = new Date(end); 
-  // Note that the next two are initialized in index.html, giving them global scope for later use with the DOM. 
+  // Note that the next two are initialized in "initGlobals.js". 
   startErrMsg = ''; 
   endErrMsg = ''; 
 
