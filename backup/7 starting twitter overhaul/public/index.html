@@ -1,0 +1,429 @@
+<html>
+<head>  
+   <link rel="stylesheet" type="text/css" href="resource/css/style.css">
+   <meta charset="ISO-8859-1">
+   <title>Insert title here</title>
+   <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" 
+              async defer></script><!-- &key=AIzaSyC_IEs6_W9MDGagKWO6ABTzAqJm0O5AyNQ-->   
+</head>
+<body>
+  <br>  
+<div class="map" id="map" style="display:block">
+   map goes here.
+</div>    
+<div id="hidden-div" style="display:none">
+  <div class="div-color boxes">
+      <div class="color-box" id="mood-div" style="background-color: RGB(127,127,127)">Current Tweet Mood</div>
+  </div>
+  <div class="div-color">
+      <div class="color-box2" id="globalMood-div" style="background-color: RGB(127,127,127)">Average Tweet Mood</div>
+  </div>
+    <br><br>
+
+  <div id='button-div'>
+       <button type="button" id="pause-btn" name='pause' onclick="buttonHandler(this)" 
+         method="post">Pause Streaming</button>
+       <button type="button" id="clear-btn" name='clear' onclick="buttonHandler(this)" 
+         method="post">Clear Map</button>
+       <button type="button" id="togCircVis-btn" name='togCircVis' style='display: block' onclick="buttonHandler(this)" 
+         method="post">Hide Circles</button>   
+      <br>             
+      Note: You can always pause your streaming, change the parameters in your form, then click 'Resume Streaming'. This will show you your new results on top of the current map. Hit 'Clear Map' to avoid overlapping results.
+      <br><br>          
+                          
+  </div>  
+    <br><br>      
+  <textarea name="text" id="text1" cols="150" rows="10">
+      Live streaming tweets...
+  </textarea>   
+</div>
+  <br>
+
+<!-- Note the use of a button rather than input to submit form; prevents
+page refresh, to preserve utility of ajax-->
+<div class="form central" id="form-input">
+   <form id="form">
+     <fieldset>
+       <legend>Your guidelines:</legend>
+          What subject do you want to follow?<br>
+       <input type="text" id="subject" value="BernieSanders"><br>
+         Define a coordinate bounding box for your search. The default box is all of continental US. <br>
+       <input type="text" id="location" value="'-124.47,24.0,-66.56,49.3843'"><br>
+         When do you want your viewing to start? <br>
+       <input type="text" id="startdate" ><br>
+         When do you want your viewing to end? <br>
+       <input type="text" id="enddate" ><br>
+         What time step would you like to set between data points? <br>
+       <input type="text" id="timestep" ><br>
+           Select units for the time step.   
+      <select name="timeUnits" form="form-input" id="timeunits">
+         <option value="seconds">Seconds</option>
+         <option value="minutes">Minutes</option>
+         <option value="hours">Hours</option>
+         <option value="days">Days</option>
+      </select>
+       <br><br>
+       <button type="button" id="submit-btn" onclick="buttonHandler(this)" name='submit' style='display: block'
+         method="post">Submit</button>  
+     </fieldset>
+   </form>
+</div>   
+
+
+<script type="text/javascript">
+
+  const ReachBoost = 75;
+  const DefaultCenter = {'lat': 77.113132, 'lng': -42.539063};
+
+  var xhr = new XMLHttpRequest();
+  var globalMood = {"mood" : [0,0,0],
+                    "count" : 1 };
+  var geoCoder;
+  var map;       
+
+  // Execute functions according to button clicks. Note the flexibility in the logic of clickWrapper(a,b,c,d,e,f) --
+  // it MUST have the first 4 arguments, but also works with either 5 or 6 args (extras as optional callbacks).
+  function buttonHandler(source){
+    var name = source.name;
+    switch (name){
+      case 'submit':
+        clickWrapper(document.getElementById('hidden-div').style, 'display', 'none', 'block', ajaxFormSubmit);
+        clickWrapper(document.getElementById('submit-btn').style, 'display', 'block', 'none');
+        break;
+      case 'pause':
+        clickWrapper(document.getElementById('pause-btn').firstChild, 'data', 'Pause Streaming', 'Resume Streaming', ajaxPauseStream, ajaxFormSubmit);
+        break;        
+      case 'togCircVis':
+        clickWrapper(document.getElementById('togCircVis-btn').firstChild, 'data', 'Hide Circles', 'Show Circles', map._togCircVis.call(map));
+        break;
+      case 'clear':
+        map._clearCircles();
+        document.getElementById('togCircVis-btn').style.display = 'none';
+        document.getElementById('togCircVis-btn').firstChild.data = 'Hide Circles';
+        break;       
+    }
+
+    // Toggle between two values for one property, and, optionally, execute click-triggered function(s). In clickAction(value, callback), 
+    // value is what the property will be set to, callback is the onclick for the current value. clickAction handles 2, 1, or 0 calllbacks from
+    // user (via clickWrapper). If 1 callback is passed to clickWrapper, clickAction uses that for both toggled values (see 'togCircVis' or 'submit' case above).
+    function clickWrapper(elem, prop, oldVal, newVal, oldOnClick, newOnClick){
+      elem[prop] == oldVal ? clickAction(newVal, oldOnClick) : clickAction(oldVal, newOnClick); 
+      function clickAction(value, callback){
+        elem[prop] = value;
+        if (!callback && oldOnClick){
+          callback = oldOnClick;
+        }
+        if (callback){        
+          callback();
+        }
+      }
+    }
+  }
+
+  function ajaxPauseStream(){
+
+    // Abort should be sufficient. The request below is a fail safe measure to ensure twitter streaming stops.
+    xhr.abort();      
+    var pauseXhr = new XMLHttpRequest();
+    pauseXhr.open('POST','../pauseStream', true);
+    pauseXhr.setRequestHeader('Content-Type','text/plain');
+    pauseXhr.send();
+
+    pauseXhr.onreadystatechange = function(){
+      if (this.readyState === XMLHttpRequest.DONE){
+        if (this.status === 200) {
+          document.getElementById("text1").value = 'Streaming paused \n\n' + document.getElementById("text1").value;
+        } else {
+          alert('There was a problem with the request.')
+        }
+      }
+    };         
+  }
+
+  function ajaxFormSubmit(){
+
+    sendData(serializeJson(jsonifyForm()));
+    document.getElementById('togCircVis-btn').style.display = 'block';        
+
+
+    function jsonifyForm(){
+      var data = { subject   : document.getElementById("subject").value,
+                   locations : document.getElementById("location").value,
+                   tart      : document.getElementById("startdate").value,
+                   end       : document.getElementById("enddate").value,
+                   step      : document.getElementById("timestep").value,
+                   units     : document.getElementById("timeunits").value 
+                  }
+      return data;
+    }    
+
+    function serializeJson(json){
+
+      var urlEncodedData = "";
+      var urlEncodedDataPairs = [];
+      var name; 
+
+      for (name in json){
+         urlEncodedDataPairs.push(encodeURIComponent(name) + '=' + encodeURIComponent(json[name]));
+      }
+      return urlEncodedDataPairs.join('&').replace(/%20/g, '+');
+    }
+
+    function sendData(data){
+
+      xhr.open('POST','../twitterQuery', true);
+      xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+      xhr.send(data);
+      xhr.onreadystatechange = function (){
+
+        if (this.readyState === XMLHttpRequest.LOADING ||
+            this.readyState === XMLHttpRequest.DONE){
+            if (this.status === 200) {
+              var responseJSON = parseResponse(this.responseText);
+            } else {
+              // alert('There was a problem with the request.')
+            }
+        }
+
+        function parseResponse(response){
+          // '{"text":"'' delimits the start of a new tweet -- a possible flaw being, if '{"text":"' occurs
+          // in a tweet, the code will think everything subsequent is a new tweet, ruining everything. 
+          var jsonTweet = JSON.parse(response.substring(response.lastIndexOf('{"text":"'), response.length));
+          displayText(document.getElementById('text1'));
+          updateMoodBox(document.getElementById('mood-div'), jsonTweet.stats.mood);
+          updateAverageMoodBox(jsonTweet.stats.mood);
+          geoCodeTweet(jsonTweet);
+          return jsonTweet;
+
+          function displayText(html){
+            html.value = (html.value + '\n\n' + jsonTweet.text + '\n\n' + ' . .  .   .  . .  .   .  . .');
+          }
+         
+          function updateMoodBox(html, mood){
+            mood = mood.toString();
+            html.style = 'background-color: RGB(' + mood + ')';  
+          }
+          
+          function updateAverageMoodBox(mood){
+            var RGB = [];
+            mood.forEach(function(value, i){
+              globalMood.mood[i] += Number(value);
+              RGB[i] = (globalMood.mood[i] / globalMood.count).toFixed(0);
+            }) 
+            updateMoodBox(document.getElementById('globalMood-div'), RGB);
+            globalMood.count++;
+          }
+
+          function geoCodeTweet(tweet){
+            var center  = null;
+            if (tweet.location != null){
+              var location = tweet.location.substring(3, tweet.location.length);
+              var id       = tweet.location.substring(0, 3);
+              switch(id){
+                case 'CO:':
+                  alert("~~~~ CO FOUND: Location is " + location)
+                  var latLng = location.split(",");
+                  center = {'lat': Number(latLng[0]), 'lng': Number(latLng[1])};
+                  alert("CO center is " + center.lat() + " " + center.lng());
+                  break;
+                case 'ST':
+                  // the UL code should work just as well for street names; allow to continue through to UL caes.
+                case 'UL:':
+                  geoCoder.geocode({'address':location}, function(results, status){
+                    if (status == google.maps.GeocoderStatus.OK){
+                      if (results[0].geometry != null && results[0].geometry.location != null){
+                          center = results[0].geometry.location;
+                          drawTweetCircle(tweet, center);
+                      }                     
+                    } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
+                      alert('Oh no! This app has maxed out its queries. Try again later.')
+                    }  
+                  });               
+                  break;   
+              }
+            } else if (location == null || center == null){
+            // The middle of Iceland, for non-located tweets!
+              center = DefaultCenter;
+            }
+            drawTweetCircle(tweet, center);   
+          }
+
+          function drawTweetCircle(tweet, center){
+
+            var radius      = tweet.stats.reach ? tweet.stats.reach * ReachBoost : ReachBoost;
+            var tweetCircle = initTweetCircle();
+            tweetCircle.initListeners();
+            tweetCircle._storeInMap(map);
+
+            function initTweetCircle(){
+              
+              var circle = new google.maps.Circle({
+                'strokeColor'  : 'RGB(' + tweet.stats.mood.toString() + ')',
+                'strokeOpacity': .8,
+                'strokeWeight' : 2,
+                'fillColor'    : 'RGB(' + tweet.stats.mood.toString() + ')',
+                'fillOpacity'  : .35, 
+                'map'          : map,
+                'center'       : center,
+                'radius'       : radius,
+                'draggable'    : true,
+                'clickable'    : true,
+              });
+
+              circle.infoWindow = initInfoWindow(); 
+
+              function initInfoWindow(){
+                var content = ("<p>"
+                               + "User:<br/> "     + tweet.user.name   + "<br/><br/>" 
+                               + "Text:<br/> "     + tweet.text        + "<br/><br/>" 
+                               + "Location:<br/> " + tweet.location    + "<br/><br/>" 
+                               + "Mood:<br/> "     + tweet.stats.mood  + "<br/><br/>" 
+                               + "Reach:<br/> "    + tweet.stats.reach + "<br/><br/>" +
+                              "</p>");
+                return new google.maps.InfoWindow({
+                  'content'        : content,
+                  'maxWidth'       : 250,
+                  'disableAutoPan' : true,
+                });
+              }
+
+              circle.initListeners = function(){          
+                this.addListener('click', function(){
+                  map.panTo(this.getCenter());
+                })
+               
+                this.addListener('mouseover', function(){
+                  var radiusExtender = ((300 - tweet.stats.reach) + 1) / 60;
+                  radiusExtender > 1.15 ? this.setRadius(radiusExtender * radius) : this.setRadius(radius * 1.15);
+                  this.infoWindow.setPosition(this.getBounds().getNorthEast());
+                  this.infoWindow.open(map);
+                });
+     
+                this.addListener('mouseout', function(){
+                  this.setRadius(radius);
+                  this.infoWindow.close(map);
+                });
+
+                this.addListener('drag', function(){
+                  this.infoWindow.setMap(null);
+                });
+
+                this.addListener('dragend', function(){
+                  this.setMap(map);
+                  this.infoWindow.setPosition(this.getBounds().getNorthEast());
+                  this.infoWindow.setMap(map);
+                });
+
+                this.addListener('dblclick', function(){
+                  this.infoWindow.setMap(null);
+                  this.setMap(null);
+                });            
+              }
+              return circle; 
+            }
+          }          
+        }
+      }         
+    }
+  }
+
+  function initMap(){
+    addCircleStorageToMap();
+    var props     = setProperties();
+    var styles    = setStyles();
+    var styledMap = new google.maps.StyledMapType(styles, {name: 'Styled Map'});
+    geoCoder      = new google.maps.Geocoder();
+    map           = new google.maps.Map(document.getElementById('map'), props);
+    map.mapTypes.set('map_style', styledMap);
+    map.setMapTypeId('map_style');
+
+    function setProperties(){
+      return {
+        'streetViewControl'      : false,
+        'disableDoubleClickZoom' : true,      
+        'center'                 : new google.maps.LatLng(42.877742, -97.380979),
+        'zoom'                   : 4,
+        'minZoom'                : 2,
+        'maxZoom'                : 12,
+        'mapTypeId'              : [google.maps.MapTypeId.ROADMAP, 'map_style'],
+      };
+    }
+
+    function setStyles(){
+      // Styles from the fantastic Google Styled Maps Wizard, http://googlemaps.github.io/js-samples/styledmaps/wizard/index.html
+      return [
+        {
+          "featureType": "road",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },{
+          "featureType": "poi",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },{
+          "featureType": "transit",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },{
+          "elementType": "labels",
+          "stylers": [
+            { "lightness": 49 }
+          ]
+        },{
+          "featureType": "administrative",
+          "elementType": "geometry.fill",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },{
+          "featureType": "administrative",
+          "elementType": "geometry.stroke",
+          "stylers": [
+            { "lightness": 48 }
+          ]
+        }
+      ];      
+    }
+
+    function addCircleStorageToMap(){
+
+      var listeners = ['click','dblclick','drag','dragend','mouseover','mouseout'];
+      google.maps.Map.prototype.circles = [];
+
+      google.maps.Map.prototype._getCircles = function(){
+        return this.circles;
+      };
+
+      google.maps.Map.prototype._clearCircles = function(){
+        this.circles.forEach(function(circle){
+          listeners.forEach(function(listener){
+            google.maps.event.clearListeners(circle, listener);
+          });
+          circle.setMap(null);
+        });
+        this.circles = [];
+      };
+
+      google.maps.Map.prototype._togCircVis = function(){
+        this.circles.forEach(function(circle){
+          circle.getMap() != null ? circle.setMap(null) : circle.setMap(map);
+        })
+      }
+
+      google.maps.Circle.prototype._storeInMap = function(map){
+        if(map){
+          map.circles.push(this);
+        }
+      }
+    }
+  }
+
+</script>
+</body>
+</html>
+
+
+

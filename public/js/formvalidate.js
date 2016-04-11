@@ -1,16 +1,12 @@
 // Fairly simple form validation, on submission. 
 function formValidates(mode){
 
-  // The stream mode operates without dates and any subject is searchable, so no validation needs to be done
-  // if the "mode" = "/streamTweets". Always return true.
+  // The stream mode operates without dates and any subject is searchable, so no validation needs to be done.
   if (mode == '/streamTweets'){ 
     return true;               
   }                        
   
-  // There's only one other mode, so if the above condition wasn't satisified, the user is using the RESTful search.
-  // As this search is date-dependent, user entries for dates must be validated. These next six variables will set up the 
-  // below functions to check differences between current time, user-entered start and end dates, and update error
-  // messages as any of the conditions fail.
+  // Set these up to validate the date for the RESTful Twitter search.
   var start = document.getElementById('startdate').value; 
   var end = document.getElementById('enddate').value; 
   var startObj = new Date(start); 
@@ -44,25 +40,25 @@ function formValidates(mode){
     }
   }
 
-  // "validStart" and "withinWeek" already validate the date numerically. This makes sure it's in the format 
-  // month/day/year (single digit month and day values are fine). 
+  // "validStart" and "withinWeek" already validate the date numerically. Check for 'month/day/year' format
+  // (single digit month and day values are fine). 
   function hasFormat(){ 
-    // Use the helper function "checkFormat" to see if both end and start dates have the valid format. 
+    // Use "checkFormat" to see if both end and start dates have the valid format. 
     var startIsValid = checkFormat(start);
     var endIsValid = checkFormat(end);
     // This error message is standard to both input boxes, so given scope outside the helper "setMsg".
     var formatErrMsg = 'Your format is incorrect. Please stick to month/day/year.';
-    // Call the "setMsg" helper to set the error messages for both input boxes. The error messages will 
-    // have been elongated throughout all the previous validation methods, if any conditions failed. 
+    // Set error messages. These will be empty strings if the validation succeeded.
     startErrMsg = setMsg(startIsValid, startErrMsg)
     endErrMsg = setMsg(endIsValid, endErrMsg)
-    // If both formats are ok, return true; if either fails, return false.
+    // If format for both is are ok, return true. If either fails, return false.
     return (startIsValid && endIsValid) ? true : false;
 
     // Validate the format by splitting around '/', making sure there are three string chunks in the returned
     // array, and checking that each chunk has the expected length (1 or 2 for month or date, 4 for year).
     function checkFormat(date){
       date = date.split('/');
+      // This precludes the chance that any following logic validates the input. Return false.
       if (date.length != 3){
         return false;
       } else {
@@ -71,12 +67,13 @@ function formValidates(mode){
           && (date[2].length === 4)){
           return true;
         }
-      }  
+      } 
+      // In case anything slips through the cracks, make a default return of false.  
       return false;
     }
 
-    // If the condition is false, see if the error message already is started, and if so, add 'Also: '. 
-    // Add "errMsg". Note that, if the condition is true, the "errMsg" is returned unchanged. 
+    // If the condition is false, see if the error message already is started, and if so, add 'Also: ', and 
+    // always add "errMsg". If the condition is true, return "errMsg" unchanged.
     function setMsg(condition, errMsg){
       if (!condition){
         if(errMsg.length > 0){

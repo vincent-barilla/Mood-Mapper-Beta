@@ -1,0 +1,489 @@
+
+C:\Users\Vincent\Heroku-Projects\Mood_Stream>node server.js
+Starting server @ localhost:3000/
+Server running at undefined
+Sat Mar 26 2016 00:57:38 GMT-0400 (Eastern Daylight Time) Socket server is listening on port 8080
+The processing has successfully reached the twitterQuery.js function
+{ subject: 'DonaldTrump',
+  locations: '\'-124.47%2C24.0%2C-66.56%2C49.3843\'',
+  tart: '',
+  end: '',
+  step: '',
+  units: 'seconds' }
+
+
+Sat Mar 26 2016 00:57:54 GMT-0400 (Eastern Daylight Time) Connection accepted.
+Sending data: {"subject":"DonaldTrump","locations":"'-124.47%2C24.0%2C-66.56%2C49.3843'","tart":"","end":"","step":"","u
+nits":"seconds"}
+
+
+Received Message. Parameters are:
+{ subject: 'DonaldTrump',
+  locations: '\'-124.47%2C24.0%2C-66.56%2C49.3843\'',
+  tart: '',
+  end: '',
+  step: '',
+  units: 'seconds' }
+
+
+{ text: 'RT @georgiastraight: For Americans planning to move to Canada if Donald Trump gets elected https://t.co/tDyWeVv
+ghD #DonaldTrump #USpoli htt.',
+  stats:
+   { mood: [ '127', '127', '127' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 751 },
+  location: 'UL:Vancouver' }
+From server: '
+{"text":"RT @georgiastraight: For Americans planning to move to Canada if Donald Trump gets elected https://t.co/tDyWeVv
+ghD #DonaldTrump #USpoli htt.","stats":{"mood":["127","127","127"],"posWords":[],"negWords":[],"tweetEF":"1.00","reach":
+751},"location":"UL:Vancouver"}'
+
+
+{ text: 'Stormfront Founder Urged Listeners To Vote For Trump https://t.co/xPFz7zcL03 #DonaldTrump #politics https://t.c
+o/0aABNx9Irb',
+  stats:
+   { mood: [ '127', '127', '127' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 3464 },
+  location: 'UL:Washington, DC' }
+From server: '
+{"text":"Stormfront Founder Urged Listeners To Vote For Trump https://t.co/xPFz7zcL03 #DonaldTrump #politics https://t.c
+o/0aABNx9Irb","stats":{"mood":["127","127","127"],"posWords":[],"negWords":[],"tweetEF":"1.00","reach":3464},"location":
+"UL:Washington, DC"}'
+
+
+**ALERT**, Word: insecure is being scored.
+{ text: 'RT @Michael_Erhart: Create a password:\n\n"donaldtrump"\n\nSorry, your password is too insecure.',
+  stats:
+   { mood: [ '127', '77', '77' ],
+     posWords: [],
+     negWords: [ [Object] ],
+     tweetEF: '1.00',
+     reach: 175 },
+  location: 'UL:Pakistan' }
+From server: '
+{"text":"RT @Michael_Erhart: Create a password:\n\n\"donaldtrump\"\n\nSorry, your password is too insecure.","stats":{"m
+ood":["127","77","77"],"posWords":[],"negWords":[{"word":"insecure","score":-2,"EF":1}],"tweetEF":"1.00","reach":175},"l
+ocation":"UL:Pakistan"}'
+
+
+**ALERT**, Word: solve is being scored.
+{ text: 'It will be interesting.\nBoth sides have new ideas to solve our problems.\nWe happen to like #DonaldTrump appro
+ach. https://t.co/pTCM7LnvBX',
+  stats:
+   { mood: [ '102', '152', '152' ],
+     posWords: [ [Object] ],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 2339 },
+  location: 'UL:Information is FREE' }
+From server: '
+{"text":"It will be interesting.\nBoth sides have new ideas to solve our problems.\nWe happen to like #DonaldTrump appro
+ach. https://t.co/pTCM7LnvBX","stats":{"mood":["102","152","152"],"posWords":[{"word":"solve","score":1,"EF":1}],"negWor
+ds":[],"tweetEF":"1.00","reach":2339},"location":"UL:Information is FREE"}'
+
+
+**ALERT**, Word: applaud is being scored.
+{ text: 'This is why we should applaud @realdonaldtrump for standing up against the elite #DonaldTrump #NWO https://t.co
+/uUfaiUFoJV',
+  stats:
+   { mood: [ '82', '188', '188' ],
+     posWords: [ [Object] ],
+     negWords: [],
+     tweetEF: '1.06',
+     reach: 1715 },
+  location: 'UL:Kenitra Morocco' }
+From server: '
+{"text":"This is why we should applaud @realdonaldtrump for standing up against the elite #DonaldTrump #NWO https://t.co
+/uUfaiUFoJV","stats":{"mood":["82","188","188"],"posWords":[{"word":"applaud","score":2,"EF":1}],"negWords":[],"tweetEF"
+:"1.06","reach":1715},"location":"UL:Kenitra Morocco"}'
+
+
+{ text: 'RT @georgiastraight: For Americans planning to move to Canada if Donald Trump gets elected https://t.co/tDyWeVv
+ghD #DonaldTrump #USpoli htt.',
+  stats:
+   { mood: [ '127', '127', '127' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 206 },
+  location: 'UL:Los Angeles' }
+From server: '
+{"text":"RT @georgiastraight: For Americans planning to move to Canada if Donald Trump gets elected https://t.co/tDyWeVv
+ghD #DonaldTrump #USpoli htt.","stats":{"mood":["127","127","127"],"posWords":[],"negWords":[],"tweetEF":"1.00","reach":
+206},"location":"UL:Los Angeles"}'
+
+
+**ALERT**, Word: plan is being scored.
+**ALERT**, Word: protect is being scored.
+{ text: 'RT @JMusicYouTube: What if Trump\'s plan is to build a wall to protect us from the Titans. #DonaldTrump  #Attac
+kOnTitan #FilmTheory',
+  stats:
+   { mood: [ '77', '177', '177' ],
+     posWords: [ [Object], [Object] ],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 12077 },
+  location: 'UL:Work in Asia and from Texas US' }
+From server: '
+{"text":"RT @JMusicYouTube: What if Trump's plan is to build a wall to protect us from the Titans. #DonaldTrump  #Attack
+OnTitan #FilmTheory","stats":{"mood":["77","177","177"],"posWords":[{"word":"plan","score":1,"EF":1},{"word":"protect","
+score":1,"EF":1}],"negWords":[],"tweetEF":"1.00","reach":12077},"location":"UL:Work in Asia and from Texas US"}'
+
+
+**ALERT**, Word: thank is being scored.
+**ALERT**, Word: best is being scored.
+{ text: 'Thank you @IngrahamAngle &amp; you\'re the Best!  I listen to u almost every morning ???? #DonaldTrump  https:/
+/t.co/FwQEGFU72w',
+  stats:
+   { mood: [ 0, 255, 255 ],
+     posWords: [ [Object], [Object] ],
+     negWords: [],
+     tweetEF: '1.10',
+     reach: 570 },
+  location: null }
+From server: '
+{"text":"Thank you @IngrahamAngle &amp; you're the Best!  I listen to u almost every morning ???? #DonaldTrump  https://
+t.co/FwQEGFU72w","stats":{"mood":[0,255,255],"posWords":[{"word":"thank","score":2,"EF":1},{"word":"best","score":3,"EF"
+:1.25}],"negWords":[],"tweetEF":"1.10","reach":570},"location":null}'
+
+
+{ text: '@guypbenson Oh well #Trump is just a stand-in for tens of millions of us. We\'re here, we\'re White, get used t
+o it. :)\n\n#DonaldTrump #LGBT',
+  stats:
+   { mood: [ '83', '137', '137' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.08',
+     reach: 60 },
+  location: 'UL:Gullible White Evangelical' }
+From server: '
+{"text":"@guypbenson Oh well #Trump is just a stand-in for tens of millions of us. We're here, we're White, get used to
+it. :)\n\n#DonaldTrump #LGBT","stats":{"mood":["83","137","137"],"posWords":[],"negWords":[],"tweetEF":"1.08","reach":60
+},"location":"UL:Gullible White Evangelical"}'
+
+
+{ text: 'RT @Johnnybeer_gab: Heyyyyyyy #DonaldTrump  https://t.co/KNrgQuOk5J',
+  stats:
+   { mood: [ '127', '127', '127' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 520 },
+  location: 'UL:en tu mente' }
+From server: '
+{"text":"RT @Johnnybeer_gab: Heyyyyyyy #DonaldTrump  https://t.co/KNrgQuOk5J","stats":{"mood":["127","127","127"],"posWo
+rds":[],"negWords":[],"tweetEF":"1.00","reach":520},"location":"UL:en tu mente"}'
+
+
+{ text: 'RT @georgiastraight: For Americans planning to move to Canada if Donald Trump gets elected https://t.co/tDyWeVv
+ghD #DonaldTrump #USpoli htt.',
+  stats:
+   { mood: [ '127', '127', '127' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 2137 },
+  location: 'UL:Seattle' }
+From server: '
+{"text":"RT @georgiastraight: For Americans planning to move to Canada if Donald Trump gets elected https://t.co/tDyWeVv
+ghD #DonaldTrump #USpoli htt.","stats":{"mood":["127","127","127"],"posWords":[],"negWords":[],"tweetEF":"1.00","reach":
+2137},"location":"UL:Seattle"}'
+
+
+**ALERT**, Word: hurting is being scored.
+~~~ALERT~~~ Negator found.
+{ text: '#DonaldTrump, #TedCruz spat is hurting the #RepublicanParty https://t.co/d6ugC6zAOB #CruzCrew #Cruz2016 https:/
+/t.co/ifhFX9qb49',
+  stats:
+   { mood: [ '77', '177', '177' ],
+     posWords: [],
+     negWords: [ [Object] ],
+     tweetEF: '1.00',
+     reach: 698 },
+  location: 'UL:Washington, DC' }
+From server: '
+{"text":"#DonaldTrump, #TedCruz spat is hurting the #RepublicanParty https://t.co/d6ugC6zAOB #CruzCrew #Cruz2016 https:/
+/t.co/ifhFX9qb49","stats":{"mood":["77","177","177"],"posWords":[],"negWords":[{"word":"hurting","score":-2,"EF":-1}],"t
+weetEF":"1.00","reach":698},"location":"UL:Washington, DC"}'
+
+
+{ text: 'https://t.co/E2nS8jJfbL #MakeAmericaGreatAgain #GOP #TrumpGOP #WI #NY #CT #DE #NE #NM #SD #MD #DonaldTrump #Ted
+Cruz https://t.co/TvgK6XLSC7',
+  stats:
+   { mood: [ '135', '135', '135' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.06',
+     reach: 8828 },
+  location: 'UL:Glens Falls, NY' }
+From server: '
+{"text":"https://t.co/E2nS8jJfbL #MakeAmericaGreatAgain #GOP #TrumpGOP #WI #NY #CT #DE #NE #NM #SD #MD #DonaldTrump #Ted
+Cruz https://t.co/TvgK6XLSC7","stats":{"mood":["135","135","135"],"posWords":[],"negWords":[],"tweetEF":"1.06","reach":8
+828},"location":"UL:Glens Falls, NY"}'
+
+
+**ALERT**, Word: insulted is being scored.
+**ALERT**, Word: war is being scored.
+~~~ALERT~~~ Negator found.
+**ALERT**, Word: hero is being scored.
+**ALERT**, Word: upset is being scored.
+{ text: 'RT @donnabrazile: When #DonaldTrump insulted Mexicans, Muslims, the Disabled, Women, plus a war hero... #TedCru
+z wasn\'t upset.  https://t.c.',
+  stats:
+   { mood: [ '127', '127', '127' ],
+     posWords: [ [Object] ],
+     negWords: [ [Object], [Object], [Object] ],
+     tweetEF: '1.00',
+     reach: 377 },
+  location: 'UL:Charlotte, MI' }
+From server: '
+{"text":"RT @donnabrazile: When #DonaldTrump insulted Mexicans, Muslims, the Disabled, Women, plus a war hero... #TedCru
+z wasn't upset.  https://t.c.","stats":{"mood":["127","127","127"],"posWords":[{"word":"hero","score":2,"EF":1}],"negWor
+ds":[{"word":"insulted","score":-2,"EF":1},{"word":"war","score":-2,"EF":-1},{"word":"upset","score":-2,"EF":1}],"tweetE
+F":"1.00","reach":377},"location":"UL:Charlotte, MI"}'
+
+
+{ text: 'RT @realDonaldTrump: I am self funding my campaign and only work for YOU, the American people!\n#Trump2016 Vide
+o: https://t.co/8hDC0YUobe ht.',
+  stats:
+   { mood: [ '147', '147', '147' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.16',
+     reach: 4624 },
+  location: 'UL:United States' }
+From server: '
+{"text":"RT @realDonaldTrump: I am self funding my campaign and only work for YOU, the American people!\n#Trump2016 Vide
+o: https://t.co/8hDC0YUobe ht.","stats":{"mood":["147","147","147"],"posWords":[],"negWords":[],"tweetEF":"1.16","reach"
+:4624},"location":"UL:United States"}'
+
+
+**ALERT**, Word: support is being scored.
+**ALERT**, Word: want is being scored.
+{ text: '@Debramax @MSNBC I think it was so they could BUY her support 4when they knew she wasn\'t going be around #pupp
+ets I want #DonaldTrump #jobs',
+  stats:
+   { mood: [ '55', '214', '214' ],
+     posWords: [ [Object], [Object] ],
+     negWords: [],
+     tweetEF: '1.06',
+     reach: 176 },
+  location: null }
+From server: '
+{"text":"@Debramax @MSNBC I think it was so they could BUY her support 4when they knew she wasn't going be around #puppe
+ts I want #DonaldTrump #jobs","stats":{"mood":["55","214","214"],"posWords":[{"word":"support","score":2,"EF":1},{"word"
+:"want","score":1,"EF":1}],"negWords":[],"tweetEF":"1.06","reach":176},"location":null}'
+
+
+**ALERT**, Word: leaked is being scored.
+**ALERT**, Word: scandal is being scored.
+{ text: 'RT @ScallywagNYC: `Hit-job' Marco Rubio ally leaked Ted Cruz sex scandal story https://t.co/sTIpeV4ofE #Donald
+Trump #DonaldTrump #MarkRubi.',
+  stats:
+   { mood: [ '227', '27', '27' ],
+     posWords: [],
+     negWords: [ [Object], [Object] ],
+     tweetEF: '1.00',
+     reach: 1619 },
+  location: 'UL:Ahurastan, ??-? \t' }
+From server: '
+{"text":"RT @ScallywagNYC: `Hit-job' Marco Rubio ally leaked Ted Cruz sex scandal story https://t.co/sTIpeV4ofE #Donald
+Trump #DonaldTrump #MarkRubi.","stats":{"mood":["227","27","27"],"posWords":[],"negWords":[{"word":"leaked","score":-1,"
+EF":1},{"word":"scandal","score":-3,"EF":1}],"tweetEF":"1.00","reach":1619},"location":"UL:Ahurastan, ??-? \t"}'
+
+
+**ALERT**, Word: wins is being scored.
+{ text: '!- Haa !- Read What Amber Rose Will Do If DonaldTrump Wins The Election, This Is Shcoking . https://t.co/MH5ZoB
+kL7f',
+  stats:
+   { mood: [ '27', '227', '227' ],
+     posWords: [ [Object] ],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 5451 },
+  location: 'UL:Nigeria' }
+From server: '
+{"text":"!- Haa !- Read What Amber Rose Will Do If DonaldTrump Wins The Election, This Is Shcoking . https://t.co/MH5ZoB
+kL7f","stats":{"mood":["27","227","227"],"posWords":[{"word":"wins","score":4,"EF":1}],"negWords":[],"tweetEF":"1.00","r
+each":5451},"location":"UL:Nigeria"}'
+
+
+{ text: 'Trump's Wife Verses Cruz's Wife Continues! https://t.co/09qfZaMWS2 #DonaldTrump',
+  stats:
+   { mood: [ '140', '140', '140' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.10',
+     reach: 11 },
+  location: null }
+From server: '
+{"text":"Trump's Wife Verses Cruz's Wife Continues! https://t.co/09qfZaMWS2 #DonaldTrump","stats":{"mood":["140","140","
+140"],"posWords":[],"negWords":[],"tweetEF":"1.10","reach":11},"location":null}'
+
+
+{ text: 'Trump's Wife Verses Cruz's Wife Continues! https://t.co/AVTHA1Gd66 #DonaldTrump',
+  stats:
+   { mood: [ '140', '140', '140' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.10',
+     reach: 4 },
+  location: null }
+From server: '
+{"text":"Trump's Wife Verses Cruz's Wife Continues! https://t.co/AVTHA1Gd66 #DonaldTrump","stats":{"mood":["140","140","
+140"],"posWords":[],"negWords":[],"tweetEF":"1.10","reach":4},"location":null}'
+
+
+{ text: 'Trump's Wife Verses Cruz's Wife Continues! https://t.co/196KpH1ZLY #DonaldTrump',
+  stats:
+   { mood: [ '140', '140', '140' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.10',
+     reach: 13 },
+  location: null }
+From server: '
+{"text":"Trump's Wife Verses Cruz's Wife Continues! https://t.co/196KpH1ZLY #DonaldTrump","stats":{"mood":["140","140","
+140"],"posWords":[],"negWords":[],"tweetEF":"1.10","reach":13},"location":null}'
+
+
+**ALERT**, Word: illegal is being scored.
+{ text: 'SC farm fined $1 million for using illegal workers https://t.co/eHyHDtcBXa #DonaldTrump',
+  stats:
+   { mood: [ '202', '52', '52' ],
+     posWords: [],
+     negWords: [ [Object] ],
+     tweetEF: '1.00',
+     reach: 149 },
+  location: null }
+From server: '
+{"text":"SC farm fined $1 million for using illegal workers https://t.co/eHyHDtcBXa #DonaldTrump","stats":{"mood":["202"
+,"52","52"],"posWords":[],"negWords":[{"word":"illegal","score":-3,"EF":1}],"tweetEF":"1.00","reach":149},"location":nul
+l}'
+
+
+{ text: '#TedCruz : " #DonaldTrump planted tabloid story " - MONTHLY_RATE_LIMIT_EXCEEDED https://t.co/9KD2oTwCsD',
+  stats:
+   { mood: [ '188', '188', '188' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.48',
+     reach: 65 },
+  location: 'UL:587Board.com' }
+From server: '
+{"text":"#TedCruz : \" #DonaldTrump planted tabloid story \" - MONTHLY_RATE_LIMIT_EXCEEDED https://t.co/9KD2oTwCsD","sta
+ts":{"mood":["188","188","188"],"posWords":[],"negWords":[],"tweetEF":"1.48","reach":65},"location":"UL:587Board.com"}'
+
+
+**ALERT**, Word: fan is being scored.
+{ text: 'Obviously Donald Trump wasn\'t a superman fan. #BatmanvSuperman #DonaldTrump #makedonalddrumphagain https://t.c
+o/XISJreIvo5',
+  stats:
+   { mood: [ '52', '202', '202' ],
+     posWords: [ [Object] ],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 875 },
+  location: null }
+From server: '
+{"text":"Obviously Donald Trump wasn't a superman fan. #BatmanvSuperman #DonaldTrump #makedonalddrumphagain https://t.co
+/XISJreIvo5","stats":{"mood":["52","202","202"],"posWords":[{"word":"fan","score":3,"EF":1}],"negWords":[],"tweetEF":"1.
+00","reach":875},"location":null}'
+
+
+{ text: 'RT @TheVelvetRope__: No....no we don\'t #VelvetTv #DonaldTrump https://t.co/BdcrfCropI',
+  stats:
+   { mood: [ '127', '127', '127' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 62 },
+  location: null }
+From server: '
+{"text":"RT @TheVelvetRope__: No....no we don't #VelvetTv #DonaldTrump https://t.co/BdcrfCropI","stats":{"mood":["127","
+127","127"],"posWords":[],"negWords":[],"tweetEF":"1.00","reach":62},"location":null}'
+
+
+{ text: 'https://t.co/iKIEjMztwa https://t.co/f0tdF1U1L3',
+  stats:
+   { mood: [ '127', '127', '127' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.00',
+     reach: 15824 },
+  location: 'UL:malibu, ca' }
+From server: '
+{"text":"https://t.co/iKIEjMztwa https://t.co/f0tdF1U1L3","stats":{"mood":["127","127","127"],"posWords":[],"negWords":[
+],"tweetEF":"1.00","reach":15824},"location":"UL:malibu, ca"}'
+
+
+**ALERT**, Word: hurting is being scored.
+~~~ALERT~~~ Negator found.
+{ text: '#DonaldTrump, #TedCruz spat is hurting the #RepublicanParty https://t.co/waSBvoCAl3 #politics https://t.co/UASi
+UE86LK',
+  stats:
+   { mood: [ '77', '177', '177' ],
+     posWords: [],
+     negWords: [ [Object] ],
+     tweetEF: '1.00',
+     reach: 3464 },
+  location: 'UL:Washington, DC' }
+From server: '
+{"text":"#DonaldTrump, #TedCruz spat is hurting the #RepublicanParty https://t.co/waSBvoCAl3 #politics https://t.co/UASi
+UE86LK","stats":{"mood":["77","177","177"],"posWords":[],"negWords":[{"word":"hurting","score":-2,"EF":-1}],"tweetEF":"1
+.00","reach":3464},"location":"UL:Washington, DC"}'
+
+
+**ALERT**, Word: agree is being scored.
+**ALERT**, Word: nigger is being scored.
+{ text: '@DonaldTrump Niggerfaggots be niggerfaggonts, amirite? Retweet if you agree. #Trumpshowusyourpenis #Nigger',
+  stats:
+   { mood: [ '227', '27', '27' ],
+     posWords: [ [Object] ],
+     negWords: [ [Object] ],
+     tweetEF: '1.00',
+     reach: 3 },
+  location: null }
+From server: '
+{"text":"@DonaldTrump Niggerfaggots be niggerfaggonts, amirite? Retweet if you agree. #Trumpshowusyourpenis #Nigger","st
+ats":{"mood":["227","27","27"],"posWords":[{"word":"agree","score":1,"EF":1}],"negWords":[{"word":"nigger","score":-5,"E
+F":1}],"tweetEF":"1.00","reach":3},"location":null}'
+
+
+**ALERT**, Word: worse is being scored.
+**ALERT**, Word: suffer is being scored.
+{ text: '#DonaldTrump O'Reilly lets Obama have it: `The longer the USA dithers, the worse we're going to suffer. https:/
+/t.co/8AB5z9KDPI',
+  stats:
+   { mood: [ 255, '2', '2' ],
+     posWords: [],
+     negWords: [ [Object], [Object] ],
+     tweetEF: '1.06',
+     reach: 43 },
+  location: null }
+From server: '
+{"text":"#DonaldTrump O'Reilly lets Obama have it: `The longer the USA dithers, the worse we're going to suffer. https:/
+/t.co/8AB5z9KDPI","stats":{"mood":[255,"2","2"],"posWords":[],"negWords":[{"word":"worse","score":-3,"EF":1},{"word":"su
+ffer","score":-2,"EF":1}],"tweetEF":"1.06","reach":43},"location":null}'
+
+
+{ text: 'RT @VickyBrush: AMERICA LOVES #DONALDTRUMP! ? @realDonaldTrump https://t.co/Qfan7XSlWd',
+  stats:
+   { mood: [ '198', '198', '198' ],
+     posWords: [],
+     negWords: [],
+     tweetEF: '1.56',
+     reach: 354 },
+  location: null }
+From server: '
+{"text":"RT @VickyBrush: AMERICA LOVES #DONALDTRUMP! ? @realDonaldTrump https://t.co/Qfan7XSlWd","stats":{"mood":["198",
+"198","198"],"posWords":[],"negWords":[],"tweetEF":"1.56","reach":354},"location":null}'
+
+
+^C
+C:\Users\Vincent\Heroku-Projects\Mood_Stream>

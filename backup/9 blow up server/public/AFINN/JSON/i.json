@@ -1,0 +1,542 @@
+[
+  {
+    "word": "idiot",
+    "score": -3
+  },
+  {
+    "word": "idiotic",
+    "score": -3
+  },
+  {
+    "word": "ignorance",
+    "score": -2
+  },
+  {
+    "word": "ignorant",
+    "score": -2
+  },
+  {
+    "word": "ignore",
+    "score": -1
+  },
+  {
+    "word": "ignored",
+    "score": -2
+  },
+  {
+    "word": "ignores",
+    "score": -1
+  },
+  {
+    "word": "ill",
+    "score": -2
+  },
+  {
+    "word": "illegal",
+    "score": -3
+  },
+  {
+    "word": "illiteracy",
+    "score": -2
+  },
+  {
+    "word": "illness",
+    "score": -2
+  },
+  {
+    "word": "illnesses",
+    "score": -2
+  },
+  {
+    "word": "imbecile",
+    "score": -3
+  },
+  {
+    "word": "immobilized",
+    "score": -1
+  },
+  {
+    "word": "immortal",
+    "score": 2
+  },
+  {
+    "word": "immune",
+    "score": 1
+  },
+  {
+    "word": "impatient",
+    "score": -2
+  },
+  {
+    "word": "imperfect",
+    "score": -2
+  },
+  {
+    "word": "importance",
+    "score": 2
+  },
+  {
+    "word": "important",
+    "score": 2
+  },
+  {
+    "word": "impose",
+    "score": -1
+  },
+  {
+    "word": "imposed",
+    "score": -1
+  },
+  {
+    "word": "imposes",
+    "score": -1
+  },
+  {
+    "word": "imposing",
+    "score": -1
+  },
+  {
+    "word": "impotent",
+    "score": -2
+  },
+  {
+    "word": "impress",
+    "score": 3
+  },
+  {
+    "word": "impressed",
+    "score": 3
+  },
+  {
+    "word": "impresses",
+    "score": 3
+  },
+  {
+    "word": "impressive",
+    "score": 3
+  },
+  {
+    "word": "imprisoned",
+    "score": -2
+  },
+  {
+    "word": "improve",
+    "score": 2
+  },
+  {
+    "word": "improved",
+    "score": 2
+  },
+  {
+    "word": "improvement",
+    "score": 2
+  },
+  {
+    "word": "improves",
+    "score": 2
+  },
+  {
+    "word": "improving",
+    "score": 2
+  },
+  {
+    "word": "inability",
+    "score": -2
+  },
+  {
+    "word": "inaction",
+    "score": -2
+  },
+  {
+    "word": "inadequate",
+    "score": -2
+  },
+  {
+    "word": "incapable",
+    "score": -2
+  },
+  {
+    "word": "incapacitated",
+    "score": -2
+  },
+  {
+    "word": "incensed",
+    "score": -2
+  },
+  {
+    "word": "incompetence",
+    "score": -2
+  },
+  {
+    "word": "incompetent",
+    "score": -2
+  },
+  {
+    "word": "inconsiderate",
+    "score": -2
+  },
+  {
+    "word": "inconvenience",
+    "score": -2
+  },
+  {
+    "word": "inconvenient",
+    "score": -2
+  },
+  {
+    "word": "increase",
+    "score": 1
+  },
+  {
+    "word": "increased",
+    "score": 1
+  },
+  {
+    "word": "indecisive",
+    "score": -2
+  },
+  {
+    "word": "indestructible",
+    "score": 2
+  },
+  {
+    "word": "indifference",
+    "score": -2
+  },
+  {
+    "word": "indifferent",
+    "score": -2
+  },
+  {
+    "word": "indignant",
+    "score": -2
+  },
+  {
+    "word": "indignation",
+    "score": -2
+  },
+  {
+    "word": "indoctrinate",
+    "score": -2
+  },
+  {
+    "word": "indoctrinated",
+    "score": -2
+  },
+  {
+    "word": "indoctrinates",
+    "score": -2
+  },
+  {
+    "word": "indoctrinating",
+    "score": -2
+  },
+  {
+    "word": "ineffective",
+    "score": -2
+  },
+  {
+    "word": "ineffectively",
+    "score": -2
+  },
+  {
+    "word": "infatuated",
+    "score": 2
+  },
+  {
+    "word": "infatuation",
+    "score": 2
+  },
+  {
+    "word": "infected",
+    "score": -2
+  },
+  {
+    "word": "inferior",
+    "score": -2
+  },
+  {
+    "word": "inflamed",
+    "score": -2
+  },
+  {
+    "word": "influential",
+    "score": 2
+  },
+  {
+    "word": "infringement",
+    "score": -2
+  },
+  {
+    "word": "infuriate",
+    "score": -2
+  },
+  {
+    "word": "infuriated",
+    "score": -2
+  },
+  {
+    "word": "infuriates",
+    "score": -2
+  },
+  {
+    "word": "infuriating",
+    "score": -2
+  },
+  {
+    "word": "inhibit",
+    "score": -1
+  },
+  {
+    "word": "injured",
+    "score": -2
+  },
+  {
+    "word": "injury",
+    "score": -2
+  },
+  {
+    "word": "injustice",
+    "score": -2
+  },
+  {
+    "word": "innovate",
+    "score": 1
+  },
+  {
+    "word": "innovates",
+    "score": 1
+  },
+  {
+    "word": "innovation",
+    "score": 1
+  },
+  {
+    "word": "innovative",
+    "score": 2
+  },
+  {
+    "word": "inquisition",
+    "score": -2
+  },
+  {
+    "word": "inquisitive",
+    "score": 2
+  },
+  {
+    "word": "insane",
+    "score": -2
+  },
+  {
+    "word": "insanity",
+    "score": -2
+  },
+  {
+    "word": "insecure",
+    "score": -2
+  },
+  {
+    "word": "insensitive",
+    "score": -2
+  },
+  {
+    "word": "insensitivity",
+    "score": -2
+  },
+  {
+    "word": "insignificant",
+    "score": -2
+  },
+  {
+    "word": "insipid",
+    "score": -2
+  },
+  {
+    "word": "inspiration",
+    "score": 2
+  },
+  {
+    "word": "inspirational",
+    "score": 2
+  },
+  {
+    "word": "inspire",
+    "score": 2
+  },
+  {
+    "word": "inspired",
+    "score": 2
+  },
+  {
+    "word": "inspires",
+    "score": 2
+  },
+  {
+    "word": "inspiring",
+    "score": 3
+  },
+  {
+    "word": "insult",
+    "score": -2
+  },
+  {
+    "word": "insulted",
+    "score": -2
+  },
+  {
+    "word": "insulting",
+    "score": -2
+  },
+  {
+    "word": "insults",
+    "score": -2
+  },
+  {
+    "word": "intact",
+    "score": 2
+  },
+  {
+    "word": "integrity",
+    "score": 2
+  },
+  {
+    "word": "intelligent",
+    "score": 2
+  },
+  {
+    "word": "intense",
+    "score": 1
+  },
+  {
+    "word": "interest",
+    "score": 1
+  },
+  {
+    "word": "interested",
+    "score": 2
+  },
+  {
+    "word": "interesting",
+    "score": 2
+  },
+  {
+    "word": "interests",
+    "score": 1
+  },
+  {
+    "word": "interrogated",
+    "score": -2
+  },
+  {
+    "word": "interrupt",
+    "score": -2
+  },
+  {
+    "word": "interrupted",
+    "score": -2
+  },
+  {
+    "word": "interrupting",
+    "score": -2
+  },
+  {
+    "word": "interruption",
+    "score": -2
+  },
+  {
+    "word": "interrupts",
+    "score": -2
+  },
+  {
+    "word": "intimidate",
+    "score": -2
+  },
+  {
+    "word": "intimidated",
+    "score": -2
+  },
+  {
+    "word": "intimidates",
+    "score": -2
+  },
+  {
+    "word": "intimidating",
+    "score": -2
+  },
+  {
+    "word": "intimidation",
+    "score": -2
+  },
+  {
+    "word": "intricate",
+    "score": 2
+  },
+  {
+    "word": "intrigues",
+    "score": 1
+  },
+  {
+    "word": "invincible",
+    "score": 2
+  },
+  {
+    "word": "invite",
+    "score": 1
+  },
+  {
+    "word": "inviting",
+    "score": 1
+  },
+  {
+    "word": "invulnerable",
+    "score": 2
+  },
+  {
+    "word": "irate",
+    "score": -3
+  },
+  {
+    "word": "ironic",
+    "score": -1
+  },
+  {
+    "word": "irony",
+    "score": -1
+  },
+  {
+    "word": "irrational",
+    "score": -1
+  },
+  {
+    "word": "irresistible",
+    "score": 2
+  },
+  {
+    "word": "irresolute",
+    "score": -2
+  },
+  {
+    "word": "irresponsible",
+    "score": 2
+  },
+  {
+    "word": "irreversible",
+    "score": -1
+  },
+  {
+    "word": "irritate",
+    "score": -3
+  },
+  {
+    "word": "irritated",
+    "score": -3
+  },
+  {
+    "word": "irritating",
+    "score": -3
+  },
+  {
+    "word": "isolated",
+    "score": -1
+  }
+]

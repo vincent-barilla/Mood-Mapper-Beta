@@ -1,3 +1,4 @@
+/*.... generic classes .... */
 body {
 	font-family: Helvetica, Arial;
   background-color: RGB(245,245,245);
@@ -128,6 +129,16 @@ select{
     font-style: italic;
     color: RGB(180,100,100);
 }
+
+
+/*...........the instructions span, shows above form inputs when "New Search" button is clicked......*/
+
+span#searchInstruct{
+  position:relative;
+  width:99%;
+}
+
+
 /*........ section contains the map and the tweet crawl, both as divs ......*/
 section {
     width: 98%;
@@ -151,6 +162,7 @@ div#text {
 }
 
 
+/*...... hiddenDiv contains the buttons beneath the map, plus the mood color boxes ... */
 
 div#hiddenDiv{
   width:100%;
@@ -180,6 +192,7 @@ div#buttonDiv{
 }
 
 /*... color box elements.... */
+
 div#colorBoxGrp{
   top: 0;
   width: 24.5%;
@@ -200,15 +213,7 @@ div#colorBoxGrp{
   margin: 2% 1% 2% 1%;
 }
 
-
-/*...........the instructions table ......*/
-
-span#searchInstruct{
-  position:relative;
-  width:99%;
-}
-
-/*...... info indicates infoWindow styles ...... */
+/*...... infoWindow styles for each circle's InfoWindow ...... */
 
 div#info {
   background: RGB(240,240,240);  
@@ -216,7 +221,6 @@ div#info {
   overflow-y: auto;
   overflow-x: hidden;  
 }
-
 
 .infoTitle {
   font-family: Helvetica, Arial;

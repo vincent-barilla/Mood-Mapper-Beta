@@ -1,0 +1,866 @@
+[
+  {
+    "word": "calm",
+    "score": 2
+  },
+  {
+    "word": "calmed",
+    "score": 2
+  },
+  {
+    "word": "calming",
+    "score": 2
+  },
+  {
+    "word": "calms",
+    "score": 2
+  },
+  {
+    "word": "can't stand",
+    "score": -3
+  },
+  {
+    "word": "cancel",
+    "score": -1
+  },
+  {
+    "word": "cancelled",
+    "score": -1
+  },
+  {
+    "word": "cancelling",
+    "score": -1
+  },
+  {
+    "word": "cancels",
+    "score": -1
+  },
+  {
+    "word": "cancer",
+    "score": -1
+  },
+  {
+    "word": "capable",
+    "score": 1
+  },
+  {
+    "word": "captivated",
+    "score": 3
+  },
+  {
+    "word": "care",
+    "score": 2
+  },
+  {
+    "word": "carefree",
+    "score": 1
+  },
+  {
+    "word": "careful",
+    "score": 2
+  },
+  {
+    "word": "carefully",
+    "score": 2
+  },
+  {
+    "word": "careless",
+    "score": -2
+  },
+  {
+    "word": "cares",
+    "score": 2
+  },
+  {
+    "word": "cashing in",
+    "score": -2
+  },
+  {
+    "word": "casualty",
+    "score": -2
+  },
+  {
+    "word": "catastrophe",
+    "score": -3
+  },
+  {
+    "word": "catastrophic",
+    "score": -4
+  },
+  {
+    "word": "cautious",
+    "score": -1
+  },
+  {
+    "word": "celebrate",
+    "score": 3
+  },
+  {
+    "word": "celebrated",
+    "score": 3
+  },
+  {
+    "word": "celebrates",
+    "score": 3
+  },
+  {
+    "word": "celebrating",
+    "score": 3
+  },
+  {
+    "word": "censor",
+    "score": -2
+  },
+  {
+    "word": "censored",
+    "score": -2
+  },
+  {
+    "word": "censors",
+    "score": -2
+  },
+  {
+    "word": "certain",
+    "score": 1
+  },
+  {
+    "word": "chagrin",
+    "score": -2
+  },
+  {
+    "word": "chagrined",
+    "score": -2
+  },
+  {
+    "word": "challenge",
+    "score": -1
+  },
+  {
+    "word": "chance",
+    "score": 2
+  },
+  {
+    "word": "chances",
+    "score": 2
+  },
+  {
+    "word": "chaos",
+    "score": -2
+  },
+  {
+    "word": "chaotic",
+    "score": -2
+  },
+  {
+    "word": "charged",
+    "score": -3
+  },
+  {
+    "word": "charges",
+    "score": -2
+  },
+  {
+    "word": "charm",
+    "score": 3
+  },
+  {
+    "word": "charming",
+    "score": 3
+  },
+  {
+    "word": "charmless",
+    "score": -3
+  },
+  {
+    "word": "chastise",
+    "score": -3
+  },
+  {
+    "word": "chastised",
+    "score": -3
+  },
+  {
+    "word": "chastises",
+    "score": -3
+  },
+  {
+    "word": "chastising",
+    "score": -3
+  },
+  {
+    "word": "cheat",
+    "score": -3
+  },
+  {
+    "word": "cheated",
+    "score": -3
+  },
+  {
+    "word": "cheater",
+    "score": -3
+  },
+  {
+    "word": "cheaters",
+    "score": -3
+  },
+  {
+    "word": "cheats",
+    "score": -3
+  },
+  {
+    "word": "cheer",
+    "score": 2
+  },
+  {
+    "word": "cheered",
+    "score": 2
+  },
+  {
+    "word": "cheerful",
+    "score": 2
+  },
+  {
+    "word": "cheering",
+    "score": 2
+  },
+  {
+    "word": "cheerless",
+    "score": -2
+  },
+  {
+    "word": "cheers",
+    "score": 2
+  },
+  {
+    "word": "cheery",
+    "score": 3
+  },
+  {
+    "word": "cherish",
+    "score": 2
+  },
+  {
+    "word": "cherished",
+    "score": 2
+  },
+  {
+    "word": "cherishes",
+    "score": 2
+  },
+  {
+    "word": "cherishing",
+    "score": 2
+  },
+  {
+    "word": "chic",
+    "score": 2
+  },
+  {
+    "word": "childish",
+    "score": -2
+  },
+  {
+    "word": "chilling",
+    "score": -1
+  },
+  {
+    "word": "choke",
+    "score": -2
+  },
+  {
+    "word": "choked",
+    "score": -2
+  },
+  {
+    "word": "chokes",
+    "score": -2
+  },
+  {
+    "word": "choking",
+    "score": -2
+  },
+  {
+    "word": "clarifies",
+    "score": 2
+  },
+  {
+    "word": "clarity",
+    "score": 2
+  },
+  {
+    "word": "clash",
+    "score": -2
+  },
+  {
+    "word": "classy",
+    "score": 3
+  },
+  {
+    "word": "clean",
+    "score": 2
+  },
+  {
+    "word": "cleaner",
+    "score": 2
+  },
+  {
+    "word": "clear",
+    "score": 1
+  },
+  {
+    "word": "cleared",
+    "score": 1
+  },
+  {
+    "word": "clearly",
+    "score": 1
+  },
+  {
+    "word": "clears",
+    "score": 1
+  },
+  {
+    "word": "clever",
+    "score": 2
+  },
+  {
+    "word": "clouded",
+    "score": -1
+  },
+  {
+    "word": "clueless",
+    "score": -2
+  },
+  {
+    "word": "cock",
+    "score": -5
+  },
+  {
+    "word": "cocksucker",
+    "score": -5
+  },
+  {
+    "word": "cocksuckers",
+    "score": -5
+  },
+  {
+    "word": "cocky",
+    "score": -2
+  },
+  {
+    "word": "coerced",
+    "score": -2
+  },
+  {
+    "word": "collapse",
+    "score": -2
+  },
+  {
+    "word": "collapsed",
+    "score": -2
+  },
+  {
+    "word": "collapses",
+    "score": -2
+  },
+  {
+    "word": "collapsing",
+    "score": -2
+  },
+  {
+    "word": "collide",
+    "score": -1
+  },
+  {
+    "word": "collides",
+    "score": -1
+  },
+  {
+    "word": "colliding",
+    "score": -1
+  },
+  {
+    "word": "collision",
+    "score": -2
+  },
+  {
+    "word": "collisions",
+    "score": -2
+  },
+  {
+    "word": "colluding",
+    "score": -3
+  },
+  {
+    "word": "combat",
+    "score": -1
+  },
+  {
+    "word": "combats",
+    "score": -1
+  },
+  {
+    "word": "comedy",
+    "score": 1
+  },
+  {
+    "word": "comfort",
+    "score": 2
+  },
+  {
+    "word": "comfortable",
+    "score": 2
+  },
+  {
+    "word": "comforting",
+    "score": 2
+  },
+  {
+    "word": "comforts",
+    "score": 2
+  },
+  {
+    "word": "commend",
+    "score": 2
+  },
+  {
+    "word": "commended",
+    "score": 2
+  },
+  {
+    "word": "commit",
+    "score": 1
+  },
+  {
+    "word": "commitment",
+    "score": 2
+  },
+  {
+    "word": "commits",
+    "score": 1
+  },
+  {
+    "word": "committed",
+    "score": 1
+  },
+  {
+    "word": "committing",
+    "score": 1
+  },
+  {
+    "word": "compassionate",
+    "score": 2
+  },
+  {
+    "word": "compelled",
+    "score": 1
+  },
+  {
+    "word": "competent",
+    "score": 2
+  },
+  {
+    "word": "competitive",
+    "score": 2
+  },
+  {
+    "word": "complacent",
+    "score": -2
+  },
+  {
+    "word": "complain",
+    "score": -2
+  },
+  {
+    "word": "complained",
+    "score": -2
+  },
+  {
+    "word": "complains",
+    "score": -2
+  },
+  {
+    "word": "comprehensive",
+    "score": 2
+  },
+  {
+    "word": "conciliate",
+    "score": 2
+  },
+  {
+    "word": "conciliated",
+    "score": 2
+  },
+  {
+    "word": "conciliates",
+    "score": 2
+  },
+  {
+    "word": "conciliating",
+    "score": 2
+  },
+  {
+    "word": "condemn",
+    "score": -2
+  },
+  {
+    "word": "condemnation",
+    "score": -2
+  },
+  {
+    "word": "condemned",
+    "score": -2
+  },
+  {
+    "word": "condemns",
+    "score": -2
+  },
+  {
+    "word": "confidence",
+    "score": 2
+  },
+  {
+    "word": "confident",
+    "score": 2
+  },
+  {
+    "word": "conflict",
+    "score": -2
+  },
+  {
+    "word": "conflicting",
+    "score": -2
+  },
+  {
+    "word": "conflictive",
+    "score": -2
+  },
+  {
+    "word": "conflicts",
+    "score": -2
+  },
+  {
+    "word": "confuse",
+    "score": -2
+  },
+  {
+    "word": "confused",
+    "score": -2
+  },
+  {
+    "word": "confusing",
+    "score": -2
+  },
+  {
+    "word": "congrats",
+    "score": 2
+  },
+  {
+    "word": "congratulate",
+    "score": 2
+  },
+  {
+    "word": "congratulation",
+    "score": 2
+  },
+  {
+    "word": "congratulations",
+    "score": 2
+  },
+  {
+    "word": "consent",
+    "score": 2
+  },
+  {
+    "word": "consents",
+    "score": 2
+  },
+  {
+    "word": "consolable",
+    "score": 2
+  },
+  {
+    "word": "conspiracy",
+    "score": -3
+  },
+  {
+    "word": "constrained",
+    "score": -2
+  },
+  {
+    "word": "contagion",
+    "score": -2
+  },
+  {
+    "word": "contagions",
+    "score": -2
+  },
+  {
+    "word": "contagious",
+    "score": -1
+  },
+  {
+    "word": "contempt",
+    "score": -2
+  },
+  {
+    "word": "contemptuous",
+    "score": -2
+  },
+  {
+    "word": "contemptuously",
+    "score": -2
+  },
+  {
+    "word": "contend",
+    "score": -1
+  },
+  {
+    "word": "contender",
+    "score": -1
+  },
+  {
+    "word": "contending",
+    "score": -1
+  },
+  {
+    "word": "contentious",
+    "score": -2
+  },
+  {
+    "word": "contestable",
+    "score": -2
+  },
+  {
+    "word": "controversial",
+    "score": -2
+  },
+  {
+    "word": "controversially",
+    "score": -2
+  },
+  {
+    "word": "convince",
+    "score": 1
+  },
+  {
+    "word": "convinced",
+    "score": 1
+  },
+  {
+    "word": "convinces",
+    "score": 1
+  },
+  {
+    "word": "convivial",
+    "score": 2
+  },
+  {
+    "word": "cool",
+    "score": 1
+  },
+  {
+    "word": "cool stuff",
+    "score": 3
+  },
+  {
+    "word": "cornered",
+    "score": -2
+  },
+  {
+    "word": "corpse",
+    "score": -1
+  },
+  {
+    "word": "costly",
+    "score": -2
+  },
+  {
+    "word": "courage",
+    "score": 2
+  },
+  {
+    "word": "courageous",
+    "score": 2
+  },
+  {
+    "word": "courteous",
+    "score": 2
+  },
+  {
+    "word": "courtesy",
+    "score": 2
+  },
+  {
+    "word": "cover-up",
+    "score": -3
+  },
+  {
+    "word": "coward",
+    "score": -2
+  },
+  {
+    "word": "cowardly",
+    "score": -2
+  },
+  {
+    "word": "coziness",
+    "score": 2
+  },
+  {
+    "word": "cramp",
+    "score": -1
+  },
+  {
+    "word": "crap",
+    "score": -3
+  },
+  {
+    "word": "crash",
+    "score": -2
+  },
+  {
+    "word": "crazier",
+    "score": -2
+  },
+  {
+    "word": "craziest",
+    "score": -2
+  },
+  {
+    "word": "crazy",
+    "score": -2
+  },
+  {
+    "word": "creative",
+    "score": 2
+  },
+  {
+    "word": "crestfallen",
+    "score": -2
+  },
+  {
+    "word": "cried",
+    "score": -2
+  },
+  {
+    "word": "cries",
+    "score": -2
+  },
+  {
+    "word": "crime",
+    "score": -3
+  },
+  {
+    "word": "criminal",
+    "score": -3
+  },
+  {
+    "word": "criminals",
+    "score": -3
+  },
+  {
+    "word": "crisis",
+    "score": -3
+  },
+  {
+    "word": "critic",
+    "score": -2
+  },
+  {
+    "word": "criticism",
+    "score": -2
+  },
+  {
+    "word": "criticize",
+    "score": -2
+  },
+  {
+    "word": "criticized",
+    "score": -2
+  },
+  {
+    "word": "criticizes",
+    "score": -2
+  },
+  {
+    "word": "criticizing",
+    "score": -2
+  },
+  {
+    "word": "critics",
+    "score": -2
+  },
+  {
+    "word": "cruel",
+    "score": -3
+  },
+  {
+    "word": "cruelty",
+    "score": -3
+  },
+  {
+    "word": "crush",
+    "score": -1
+  },
+  {
+    "word": "crushed",
+    "score": -2
+  },
+  {
+    "word": "crushes",
+    "score": -1
+  },
+  {
+    "word": "crushing",
+    "score": -1
+  },
+  {
+    "word": "cry",
+    "score": -1
+  },
+  {
+    "word": "crying",
+    "score": -2
+  },
+  {
+    "word": "cunt",
+    "score": -5
+  },
+  {
+    "word": "curious",
+    "score": 1
+  },
+  {
+    "word": "curse",
+    "score": -1
+  },
+  {
+    "word": "cut",
+    "score": -1
+  },
+  {
+    "word": "cute",
+    "score": 2
+  },
+  {
+    "word": "cuts",
+    "score": -1
+  },
+  {
+    "word": "cutting",
+    "score": -1
+  },
+  {
+    "word": "cynic",
+    "score": -2
+  },
+  {
+    "word": "cynical",
+    "score": -2
+  },
+  {
+    "word": "cynicism",
+    "score": -2
+  }
+]

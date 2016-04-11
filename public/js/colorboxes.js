@@ -1,13 +1,16 @@
-// Originally this was only to test getting anything from the back end and 
-// representing it with colors on the front end, but I think it's a neat
-// addition to the overall app. It shows the averaged mood from all the 
-// tweets, then also shows the mood of the current tweet.   
+// For context, this was the original proof-of-concept, for when I was figuring out
+// how to get any data from the back end and turn it into colors on the front. I 
+// started with returning an array of three randomized integers from "tweetAnalyzer"
+// and displaying those as RGB colors in these boxes.
 function updateMoodBoxes(mood){
+  
   // "RGB" represents the overall mood of the current session. 
   var RGB = [];
+  // Update the colors every time data from the server's response is parsed .
   updateRGB();
   colorBox(document.getElementById('moodDiv'), mood)
   colorBox(document.getElementById('globalMoodDiv'), RGB);
+  // Used for averaging the overall mood of all parsed tweets.
   globalMood.count++;
 
   // The heper function to update the mood of the session. 
@@ -18,7 +21,7 @@ function updateMoodBoxes(mood){
     })
   }
 
-  // A helper function to set a given html to a given color. 
+  // Sets a given html to a given color (mood of the current tweet, then overall mood). 
   function colorBox(html, mood){
     mood = mood.toString();
     html.style = 'background-color: RGB(' + mood + ')';  

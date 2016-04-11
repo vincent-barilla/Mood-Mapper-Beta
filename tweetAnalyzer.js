@@ -1,10 +1,10 @@
 var util = require('util');
 
-// Receive a JSON tweet and the wordBanks object, perform a sentiment analysis on the tweet. Refer to 
-// Readme.md, "IV: Tweet Analysis Methodology" for a discussion on how I approached the mood analysis. 
-// In short: it uses the AFINN wordbank, plus considerations for punctuation, and makes an RGB color
-// array using negative words to increase R pixels and positive words to increase GB pixels. 
+// Receive a JSON tweet and the wordBanks object, perform a sentiment analysis on the tweet. 
+// Analysis uses the AFINN wordbank plus some syntax consideration, makes an RGB color
+// using negative words to increase R pixels and positive words to increase GB pixels. 
 this.analyze = function(tweet, wordBanks){
+	// Choose the language for "wordBank".
 	var wordBank = setWordBank();
 
 	// The return from this call is ready to be parsed and used on the front end. 
@@ -42,7 +42,7 @@ this.analyze = function(tweet, wordBanks){
 		}
 		return result;
 
-		// Simple method to set the result.user field.
+		// Simple method to set the "result.user" field.
 		function setUser(){
 			var user         = {};
 			user.description = tweet.user.description;
@@ -55,10 +55,7 @@ this.analyze = function(tweet, wordBanks){
 		// Assign a location string to the result. The two-letter id's ('CO, UL') will assist in 
 		// geocoding on the front end. Note that I prioritize the "tweet.coordinates" first, as 
 		// this is the least ambiguous and most useful for geocoding data. "tweet.place" has the next best 
-		// data. Location from a user's account is often pretty poor as data (i.e., people will write 
-	    // things like "waaaay out in $paaaace" for their location -- presumably not true, and definitely
-	    // not easy to geocode). Still, a user's location will usually produce some result on the front end, 
-		// and without this, very few tweets would be mappable. 
+		// data. Location from a user's account is used as a last resort (unfortunately, also the most common case). 
 		function setLocation(){
 			var location = null;
 			if (tweet.coordinates) {
@@ -79,12 +76,12 @@ this.analyze = function(tweet, wordBanks){
 		}
 
  		// RGB(127,127,127), or gray, means there's no mood detected. All tweets start at this point, 
- 		// then the scoring increases or decreases R and GB in different amounts to represent positivity 
- 		// vs. negativity, as well as extremeness of that sentiment. "tweetBoost" and "wordBoost" indicate 
- 		// extremess of sentiment -- how many "!"'s occur and if it is in all caps. They will amplify R,G, and B 
- 		// equally (so you can get a very extreme, but not negative nor positive, tweet -- loud but 
- 		// without content). "R" represents negativity, "G" and "B", always equal to each other, represent
-		// positivity. The actual scoring is done in "scoreIndividualWords" and "scoreEntireTweet."  
+ 		// then the scoring increases or decreases R and GB to represent positivity vs. negativity.
+ 		// "tweetBoost" and "wordBoost" indicate extremess of sentiment -- how many "!"'s occur and if it 
+ 		// is in all caps. They will amplify R,G, and B equally (so you can get a very extreme, but not 
+ 		// negative nor positive, tweet -- loud but without content). "R" represents negativity, "G" and "B", 
+		// always equal to each other, represent positivity. The actual scoring is done in "scoreIndividualWords" 
+		// and "scoreEntireTweet."  
 		function analyzeMood(){
 			var R = 127;
 			var B = 127;
@@ -106,7 +103,7 @@ this.analyze = function(tweet, wordBanks){
 					var conditions = (word.length > 2 				// Words must be 3 letters and up.
 								    && word[0] != '@' 				// No usernames
 								    && word.indexOf('http') == -1 	// No links
-									&& word.indexOf('@') == -1 		// Really, no usernames! (nor emails)
+									&& word.indexOf('@') == -1 		// Really, no usernames! (Nor emails)
 									&& word != "\n" 				// No newline characters
 									&& !(word.length == 3 && word[0] =='#')); // No 2-letter hashtags
 
@@ -171,8 +168,8 @@ this.analyze = function(tweet, wordBanks){
  				// Flexible scoring template. Presumes 'bases.length" = "constants.length" and the logic 
  				// of "constants[i]" pairs with "bases[i]". "bases" will be an array of the starting score 
  				// of some value (like R,G, or B), "constants" add to "bases" to boost the starting score. 
- 				// For example: "scoringTemplate(R, -50)"" would mean "decrease R by 50." Or, 
- 				// "scoringTemplate([R,B],[-50,50])"" would mean, "decrease R by 50, then increase B by 50."
+ 				// For example: "scoringTemplate(R, -50) would mean "decrease R by 50." Or, 
+ 				// "scoringTemplate([R,B],[-50,50])" would mean, "decrease R by 50, then increase B by 50."
  				function scoringTemplate(bases, constants){
  					if (bases.constructor === Array){
  						for (var i = 0; i < bases.length; i++){
@@ -189,7 +186,7 @@ this.analyze = function(tweet, wordBanks){
  					punc = word.replace(/[a-z']/gi,''); // Take only the punctuation, other than ', for analysis.
 
  					// "puncScoringWrapper" invokes "scoringTemplate", forms "constants" for "scoringTemplate"
- 					// from multiplying both elements of its third argument by the number of the first argument 
+ 					// from multiplying both elements of its third argument by the length of the first argument 
  					// to "puncScoringWrapper" (here, that is "!") found in "punc".
  					var temp = puncScoringWrapper(/!/g, [wordBoost, tweetBoost], [.15, .1]);
  					if (temp){ 
@@ -229,11 +226,11 @@ this.analyze = function(tweet, wordBanks){
 	 				word = word.match(/[a-z']+/gi);// This regexp takes upper- and lower-cased letters and "'". 
 	 				if (word){
 	 					word = word.join(''); 	
- 						var caps = word.match(/[A-Z']+/g); // Take only the upper-cased-letters from "word".
+ 						var caps = word.match(/[A-Z']+/g); // Take only the upper-cased-letters and "'" from "word".
 	 					if (caps && caps.length == word.length){ // This means it's all-caps.
 	 						// Scoring template uses "caps.length" to increase the constants passed to "scoringTemplate". 
 	 						// I forwent using a wrapper, here, because I'm only invoking the call to scoringTemplate once. 
-	 						// With "puncScoringWrapper", the same action was used three times, so the wrapper helded cut code.
+	 						// With "puncScoringWrapper", the same action was used three times, so writing a wrapper was warranted.
 	 						var temp   = scoringTemplate([wordBoost, tweetBoost], [(.05 * caps.length), (.02 * caps.length)]); 
 	 						wordBoost  = temp[0];   
 	 						tweetBoost = temp[1];   
@@ -250,8 +247,8 @@ this.analyze = function(tweet, wordBanks){
  				function scoreWord(word, i){
  					// "score" will be multiplied by other constants, so is assigned as 1.
  					var score = 1;
- 					// Present of "n't" indicates the reverse sentiment of a word coming after it -- 
- 					// For example: wordBank['hate'] //==> -4, but if 'doesn't' comes before 'hate', 
+ 					// Presence of "n't" indicates the reverse sentiment of a word coming after it -- 
+ 					// For example: wordBank['hate'] //==> -4, but if "doesn't" comes before "hate", 
  					// now wordBank['hate'] //==> 4.
  					negatorCheck();
  					// Scoring criteria get amalgamated into one score. Note that "negatorCheck" may have flipped "score"'s +/- sign.
@@ -270,9 +267,8 @@ this.analyze = function(tweet, wordBanks){
 					}		
 
 					// wordScoringWrapper accepts either "posWords" or "negWords" as a field into "stats", 
-					// and pushes a word into "stats[field]" according to its scored -- words with a score
-					// of below 0 go into "newWords", words with a score above zero go into "posWords". This
-					// is used for displaying info on my scoring on the front end. 
+					// and pushes a word into "stats[field]" according to its score. Words with a score
+					// of below 0 go into "newWords", words with a score above zero go into "posWords". 
 					function wordScoringWrapper(field){ 
 						stats[field].push({'word': word, 'score': wordBank[word]});
 						var rbTemp = scoringTemplate([R, B], [-score, score]); 

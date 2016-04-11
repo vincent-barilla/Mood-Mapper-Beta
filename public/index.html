@@ -3,12 +3,11 @@
    <link rel="stylesheet" type="text/css" href="resource/css/style.css">
    <meta charset="ISO-8859-1">
    <title>Insert title here</title>
-   <!-- All front end JS scripts are in these scripts. Minus comments, there was around 600 lines of code here, 
-        so I figured a modularized approach would be a lot more readable. The order in which these scripts is 
-        important; I did not make inputs/returns as needed, for this to be able to be shuffled around in any
-        order. If one of the scripts uses variables defined in a previous script, I mention where the original
-        initialization of that variable is. Most global variables are in initGlobals.js, found at the bottom of this 
-        HTML block. -->
+   <!-- All front end JS scripts are in these. Minus comments, there was around 600 lines of code in this file, 
+        so I figured a modular approach would be a lot more readable. The order in which these scripts are listed here
+        is important to the app loading correctly. If one of the scripts uses variables defined in a previous script, I 
+        mention where the original initialization of that variable is. Most global variables are initialized and/or defined
+        in "initGlobals.js". -->
    <script src='resource/map_scripts/init.js'></script>
    <script src='resource/js/buttonhandle.js'></script>                 
    <script src='resource/js/formvalidate.js'></script>
@@ -22,7 +21,9 @@
 </head>
 <body >
 
+<!-- The top banner is used to display help files, or jump the scroll view down to an input form. -->
 <div id='bannerContentDiv' style='display:block'>
+  <!-- This iFrame will show instructions from two different sources, set according to what button is clicked.-->
   <iframe id='banFrame' style='visibility:hidden'></iframe>    
   <div id='contentBtns'> 
     <button type="button" id="aboutBtn" name='about' class="label sml" onclick="buttonHandler(this)" method="post">About This App</button>
@@ -31,14 +32,13 @@
   </div>
 </div>
 
-<!-- The top of the page, with the map and the text crawl. -->  
+<!-- The map and a text crawl to the right of it. -->  
 <section>  
   <div class="map" id="map" style="display:inline-block">map goes here.</div>    
   <div id="text" style='display:none'></div>
 </section>
 
-<!-- The mood color boxes, plus the buttons which relate to interacting with the map. These are below the map, 
-     and start out invisible. -->
+<!-- The mood color boxes, plus the buttons which relate to interacting with the map. -->
 <div id="hiddenDiv" style="display:none">
   <div id='buttonDiv'>
     <br> 
@@ -54,9 +54,7 @@
   </div>    
 </div>
 
-<!-- The form and all its labels and inputs. All inputs trigger 'buttonHandler', which sorts out what to do based on the name 
-     of the element which triggered the callback. Note that visibilities will be toggled on and off, depending on the current
-     activity of the user. All inputs are handled asynchonously in the 'buttonHandler' function, thus the lack of a "submit" 
+<!-- The form and all its labels and inputs. All inputs are handled asynchonously in the 'buttonHandler' function, thus the lack of a "submit" 
      action for the form.-->
 <div id="formInput">
    <br>          
@@ -103,14 +101,16 @@
    </div>
 </div>
 
-<!--I initialize the global variables here to make sure all the DOM elements above are defined, before this sets some of their starting views. --> 
+<!--I initialize the global variables here, after  all the DOM elements above are defined, so this can set some of their starting properties. --> 
 <script src='resource/js/initGlobals.js'></script>   
 <script type="text/javascript">
 
   /* 
-   All javascript traffic is directed through buttonhandler.js, the de facto front-end dispatcher. 
-  */
 
+   All javascript traffic is directed through buttonhandler.js, the de facto front-end dispatcher. See the script tags at the top of this file 
+   for a list of all JS scripts used, in roughly the order in which they are executed in the app's work flow. 
+    
+  */
 
 </script>
 

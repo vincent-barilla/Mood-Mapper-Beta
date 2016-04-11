@@ -2,7 +2,8 @@ var fs            = require('fs');
 var path          = require('path');
 var mime          = require('mime');
 var util          = require('util');
-// The next two modules will handle the streaming and RESTful requests to Twitter. 
+
+// The next two custom modules will handle the streaming and RESTful requests to Twitter. 
 var streamServlet = require('./streamServlet.js'); 
 var restServlet   = require('./restServlet.js'); 
 
@@ -20,20 +21,21 @@ this.dispatch = function(request, response, wordBank){
 		// The next 3 lines pull out the action of the request -- "action" being the indicator of where 
 		// to send the request's data. "argument" contains the user's parameters.						
 		var parts = request.url.split('/'); 
-		var action = parts[1];				
-		var argument = parts.slice(2, parts.length).join("/");
+		var action = parts[1];
+		// Take everything left after pulling out the action from "parts", put it back into "/folder/file" format.				
+		var argument = parts.slice(2, parts.length).join('/');
 
 		// The switch statement cases control the flow of non-home requests.
 		switch(action){
 
 			// If the request is for a resource, call the openFile function, feed in the local path 
-			// (./public/) plus the file name (argument).
+			// ("./public/") plus the file name ("argument").
 			case 'resource': 
 				openFile('./public/' + argument); 
 				break;
 
 			// Pull the data out from the request, convert it from a url-encoded string to JSON, pass it
-			// to streamServlet.query to connect to Twitter Public Streaming API
+			// to "streamServlet.query" to connect to Twitter Public Streaming API
 			case 'streamTweets': 
 				request.on('data', function(data){
 					dataJson = jsonifyRequest(data.toString());
@@ -42,7 +44,7 @@ this.dispatch = function(request, response, wordBank){
 				break;
 
 			// Pull the data from the request, convert it from a url-encoded string to JSON, pass it 
-			// to restServlet.query to get a batch of data from a Twitter GET request.
+			// to "restServlet.query" to get a batch of data from a Twitter GET request.
 			case 'getTweets':
 				request.on('data', function(data){			
 					dataJson = jsonifyRequest(data.toString()); 

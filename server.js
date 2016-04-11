@@ -10,7 +10,7 @@ require('./env.js'); // The environment variables (Twitter authentication/access
 var wordBank = {}; 
 initWordBank();   
 
-// The server receives requests and passes them along to Dispatcher.dispatch for further processing. The
+// The server receives requests and passes them along to "Dispatcher.dispatch" for further processing. The
 // server will listen at a local port, if not launched on a hosting service.
 var mainServer = http.createServer(function (request, response){
 	try {
@@ -29,8 +29,8 @@ var mainServer = http.createServer(function (request, response){
 	including examples of both the format of the file this loads, as well as the format of the word bank it creates. 
 */
 
-// This initializes the wordBank (effectively the app's database). Sync used to make sure the wordBank 
-// is done readiing before requests come in. 
+// This initializes the wordBank (effectively, the app's database). Sync used to make sure "wordBank" 
+// is finished being read in before requests come in. 
 function initWordBank(){
 	var data = fs.readFileSync('./public/AFINN/JSON/MasterList.json').toString(); 
 	data = JSON.parse(data); 

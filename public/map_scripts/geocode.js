@@ -1,49 +1,48 @@
 /*
-  See Readme IV: "Comments on geocoding usage" for a discussion on why I use four geocoders, and 
-  general issues of working with them and live data.
+  See Readme VII: "Comments on geocoding usage" for a discussion on why I use four geocoders, and 
+  general issues of working with them, with live data.
 */
 
-// The basic pattern here is: 1) Grab the location from tweet data, 2) Send a location to a geocoder
-// query, 3) pass the response to "createTweetCircle", to see a circle mapped at the returned coordinates. 
+// The basic pattern here is: 1) Grab the location from a tweet, 2) send the location to a geocoder
+// service, 3) pass the response to "createTweetCircle", 4) see a circle mapped at the returned coordinates. 
 // This is done for one geocoder at a time, with a cycle of four geocoders being used to handle the load
 // of live data. 
 function geoCodeTweet(tweet){
   var center;
-  // If the user location is null, a default center will be given in the else if of this statement. 
+  // If the user location is null, the tweet will go to the center of "tweetDump". 
   if (tweet.location != null){
     // The next 2 lines separate the location from the 2-letter id code I set in "tweetAnalyzer". This 
-    // code will be used in the outer switch statement below, to indicate what format the address has. 
+    // code will be used to indicate what format the address has. 
     var location = tweet.location.substring(3, tweet.location.length);
     var id = tweet.location.substring(0, 3);
     // Update the tweet's location, now without its id code, for display in "drawTweetCircle".
     tweet.location = location;
     switch(id){
-      // "CO:" Here, locations are already coordinates, and do not need geocoding.
+      
+      // Here, locations are already coordinates, and do not need geocoding.
       case 'CO:':
         var latLng = location.split(",");
-        // This format for "center", maing it a JSON object with 'lat','lng' keys, is standardized across
-        // all the geocoder results. This helps with the later href map panning function. 
+        // This format for "center" is standardized across all cases. This helps with the later href map panning function. 
         center = {'lat': Number(latLng[0]), 'lng': Number(latLng[1])};
         break;
-      // UL stands for "user location". I originally had a separate code, "ST", or "street address", but 
-      // the geocoders receive street addresses the same as a less clear user location, so I cut the ST 
-      // case, used UL code for street addresses, too. 
+
+      // UL stands for "user location". Cycle through geocoders. (I use "turnstileCount" as this invokes the image of a turnstile, for me.) 
       case 'UL:':
         switch(turnstileCount){
+
           // 0: Query the Google geocoder.
           case 0:
             turnstileCount++; 
-            // Google requires an https request be made, so I can't use the helper function "getGeo"
-            // for the Google coder. Luckily, Google makes a geocoder object available, which is
-            // what I use here. 
+            // Google requires an https request be made, so I can't use "getGeo" for the Google coder. Luckily, Google makes a
+            // geocoder object available, which I use here. 
             geoCoder.geocode({'address':location}, function(results, status){
               if (status == google.maps.GeocoderStatus.OK){
-                  // Make sure the results exist where I'm expecting them before making an assignment to 
-                  // "center".
+                  // Make sure the results exist where I'm expecting them before making an assignment to "center".
                   if (results[0].geometry != null && results[0].geometry.location != null){
                     center = results[0].geometry.location;
                     // Standardize "center"'s format for later use.
                     center = {'lat': center.lat(), 'lng': center.lng()};
+                    // Send the tweet and center to "createTweetCircle" for making the final view state.
                     createTweetCircle(tweet, center);
                   }                     
                 } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
@@ -52,16 +51,19 @@ function geoCodeTweet(tweet){
                 }  
               });
               break;
+
           // 1: Query the mapquest geocoder service using the "getGeo" helper function.    
           case 1:  
             turnstileCount++;
             getGeo(('http://www.mapquestapi.com/geocoding/v1/address?key=bTOgIMAbO4p0SvZmAgD9EIFVxqO2MocO&maxResults=1&location=' + location), 1);
             break; 
+
           // 2: Query the Open Cage geocoder service using the "getGeo" helper function.     
           case 2: 
             turnstileCount++; 
             getGeo(('http://api.opencagedata.com/geocode/v1/json?q=' + location + '&key=02b58331c3075f21b23ab96521c85d81&limit=1'), 2);
             break;
+
           // 3: Query the bing geocoder service.  
           case 3:
             // Here's where the "turnstileCount" is reset, such that, next time "geoCodeTweet" is called, it'll start
@@ -69,14 +71,15 @@ function geoCodeTweet(tweet){
             turnstileCount = 0;
             var geocodeRequest = 'http://dev.virtualearth.net/REST/v1/Locations?query=' + location
               + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
+
             // Due to lack of CORS support for bing's service, I use a blank script ("bingScript" is included with all
-            // the other scripts in the header of index.html), then set its source to the user-parameterized 
+            // the other scripts in the header of "index.html"), then set its "src" to the user-parameterized 
             // query string above. "bingScript" will now have the results from that query in it. When "bingCallback" 
             // fires, it grabs data from those results, and processes them in the same pattern as the above cases. 
             bingScript.setAttribute('src', geocodeRequest);                                             
 
-            // This callback fires as soon as the geocodeRequest is set to bingScript's 'src' attribute. Note the repeat
-            // of the pattern of handling its data, despite needing a different request protocol. 
+            // This callback fires as soon as the "geocodeRequest" is set to bingScript's "src" attribute in the above
+            // line. The callback repeats the same pattern as the above cases. 
             bingCallback = function(response){ 
               if(response.resourceSets[0].resources[0]){
                 center = response.resourceSets[0].resources[0].point.coordinates;
@@ -90,9 +93,10 @@ function geoCodeTweet(tweet){
         }    
       break;
     }
-  // If the tweet didn't have a location, give it the default center (just south of Hawaii, in the ocean).   
+  // If the tweet didn't have a location, send it to "tweetDump".   
   } else if (location == null){
     center = DefaultCenter;
+    // "default" will be used here for telling "tweetCircleDraw" when to highlith "tweetDump" for the user.
     createTweetCircle(tweet, center, 'default');
   }
 
@@ -109,9 +113,8 @@ function geoCodeTweet(tweet){
         if(response.results[0]){
 
           // 1 uses mapQuest geocoder service, not 1 uses Open Cage's service. The returns from the queries
-          // do not come in the same format, which is why it's necessary to have separate assignments according 
-          // to where the results came from -- i.e., the first option is how mapQuest results must be assigned,
-          // the second option is how  Open Cage results must be assigned.
+          // do not come in the same format, which is why it's necessary to have separate assignments. The 
+          // first option is how mapQuest results must be assigned, the second is for Open Cage results.
           count == 1 ? (center = response.results[0].locations[0].latLng) : (center = response.results[0].geometry);
           if (center) {     
             createTweetCircle(tweet, center)
