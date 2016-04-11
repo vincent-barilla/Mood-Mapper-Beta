@@ -6,7 +6,7 @@ code where I had originally left a too-long comment, then relocated it to this f
 
 The exception to this is "tweetAnalyzer.js", which I thought was much more accessible, 
 as a purely invented approach to sentiment analysis, with step-by-step explanations 
-to accompany the decisions I was making. 
+to accompany the decisions I was making, side-by-side with the code. 
 
 
 I.     initWordBank()
