@@ -7,6 +7,9 @@ var https            = require('https');
 // and "request" are from the main server, so when "response.write" is used, it's writing back to the front end.
 this.query = function(data, response, request, wordBank){ 
 
+	// "octet-stream" alleviates a strange buffering issue I experienced when writing to Chrome. 
+	response.writeHead(200,{'Content-Type': 'application/octet-stream'});	
+
 	console.log('ID IS: ')
 	console.log(data.id)
 
