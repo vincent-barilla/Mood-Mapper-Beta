@@ -48,7 +48,6 @@ const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClien
   function buttonDisp(htmls){
     var key;
     for (key in htmls){
-      console.log(key)
       document.getElementById(key).firstChild.data = htmls[key];
     }
   }

@@ -57,7 +57,7 @@ function formSubmit(){
         // interactive map objects and links that make the front end's final view state.         
         geoCodeTweet(jsonTweet);
         // "updateMoodBoxes" changes the colors below the text crawl. 
-         updateMoodBoxes(jsonTweet.stats.mood);           
+        updateMoodBoxes(jsonTweet.stats.mood);         
       }
     }         
   }
