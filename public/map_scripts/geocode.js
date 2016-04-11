@@ -55,13 +55,13 @@ function geoCodeTweet(tweet){
           // 1: Query the mapquest geocoder service using the "getGeo" helper function.    
           case 1:  
             turnstileCount++;
-            getGeo(('http://www.mapquestapi.com/geocoding/v1/address?key=bTOgIMAbO4p0SvZmAgD9EIFVxqO2MocO&maxResults=1&location=' + location), 1);
+            getGeo(('https://www.mapquestapi.com/geocoding/v1/address?key=bTOgIMAbO4p0SvZmAgD9EIFVxqO2MocO&maxResults=1&location=' + location), 1);
             break; 
 
           // 2: Query the Open Cage geocoder service using the "getGeo" helper function.     
           case 2: 
             turnstileCount++; 
-            getGeo(('http://api.opencagedata.com/geocode/v1/json?q=' + location + '&key=02b58331c3075f21b23ab96521c85d81&limit=1'), 2);
+            getGeo(('https://api.opencagedata.com/geocode/v1/json?q=' + location + '&key=02b58331c3075f21b23ab96521c85d81&limit=1'), 2);
             break;
 
           // 3: Query the bing geocoder service.  
@@ -69,7 +69,7 @@ function geoCodeTweet(tweet){
             // Here's where the "turnstileCount" is reset, such that, next time "geoCodeTweet" is called, it'll start
             // with the case 0 geocoder (Google's), then work back down the list from there. 
             turnstileCount = 0;
-            var geocodeRequest = 'http://dev.virtualearth.net/REST/v1/Locations?query=' + location
+            var geocodeRequest = 'https://dev.virtualearth.net/REST/v1/Locations?query=' + location
               + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
 
             // Due to lack of CORS support for bing's service, I use a blank script ("bingScript" is included with all
