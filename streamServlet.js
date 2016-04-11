@@ -6,16 +6,6 @@ var TweetAnalyzer    = require('./tweetAnalyzer.js');
 // and kill the sream in "kill". 
 var stream;
 
-var dummyString = function(){
-	var empty = ' ';
-	var i = 2048;
-	for (; i > 0; i--){
-		empty += ' ';
-	}
-	console.log(empty.length);
-	return empty;
-}();
-
 // Query the Twitter public stream API. Receive a sample of real-time tweets that match query parameters.
 // "data" came from the front end, contains the parameters to define the query to Twitter. "response", 
 // "request", are from the main server, so when response.write is used, it goes back to the front end. 
@@ -80,7 +70,7 @@ this.query = function(data, response, request, wordBank){
 				tweet = string.substring(startInd, endInd); 
 				result = TweetAnalyzer.analyze(JSON.parse(tweet), wordBank);
 				string = "";				
-				response.write(dummyString + JSON.stringify(result));
+				response.write(JSON.stringify(result));
 				console.log(JSON.stringify(result));
 				console.log('\n')
 			}
