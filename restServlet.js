@@ -2,6 +2,15 @@ var util 			 = require('util');
 var TweetAnalyzer    = require('./tweetAnalyzer.js');
 var https            = require('https');
 
+var dummyString = function(){
+	var empty = ' ';
+	var i = 2048;
+	for (; i > 0; i--){
+		empty += ' ';
+	}
+	console.log(empty.length);
+	return empty;
+}();
 
 // "data", here, came from the front end, contains the parameters to define the query to Twitter. "response" 
 // and "request" are from the main server, so when "response.write" is used, it's writing back to the front end.
@@ -56,7 +65,7 @@ this.query = function(data, response, request, wordBank){
 						// The result, at this point, is ready for use in the front end.    
 						result = TweetAnalyzer.analyze(tweets[i], wordBank); 
 						if (result){
-							response.write(JSON.stringify(result)); 
+							response.write(dummyString + JSON.stringify(result)); 
 						}
 					}, i * 500); // The half-second interval is arbitrary/aesthetic.									       
 				})(i); // Closure needed to correctly stagger timeout.
