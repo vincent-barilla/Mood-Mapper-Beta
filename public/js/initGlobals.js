@@ -12,18 +12,14 @@ const Week = function (){
   var pointB = new Date('3/10/2016'); 
   return pointB - pointA;
 }();
-
-// This gives a y-coordinate which allows "scrollTo" calls to jump the user to the form. 
-const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClientRect().height + 
-              document.getElementById('map').getBoundingClientRect().height;  
-
+  
 // Several DOM displays are easiest set with an onLoad function. Those are done here. 
 (function onLoadDisplays(){
   
-  var viewSize = window.innerHeight;
-  document.getElementById('mainViewSection').style.height = viewSize;
-  document.getElementById('map').style.height = viewSize;
-  document.getElementById('text').style.height = viewSize;
+  var mapHeight = window.innerHeight - 55;
+  document.getElementById('mainViewSection').style.height = mapHeight;
+  document.getElementById('map').style.height = mapHeight;
+  document.getElementById('text').style.height = mapHeight;
 
 
   // Since Twitter will only search back a week or so, set the placeholders of the input 
@@ -36,7 +32,7 @@ const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClien
   // Show placeholder dates in 'month/day/year' format in a given input box.
   function setDisplay(html, date){
   	date = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
-  	document.getElementById(html).placeholder = date;
+  	document.getElementById(html).value = date;
   }
 
   // In order to toggle DOM values in "buttonHandler", the following properties all need to be strings. Setting 
@@ -60,6 +56,10 @@ const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClien
     }
   }
 })()
+
+// This gives a y-coordinate which allows "scrollTo" calls to jump the user to the form. 
+const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClientRect().height + 
+              document.getElementById('map').getBoundingClientRect().height;
 
 // These functions need to be global, to be set asynchronously/dynamically in "createCircle" and "geoCodeTweet".
 var bingCallback = function(){};
