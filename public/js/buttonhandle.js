@@ -46,8 +46,8 @@ function buttonHandler(source){
       toggleWithOptCb(document.getElementById('map').style, 'width', '100%', '73%');
       break;
 
-    // An 'onkeyup' event in the "Choose a search subject" input box causes this event. 
-    case 'subject':
+    // An 'onkeyup' event in any of the three inpux boxes in the form causes this event. 
+    case 'formChange':
       // When the user changes the subject, the previously stored "lastId" is no longer relevant. See "mapInit" in 
       // "init.js" for details about what "lastId" does.
       map._resetLastId.call(map, ""); 
@@ -109,7 +109,14 @@ function buttonHandler(source){
 
     // Wipes all circles from the map. Clears any global variables that have been tracking current mood.  
     case 'clear':
-      resetGlobals();
+      // Decouple references of all currently showing circles from the map. 
+      map._clearCircles();
+      // Reset the mood tracking variables to their start values. 
+      globalMood = {"mood" : [0,0,0], "count" : 1 };
+      // Set the text crawl to be blank. 
+      document.getElementById('text').innerHTML = '';
+      // Show the user 'No Circles' on this button. 
+      document.getElementById('togCircVisBtn').firstChild.data = 'No Circles';        
       break;       
   }
 
@@ -156,18 +163,6 @@ function buttonHandler(source){
     if (togSources.length == 2){
       togSources = [];
     }
-  }
-
-  // Reset the global variables that relate to the user's view. 
-  function resetGlobals(){
-    // Decouple references of all currently showing circles from the map. 
-    map._clearCircles();
-    // Reset the mood tracking variables to their start values. 
-    globalMood = {"mood" : [0,0,0], "count" : 1 };
-    // Set the text crawl to be blank. 
-    document.getElementById('text').innerHTML = '';
-    // Show the user 'No Circles' on this button. 
-    document.getElementById('togCircVisBtn').firstChild.data = 'No Circles';    
   }
 
   // Takes an array of html elements, toggles their display to 'none'.

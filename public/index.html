@@ -3,11 +3,12 @@
    <link rel="stylesheet" type="text/css" href="resource/css/style.css">
    <meta charset="ISO-8859-1">
    <title>Welcome to Mood Mapper Beta1</title>
+   <link rel="shortcut icon" href="resource/icon.ico" />
    <!-- All front end JS scripts are in these. Minus comments, there was around 600 lines of code in this file, 
         so I figured a modular approach would be a lot more readable. The order in which these scripts are listed here
         is important to the app loading correctly. If one of the scripts uses variables defined in a previous script, I 
         mention where the original initialization of that variable is. Most global variables are initialized and/or defined
-        in "initGlobals.js". -->
+        in "initGlobals.js". -->        
    <script src='resource/map_scripts/init.js'></script>
    <script src='resource/js/buttonhandle.js'></script>                 
    <script src='resource/js/formvalidate.js'></script>
@@ -68,7 +69,7 @@
        <div id='grp1' style='' class='grp1'>
          <label for='subject'style='display:block' class='label'>
               Choose your subject.<br>
-          <input type="text" id="subject" name='subject' value="BernieSanders" style="display:block" class='formText' onkeyup='buttonHandler(this)'><br>
+          <input type="text" id="subject" name='formChange' value="" placeholder="Your Subject" style="display:block" class='formText' onkeyup='buttonHandler(this)'><br>
          </label>   
          <label for='mode' style='display:block' class='label'>
             Select your search mode.<br>   
@@ -81,12 +82,15 @@
         <div id='grp2' style='display:inline-block' class='grp2'>  
          <label for='startdate' style='display:block' id='startlabel' class='label'>
             Choose a start date for a search, up to one week ago: <br>
-            <input type="text" id="startdate" value="" placeholder="day/month/2016" style="display:block" class='formText'><br>
+            <input type="text" id="startdate" value="" placeholder="day/month/2016" style="display:block" class='formText' 
+                   name='formChange' onkeyup='buttonHandler(this)'
+            ><br>
             <div name="error1" id="starterror" style="display:none" class='err'>Not quite. Please correct the following: </div>   
          </label> 
          <label for='enddate' style='display:block' id='endlabel' class='label'>
             Choose an end date for your search: <br>
-            <input type="text" id="enddate" value="javascript:setDate()" placeholder="day/month/2016" style="display:block" class='formText'><br>       
+            <input type="text" id="enddate" value="" placeholder="day/month/2016" style="display:block" class='formText' 
+                  name='formChange' onkeyup='buttonHandler(this)'><br>       
             <div name="error2" id="enderror"  style="display:none" class='err'>Not quite. Please correct the following: </div>   
          </label>
         </div>

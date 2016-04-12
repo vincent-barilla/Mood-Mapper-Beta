@@ -20,17 +20,17 @@ const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClien
 // Several DOM displays are easiest set with an onLoad function. Those are done here. 
 (function onLoadDisplays(){
   
-  // Since Twitter will only search back a week or so, set the default values of the input 
+  // Since Twitter will only search back a week or so, set the placeholders of the input 
   // boxes to 6 (ish) days ago. 
   var end = new Date();
   var start = new Date(end - Week + 86400 * 1000); // That math at the end equals one day, in ms.
   setDisplay('enddate', end);
   setDisplay('startdate', start);
   
-  // Shows the default dates in 'month/day/year' format in a given input box.
+  // Show placeholder dates in 'month/day/year' format in a given input box.
   function setDisplay(html, date){
   	date = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
-  	document.getElementById(html).value = date;
+  	document.getElementById(html).placeholder = date;
   }
 
   // In order to toggle DOM values in "buttonHandler", the following properties all need to be strings. Setting 
