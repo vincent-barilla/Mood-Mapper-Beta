@@ -220,7 +220,7 @@ div#colorBoxGrp{
 
 div#info {
   background: RGB(240,240,240);  
-  max-height: 140px;
+  max-height: 170px;
   overflow-y: auto;
   overflow-x: hidden;  
 }
