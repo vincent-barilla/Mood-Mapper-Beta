@@ -146,21 +146,21 @@ span#searchInstruct{
 /*........ section contains the map and the tweet crawl, both as divs ......*/
 section {
     width: 98%;
-    height: 750px;
+    height: 725px;
     background: RGB(240,240,240);
     margin: auto;
     padding: 10px;
 }
 div#map { 
     width: 100%;
-    height: 750px;
+    height: 725px;
     float: left;
     margin-right: 3%;
 }
 div#text {
     position: relative;
     width: 23%;
-    height: 750px;
+    height: 725px;
     background: RGB(240,240,240);
     overflow: scroll;
 }

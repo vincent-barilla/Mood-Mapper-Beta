@@ -20,6 +20,12 @@ const yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClien
 // Several DOM displays are easiest set with an onLoad function. Those are done here. 
 (function onLoadDisplays(){
   
+  var viewSize = window.innerHeight;
+  document.getElementById('mainViewSection').style.height = viewSize;
+  document.getElementById('map').style.height = viewSize;
+  document.getElementById('text').style.height = viewSize;
+
+
   // Since Twitter will only search back a week or so, set the placeholders of the input 
   // boxes to 6 (ish) days ago. 
   var end = new Date();
