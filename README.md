@@ -1,4 +1,4 @@
-###Contents:
+###File Directory:
 
 (Order within each group is alphabetical, not the order in which the scripts need to be invoked.)
 
@@ -36,12 +36,7 @@
     public/map_scripts/init.js       - Initialize the Google Map. 
 
 
-
-Explaining some of the denser coding blocks and general engineering concerns for this app: 
-
-A note on commenting: I tried to put the more extensive comments, especially
-those that called for examples, here in the readme. References will be placed in the 
-code to indicate when to use these comments.
+###Comments on the Code: 
 
 ####I.     initWordBank()
 
