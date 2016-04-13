@@ -47,7 +47,7 @@ I.     initWordBank()
 II. Concerns About Twitter Stream Usage Limits
 
   Note that I customize the get request (the stream) to Twitter for each user. This is not a good solution, 
-  according to Twitter. It may, in fact, block apps that make too many connections from the same IP address. 
+  according to Twitter. Twitter may, in fact, block apps that make too many connections from the same IP address. 
 
   That's a big limitation to the streaming mode of my app. Luckily, Twitter is developing something 
   that would solve this problem perfectly: Twitter's Site Streaming API is currently in closed beta, but,
@@ -154,10 +154,6 @@ V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMth
                   oldVal and newVal, and not fire any callbacks. If there's one callback given, use that 
                   callback whenever this button is clicked. If both callbacks are given, use the first 
                   when element shows newVal, and the second when the element shows oldVal. 
-              
-                  I find it counter-intuitive to order the callbacks new before old, but doing so allows 
-                  the single callback to be entered, and used for both sides of the toggle. That's why 
-                  I ordered them as such.
 
               */
 
@@ -208,27 +204,6 @@ VI. function preventCrossToggling(source){
       toggleWithOptCb(document.getElementById('contentBtns').style, 'bottom', '3.5%','5px');      
       toggleWithOptCb(document.getElementById('banFrame').style,'visibility','visible','hidden');
     }
-
-    /* Why wipe out the array, when length == 2? 
-        
-        This makes it so only the last two button clicks are considered. Notice that the 'push' at the start
-        of this function ensures that the length will always be at least 1. When it is 1, the first toggle
-        action -- here, showing the iFrame -- starts. If the two elements in the array are different, nothing
-        happens -- the iFrame stays visible, while the above cases will have set its contents.
-
-        If the user has clicked both buttons once to see both help files, then togSources will have reset to []. 
-        The next click becomes the first and only element in a new togSources. Since the above condition will toggle the
-        actions when togSources.length == 1, the toggle actions will fire again. The previous state of the toggle has
-        the iFrame being visible, so it will now toggle to being closed. 
-
-        It's a bit of a convoluted piece of coding. My reason for doing this is to provide a smoother viewing experience 
-        of the help files. Without it, the user has to click once to open the iFrame, once more to close it, then a  
-        third time to reopen it with new contents. This function cuts that down by one needless click. Or, if the
-        user is finished with the iFrame, it'll still close after two clicks, so long as the same button is clicked twice 
-        in a row.
-
-    */
-
     // Here's the reset to [], whenever a second click, regardless of source, calls this function.
     if (togSources.length == 2){
       togSources = [];
