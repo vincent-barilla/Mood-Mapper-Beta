@@ -2,26 +2,26 @@
 
 (Order within each group is alphabetical, not the order in which the scripts need to be invoked.)
 
-####Server files: 
+#####Server files: 
     server.js        - Main server.
     dispatcher.js    - Gets the requests from the server, parses them, sends them onward for further processing.
     restServlet.js   - Make queries for Twitter RESTful API.
     streamServlet.js - Make queries for Twitter streaming API.
     tweetAnalyzer.js - Analyze a tweet's text for inferred mood.
 
-####Data files: 
+#####Data files: 
     public/AFINN/JSON/MasterList.json - AFINN word list.
 
-####Help files: 
+#####Help files: 
     Readme.md             - Readme for the whole project.
     public/aboutThis.html - About the app.
     public/mapTips.html   - About map features.
 
-####Mark-up and styles: 
+#####Mark-up and styles: 
     public/css/style.css - CSS style sheet.
     public/index.html    - Home view markup.
 
-####Front-end JS files:  
+#####Front-end JS files:  
     public/js/buttonhandle.js - All buttons invoke one handler, it then executes actions according to what was pushed.
     public/js/colorboxes.js   - Update averaged tweet moods as RGB colors.
     public/js/formsubmit.js   - Send user parameters to the server (server.js).
@@ -30,7 +30,7 @@
     public/js/initGlobals.js  - Initialize several global variables on page load.
     public/js/pause.js        - Pause mapping, sever connection to Twitter stream API.
 
-####Google Map-specific JS files:  
+#####Google Map-specific JS files:  
     public/map_scripts/circledraw.js - Draw a color-coded circle for each tweet on the map. 
     public/map_scripts/geocode.js    - Take a tweet's location string, query a geocoder service, get coordinates. 
     public/map_scripts/init.js       - Initialize the Google Map. 
@@ -43,7 +43,7 @@ A note on commenting: I tried to put the more extensive comments, especially
 those that called for examples, here in the readme. References will be placed in the 
 code to indicate when to use these comments.
 
-###I.     initWordBank()
+####I.     initWordBank()
 
   Read in data from a local file path, then reformat it into a wordBank that is tailored
   to the needs of tweetAnalyzer. A sample of the start product:
@@ -83,7 +83,7 @@ code to indicate when to use these comments.
 
   
   
-###II. Concerns About Twitter Stream Usage Limits
+####II. Concerns About Twitter Stream Usage Limits
 
   Note that I customize the get request (the stream) to Twitter for each user. This is not a good solution, 
   according to Twitter. Twitter may, in fact, block apps that make too many connections from the same IP address. 
@@ -99,7 +99,7 @@ code to indicate when to use these comments.
 
 
 
-###III.   Delimiting Stream Response
+####III.   Delimiting Stream Response
     
     /* What I did: 
 
@@ -143,7 +143,7 @@ code to indicate when to use these comments.
 	
 
 	
-###IV.     Why Track "lastId"? 
+####IV.     Why Track "lastId"? 
 
   GET requests to Twitter using the same set of parameters will usually return the same batch of tweets 
   in response. For the user, this means he or she will see the same medley of circles show up on the 
@@ -164,8 +164,9 @@ code to indicate when to use these comments.
 
 
 
-###V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
+####V.     toggleWithOptCb
 
+	toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
           /* Paraphrasing the arguments:
 
               elem: The html element you want to change. 
@@ -211,47 +212,48 @@ code to indicate when to use these comments.
 
 
 
-###VI. function preventCrossToggling(source){
-
-    /* What this does, in a nutshell: 
-
-      If 'banFrame' is hidden and minimized, maximize and show it. This will contain how-to info for 
-      the app. As two buttons set the 'src' of the iFrame, this function checks to make sure one button isn't 
-      toggling 'hidden' when the other one is expecting 'visible.'
-    
-    /*  
-
-    togSources.push(source);
+####VI. function preventCrossToggling
  
-    if (togSources.length == 1 || togSources[0] == togSources[1]){
+	 function preventCrossToggling(source){
+	    /* What this does, in a nutshell: 
+	
+	      If 'banFrame' is hidden and minimized, maximize and show it. This will contain how-to info for 
+	      the app. As two buttons set the 'src' of the iFrame, this function checks to make sure one button isn't 
+	      toggling 'hidden' when the other one is expecting 'visible.'
+	    
+	    /*  
+	
+	    togSources.push(source);
+	 
+	    if (togSources.length == 1 || togSources[0] == togSources[1]){
+	
+	      /* What happens when the length is either one, or both elements are the same?  
+	
+	        If only one source has been kept track of so far, go ahead and let it start its toggle action. Then,
+	        the next time a button is clicked, compare it to the first one. If they're different, then do not 
+	        let the first button's action be un-toggled. 
+	
+	        In practice, this means either 'action' or 'mapHowTo' can toggle the iFrame to be visible, but it
+	        will only toggle to be hidden if the same button is clicked consecutively. If the user first 
+	        clicks one button to open the iFrame, then clicks the other button, iFrame now will stay open, even 
+	        though the contents have been changed.
+	
+	      */
+	
+	      // All thsee values toggle between the iFrames visible/hidden states.       
+	      toggleWithOptCb(document.getElementById('bannerContentDiv').style, 'height', '500px','60px');
+	      toggleWithOptCb(document.getElementById('contentBtns').style, 'bottom', '3.5%','5px');      
+	      toggleWithOptCb(document.getElementById('banFrame').style,'visibility','visible','hidden');
+	    }
+	    // Here's the reset to [], whenever a second click, regardless of source, calls this function.
+	    if (togSources.length == 2){
+	      togSources = [];
+	    }
+	  }
 
-      /* What happens when the length is either one, or both elements are the same?  
-
-        If only one source has been kept track of so far, go ahead and let it start its toggle action. Then,
-        the next time a button is clicked, compare it to the first one. If they're different, then do not 
-        let the first button's action be un-toggled. 
-
-        In practice, this means either 'action' or 'mapHowTo' can toggle the iFrame to be visible, but it
-        will only toggle to be hidden if the same button is clicked consecutively. If the user first 
-        clicks one button to open the iFrame, then clicks the other button, iFrame now will stay open, even 
-        though the contents have been changed.
-
-      */
-
-      // All thsee values toggle between the iFrames visible/hidden states.       
-      toggleWithOptCb(document.getElementById('bannerContentDiv').style, 'height', '500px','60px');
-      toggleWithOptCb(document.getElementById('contentBtns').style, 'bottom', '3.5%','5px');      
-      toggleWithOptCb(document.getElementById('banFrame').style,'visibility','visible','hidden');
-    }
-    // Here's the reset to [], whenever a second click, regardless of source, calls this function.
-    if (togSources.length == 2){
-      togSources = [];
-    }
-  }
 
 
-
-###VII.      Comments on Geocoding Usage:
+####VII.      Comments on Geocoding Usage:
 
   I've found that geocoders are not very well-suited for streaming live data. They'll briefly stop working
   if you exceed some per-second query limit which is not clearly stated in the documentation. To work around
