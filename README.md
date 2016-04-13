@@ -10,30 +10,32 @@ Server files:
   tweetAnalyzer.js - Analyze a tweet's text for inferred mood.
 
 Data files: 
-  public/AFINN/JSON/MasterList.json - AFINN word list.
+    public/AFINN/JSON/MasterList.json - AFINN word list.
 
 Help files: 
-  Readme.md             - Readme for the whole project.
-  public/aboutThis.html - About the app.
-  public/mapTips.html   - About map features.
+    Readme.md             - Readme for the whole project.
+    public/aboutThis.html - About the app.
+    public/mapTips.html   - About map features.
 
 Mark-up and styles: 
-  public/css/style.css - CSS style sheet.
-  public/index.html    - Home view markup.
+    public/css/style.css - CSS style sheet.
+    public/index.html    - Home view markup.
 
 Front-end JS files:  
-  public/js/buttonhandle.js - All buttons invoke one handler, it then executes actions according to what was pushed.
-  public/js/colorboxes.js   - Update averaged tweet moods as RGB colors.
-  public/js/formsubmit.js   - Send user parameters to the server (server.js).
-  public/js/formvalidate.js - Make sure user input is valid.
-  public/js/initDisplays.js - Initialize several DOM view states on page load.
-  public/js/initGlobals.js  - Initialize several global variables on page load.
-  public/js/pause.js        - Pause mapping, sever connection to Twitter stream API.
+    public/js/buttonhandle.js - All buttons invoke one handler, it then executes actions according to what was pushed.
+    public/js/colorboxes.js   - Update averaged tweet moods as RGB colors.
+    public/js/formsubmit.js   - Send user parameters to the server (server.js).
+    public/js/formvalidate.js - Make sure user input is valid.
+    public/js/initDisplays.js - Initialize several DOM view states on page load.
+    public/js/initGlobals.js  - Initialize several global variables on page load.
+    public/js/pause.js        - Pause mapping, sever connection to Twitter stream API.
 
 Google Map-specific JS files:  
-  public/map_scripts/circledraw.js - Draw a color-coded circle for each tweet on the map. 
-  public/map_scripts/geocode.js    - Take a tweet's location string, query a geocoder service, get coordinates. 
-  public/map_scripts/init.js       - Initialize the Google Map. 
+    public/map_scripts/circledraw.js - Draw a color-coded circle for each tweet on the map. 
+    public/map_scripts/geocode.js    - Take a tweet's location string, query a geocoder service, get coordinates. 
+    public/map_scripts/init.js       - Initialize the Google Map. 
+
+    
 
 Explaining some of the denser coding blocks and general engineering concerns for this app: 
 
