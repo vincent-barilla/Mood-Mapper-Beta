@@ -85,6 +85,7 @@ this.query = function(data, response, request, wordBank){
 this.kill = function(response){
 	stream.abort();
 	response.writeHead(200,{'Content-Type': 'text/plain; charset=UTF-8'});
+	console.log('kill');
 	response.end("Stream ended.");
 }
 

@@ -7,29 +7,26 @@ function createTweetCircle(tweet, center, source){
   var color = 'RGB(' + tweet.stats.mood.toString() + ')';                    
   var tweetCircle = setTweetCircle();
   tweetCircle.initListeners();
-
   // Track the tweet's id for parameterizing later Twitter GET requests. 
   tweetCircle._setId(tweet.id);
-
   // Store the circle in the map for later toggling of visibility.  
   tweetCircle._storeInMap(map);
-
   // Set an href in the text crawl that pans the map and zooms to the current "center".
   linkToCircle();
 
-  // This sets the radius such that smaller tweets receive a bigger bump that larger ones, 
-  // capped at 50k followers. I left the math unsimplified (and quite ugly, sorry) to make it 
-  // easier to make micro-adjustments (small changes here show as big changes in the map). 
+  // Circle radii are in meters, so numbers of followers need to be multiplied in order for the circle to show on 
+  // the map. This sets the radius such that smaller tweets receive a bigger bump in size than larger ones, 
+  // capped at 25k followers, after which there is a constant multiplier.
   function setRadius(){
     var rad = tweet.stats.reach;
     if (rad){
       // In short -- it's half of an upside-down parabola (fast growth for small numbers, slow growth
-      // towards the middle, decay after), with the middle set at 25k followers. The constants are 
-      // set to further increase the growth of smaller circles, relative to that of larger circles.
-      rad > 25000 ? rad *= 20 : rad = ((500000 - 20 * rad) * .000095 * rad) ;
+      // towards the middle), with the middle set at 25k followers. The constants are set to further increase 
+      // the growth of smaller circles, relative to that of larger circles.
+      rad > 25000 ? rad *= 25 : rad = ((50 - .001 * rad) * rad);
     } else {
-      // 40 meters is the default, for a user with no followers. 
-      rad = 40;
+      // 50 meters is the default, for a user with no followers. 
+      rad = 50;
     }
     return rad;
   }
@@ -49,7 +46,6 @@ function createTweetCircle(tweet, center, source){
       'clickable'    : true,
       'geodesic'     : false,
     });
-
     // Each circle has its own Info Window object following it around, displaying
     // information about its tweet.
     circle.infoWindow = initInfoWindow(); 
@@ -78,6 +74,7 @@ function createTweetCircle(tweet, center, source){
       // If there are words inside either posWords or negWords, make a row for the "content" table out of an html
       // string. It'll be formatted as such: "love(4), win(3), hate(-4)". 
       function wordsToRow(words){
+        // Notice the use of "concat" in the definition of "content". "words" has both "posWords" and "negWords".
         if (words.length > 0){
           var str = '';
           // "str" will become a comma-separated string of all words that were scored in "tweet".
@@ -86,51 +83,44 @@ function createTweetCircle(tweet, center, source){
               // Put a plus sign in front of everything from "posWords" (scores > 0).
               word.score = '+' + word.score;
             }
-            // Concatenate "word(+/-score)," until the last element, then, drop the comma, concatenate (word(+/-score) only).
+            // Concatenate "word(+/-score)," until the last element, then, drop the comma, concatenate "(word(+/-score)" only).
             i < words.length - 1 ? str += (word.word + ' (' + word.score +'), ') : str += (word.word + ' (' + word.score +')');
           })
           // Scoring words from both "posWords" and "negWords" appear in the same html string. 
           return '<tr><td>Scoring Words:</td><td>' + str + '</td></tr>';          
         } else {
-          // If there aren't any words in this array, return an empty string. No row will show in "content" for this type.
+          // If there aren't any words in this array, return an empty string. No row will show in "content" for this tweet.
           return '';
         }
       };
     }
-
     // The circle has its own listeners, detecting events such as "drag", "mouseover", etc.
     circle.initListeners = function(){
-      // "holdWindow" will tell listeners whether or not to close an info window immediately on a 'mouseout', or whether
-      // to hold it open. 
+      // "holdWindow" will tell listeners whether or not to close an info window immediately on a 'mouseout'. 
       var holdWindow = false;
       var timer = null;
 
       // Sets a listener that triggers whenever the cursor passes over this circle.
       this.addListener('mouseover', function(){
-        // Without this condition, the info Window stays open, after being clicked the first time, until
-        // you click it again. With this condition, the info window closes after the next time the mouseover
-        // occurs (leads to much cleaner viewing.)
+        // With this condition, the info window closes after the next time the mouseover
+        // occurs, after it has been clicked to hold it open.
         if (holdWindow){
           holdWindow = false
         };
-
         // Before opening the window, it must be anchored to the circle. 
         anchorInfoWindow(this);     
-
-        // When the cursor passes over this circle, make a small increase in its radius, to clarify which 
+        // When the cursor passes over this circle, make a small increase in its radius to clarify which 
         // circle is currently under the cursor.       
         explodeView();
-
         // Open up the map, now that all the above properties have been set.                 
         this.infoWindow.open(map);
-
         // The helper function which gives the temporary boost to radius. 
         function explodeView(){
           circle.setRadius(radius * 1.15);
         }  
       });
 
-      // Set the timer to clear, reset the radius (undoes "explodeView"), and close the info window if 
+      // Clear the timer, reset the radius (undoes "explodeView"), and close the info window if 
       // "holdWindow" is not true on a 'mouseout' event.
       this.addListener('mouseout', function(){
         clearTimer();
@@ -176,7 +166,7 @@ function createTweetCircle(tweet, center, source){
         var span = circle.getBounds().toSpan();
         // Dealing with latLng math is made difficult due to conversion factors of lat/long values 
         // into meters. Spherical math is needed, which takes up a bunch of space. "getBounds" keeps the units 
-        // in latLng, alleviates that issue.
+        // in coordinates, alleviates that issue.
         var latLng = {'lat': cen.lat() + (span.lat() / 2.3), 'lng': cen.lng() + (span.lng() / 2.3) };
         circle.infoWindow.setPosition(latLng);                    
       }  
@@ -193,11 +183,10 @@ function createTweetCircle(tweet, center, source){
   }
 
   // Appends an href to the crawl to the right of the map. The href has the tweet's text and is color-
-  // coded to its mood (same color as the circle). Clicking it pans the map to center over this circle. 
+  // coded to its mood (same color as the circle). Clicking it pans the map to center over its circle. 
   function linkToCircle(){
     var a = document.createElement('a');
     a.innerHTML = tweet.text + "<br><br>";
-
     // Setting display to 'block' helps to stabilize the animations, prevents 'mouseout's from firing when 
     // the cursor slides between gaps in characters, words, line spaces, etc..
     a.style.display = 'block';
@@ -207,20 +196,20 @@ function createTweetCircle(tweet, center, source){
     // Concatenate this string to preserve the current center in the DOM, ensures map pans to correct circle.
     var centerString = center.lat.toString() + ',' + center.lng.toString();
     a.href = 'javascript:panToCircle([' + centerString + ']);' 
-    // Creates a gold ring to go around 'this' circle when the cursor hovers over 'a.href'.
+    // Creates a gold ring to go around 'this' circle when the cursor hovers over "a.href'\".
     highlightHalo();
     // Append "a" to the crawl.
     document.getElementById('text').appendChild(a);
-
     // The href's function; pans the map to "this" circle's center.
     panToCircle = function(latLng){
+      // Though "centerString" was a string above, it evaluates as an array, here.
       var lat = Number(latLng[0]);
       var lng = Number(latLng[1]);
       // "zoomLevel" is either 6 (more zoom) for tweets that have locations, or 5 (less zoom) for the tweets in 
-      // "tweetDump". (Auto-zooming in too much within "tweetDump" is disorienting, I found.)
+      // "tweetDump". (Auto-zooming too close within "tweetDump" is disorienting, I found.)
       var zoomLevel = (lat == DefaultCenter.lat && lng == DefaultCenter.lng) ? 5 : 6;     
-      // Using "center" from the outer scope doesn't work. It leads to panning to the most recently drawn circle, as "center"
-      // refers to a variable that keeps getting overwritten.
+      // Take the center from the local argument, not "center" from the outer scope. "center" from the outer scope
+      // is overwritten by the time this will fire, panning the map to the most recently drawn circle.
       var cen = {'lat': lat, 'lng': lng};
       map.setZoom(zoomLevel); 
       map.setCenter(cen);
@@ -229,7 +218,7 @@ function createTweetCircle(tweet, center, source){
       map.panTo(cen);
     }
 
-    // Sets a ring to zoom in and out around a circle, helps clarify which circle belongs to which tweet, in the crawl.   
+    // Sets a ring to zoom in and out around a circle, helps clarify which circle belongs to which tweet, from the crawl.   
     function highlightHalo(){  
       var haloRad = radius * 1.3;
       // An empty golden ring -- a halo.
@@ -243,18 +232,18 @@ function createTweetCircle(tweet, center, source){
         'center'       : center,
         'radius'       : haloRad,
       });
-
       // A timeout will be used to animate the halo expanding and contracting. 
       var haloTimer;
-
-      // The ring will zoom in and out around a circle in a 'mouseover' event of the href in the crawl.
+      // A 'mouseover' event of the href in the crawl triggers halo animation around its circle.
       a.addEventListener('mouseover', function(){
         // Light up "tweetDump", in addition to the halo, in case the halo is buried under a big stack of dumped tweets.
         if (source == 'default'){
           tweetDump.setOptions({'strokeColor': 'RGB(255,255,100)',
                                 'strokeOpacity': .4 });      
-        }  
+        }
+        // Make the halo visible.  
         hrefHalo.setMap(map); 
+        // Pre-allocate "i", as there will be many iterations.
         var i = 1;
         // Read as "the amount by which to change halo."
         var haloChange = .17; 
@@ -267,7 +256,7 @@ function createTweetCircle(tweet, center, source){
               // "haloIncr" tells "haloChange" to either increment or decrement. 
               haloIncr ? haloChange += .17 : haloChange -= .17;
               // .17 and 5 form lower and upper bounds for "haloChange". When a bound is reached, flip "haloIncr", so that
-              // "haloChange" will move towards the opposite bound in the next loop iteration.
+              // "haloChange" will now move towards the opposite bound in the next loop iteration.
               if (haloChange >= 5){
                 haloIncr = false;
               }
@@ -286,9 +275,11 @@ function createTweetCircle(tweet, center, source){
       a.addEventListener('mouseout', function(){
         clearTimeout(haloTimer);
         hrefHalo.setMap(null);
-        // These are the original values from "mapInit".
-        tweetDump.setOptions({'strokeColor': 'RGB(85,85,85)',
-                              'strokeOpacity': .25});      
+        if (source == 'default'){
+          // These are the original values for "tweetDump" from "mapInit" in "init.js".
+          tweetDump.setOptions({'strokeColor': 'RGB(85,85,85)',
+                                'strokeOpacity': .25});   
+        }                         
       });    
     } 
   };

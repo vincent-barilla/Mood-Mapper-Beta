@@ -2,33 +2,32 @@ Explaining some of the denser coding blocks and general engineering concerns for
 
 Intro -- A note on commenting: I tried to put the more extensive comments, especially
 those that called for examples, here in the readme. References will be placed in the 
-code where I had originally left a too-long comment, then relocated it to this file. 
-
-The exception to this is "tweetAnalyzer.js", which I thought was much more accessible, 
-as a purely invented approach to sentiment analysis, with step-by-step explanations 
-to accompany the decisions I was making, side-by-side with the code. 
-
+code to indicate when to use these comments.. 
 
 I.     initWordBank()
 
-   Read in data from a local file path, then reformat it into a wordBank that is tailored
+  Read in data from a local file path, then reformat it into a wordBank that is tailored
   to the needs of tweetAnalyzer. A sample of the start product:
   
-  		var wordFile = {'english':[ {'word': 'love',
-  									'score': 4},
-  								    {'word': 'hate',
-  								    'score': -4} ],
-  					    'spanish':[ {'word': 'amor',
-  					    			'score': 4},
-  					     			{'word': 'odio',
-  					     			'score': -4} ] };
+  		var wordFile = {'english':[ 
+                       {'word': 'love',
+  								  	 'score': 4},
+  								     {'word': 'hate',
+  								     'score': -4} ],
+  					         'spanish':[ 
+                       {'word': 'amor',
+  					    			 'score': 4},
+  					     			 {'word': 'odio',
+  					     			 'score': -4} ] };
   
    And a sample of the end product:
   
-  		var wordBank = {'english': {'love': 4,
-  									'hate': -4},
-  						'spanish': {'amor': 4,
-  						 			'odio': -4}};
+  		var wordBank = {'english': 
+                         {'love': 4,
+  								    	 'hate': -4},
+  			        		'spanish': 
+                         {'amor': 4,
+  						 		   	   'odio': -4} };
   
   This allows for tweetAnalyzer to make rapid checks to see if a word is in a wordBank, 
   with the following: 
@@ -47,28 +46,16 @@ II. Concerns About Twitter Stream Usage Limits
 
   Note that I customize the get request (the stream), making a unique connection to Twitter 
   for each user. This is NOT a good solution, according to Twitter. Twitter will, in fact, 
-  block access to accounts who make too many connections from the same IP address. 
+  block accounts who make too many connections from the same IP address. 
 
-  That's a big limitation to the streaming mode of my app. A possible workaround would be 
-  to make one stream for the entire server, remove all filtering (or try to -- there would 
-  have to be something to define my request query), then receive the user parameters, make 
-  a filter from them, and apply this filter as a 
-  response.addListener('data', function(data){//and here I parse data}) to the server's stream. 
-  The user is then listening to a global stream for matches of their parameters. 
+  That's a big limitation to the streaming mode of my app. All the solutions that I can think 
+  of would ask Twitter's public stream to do something it wasn't meant to. My best approach is 
+  probably to just keep my code as is, demo for you the idea as I originally saw it, and then 
+  wait on a new tech to come out. This may not take so long: Twitter is actually developing something 
+  that	would be perfect for this app: Twitter's Site Streaming API is currently in closed beta, but,
+  when open, it will do exactly what I'm talking about here -- make customized connections per user, 
+  for many users, for your app. When Site Stream comes out, it should be an easy inclusion to this app. 
 
-  I don't like that solution, insofar as it means flooding the server with this generalized 
-  stream of tweets, of which the user(s) only cares about a tiny percent. Also, I doubt I could 
-  ake a filter to detect 100% of all relevant tweets from the global stream, which will already 
-  be diluted by huge amounts of irrelevant tweets, so the user ends up seeing a much less 
-  interesting stream. 
-
-  All other solutions that I can think of would similarly ask Twitter's public stream to do 
-  something it wasn't meant to. My best solution is probably to just keep my code as is, demo 
-  for you the idea as I originally saw it, and then wait on a new tech to come out. This may not 
-  take so long: Twitter is actually developing something that	would be perfect for this app: 
-  Twitter's Site Streaming API is currently in closed beta, but, when open, it will do exactly what 
-  I'm talking about here -- make customized connections per user, for many users, for your app. When 
-  Site Stream comes out, it should be an easy inclusion to this app. 
 
 
 
@@ -90,16 +77,18 @@ III.   Delimiting Stream Response
       startInd = string.indexOf('\r\n{"created_at":"'); 
       endInd = string.lastIndexOf('\r\n{"created_at":"');
 
-      /* The downside to what I did, and why I didn't fix it: 
+      /* The downside to what I did, and why I have left it as-is: 
 
-        Use startInd and endInd to pull out the entire tweet, pass it through tweetAnalyzer, reset the 
-        string for the next incoming tweet, and write the result, in JSON, back to the front end. Note 
-        that setting string to "" wipes out the tail of the string, which could have been coupled with 
-        chunk to form another tweet. This means I'm losing about half the tweets that I could be returning to 
-        the start of the next the front end. Because the streaming is already very close to maxing out 
-        the geocoders on the front end, I'm leaving that alone. It actually acts as a de facto throttling
-        measure; fixing it would double theload on geocoders, which they cannot support. If I can further 
-        boost the geocoders, then I can supportthe additional load, and will then fix this. 
+        I use startInd and endInd to pull out the entire tweet, pass it through tweetAnalyzer, reset the 
+        string for the next incoming tweet, and write the result, in JSON, back to the front end. 
+
+        The downside: setting string to "" wipes out the tail of the string, which could have been coupled with the 
+        beginning of the next data chunk to form another tweet. This means I'm losing about half the tweets 
+        that I could be returning to the front end. 
+
+        Because the streaming is already very close to maxing out the geocoders on the front end, I'm leaving that alone. 
+        Losing tweets actually acts as a de facto throttling measure; fixing it would double the load on geocoders, 
+        which they cannot support. If I can further boost the geocoders, then I can support the additional load. 
 
       */
       if (endInd > startInd){ 
@@ -111,16 +100,15 @@ III.   Delimiting Stream Response
         console.log('\n')
 	
 
-
 	
 IV.     Why Track "lastId"? 
-  
 
     All GET requests to Twitter using the same set of parameters will return the same batch of tweets 
     in response. For the user, this means he or she will see the same medley of circles show up on the 
-    map over and over again, till the form values are changed and a new GET request sends. To solve 
-    this, the id of the the last tweet must be stored, so that it can then be used in the "max_id" 
-    parameter. "mad_id" tells Twitter to only respond with tweets that are older* than the one 
+    map over and over again, till the form values are changed and a new GET request sends. 
+
+    To solve this, the id of the the last tweet must be stored. It can then be used in the "max_id" 
+    parameter of the GET request. "mad_id" tells Twitter to only respond with tweets that are older* than the one 
     corresponding to this id. The user will now see all new tweets every time they hit "Submit" on the 
     front end, even if they use the identical form, multiple times.  
 
@@ -144,8 +132,10 @@ V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMth
               prop: The property of that element you want to change. 
               newVal: The new value you want. 
               oldVal: The value it currently is, which it will then be toggled back to, on the next click. 
-              newOnClickMthd: A callback that you want to fire whenever the button is clicked.
-              oldOnClickMthd: A callback that you want to fire when the element is showing the value found 
+              newOnClickMthd: A callback that you want to fire whenever the button is clicked - OR - a callback
+                              you want to fire only when the element's property is set to arguments[2]. Whether or not
+                              there is a sixth argument determines between the two options. 
+              oldOnClickMthd: A callback that you want to fire when the element's property is set to the value found 
                               in arguments[3]. Including this means the callback in agument[4] will be 
                               associated with the value in arguments[2].
 
@@ -187,13 +177,12 @@ V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMth
 
 
 
-
 VI. function preventCrossToggling(source){
 
     /* What this does, in a nutshell: 
 
       If 'banFrame' is hidden and minimized, maximize and show it. This will contain how-to info for 
-      the app. As two buttons set the 'src' of the iFrame, this checks to make sure one button isn't 
+      the app. As two buttons set the 'src' of the iFrame, this function checks to make sure one button isn't 
       toggling 'hidden' when the other one is expecting 'visible.'
     
     /*  
@@ -216,7 +205,7 @@ VI. function preventCrossToggling(source){
 
         My reason for doing this is to provide a smoother viewing experience of the help files. Without it,
         the user has to click once to open the iFrame, once more to close it, then a third time to reopen 
-        it with new contents. This function cuts that down by one needless click. Or, if they are done with the
+        it with new contents. This function cuts that down by one needless click. Or, if the user is finished with the
         iFrame, it'll still close after two clicks, so long as the same button is clicked twice in a row.
 
       */
@@ -232,7 +221,8 @@ VI. function preventCrossToggling(source){
         This makes it so only the last two button clicks are considered. Notice that the 'push' at the start
         of this function ensures that the length will always be at least 1. When it is 1, the first toggle
         action -- here, showing the iFrame -- starts. If the two elements in the array are different, nothing
-        happens -- the iFrame stays visible, while the above cases will have set its contents. 
+        happens -- the iFrame stays visible, while the above cases will have set its contents.
+
     */
     if (togSources.length == 2){
       togSources = [];
@@ -241,14 +231,15 @@ VI. function preventCrossToggling(source){
 
 
 
-VII.      Comments on Geocoding Usage
+VII.      Comments on Geocoding Usage:
 
-    I've found that geocoders are not very well-suited for streaming live data.  They'll briefly stop working
+    I've found that geocoders are not very well-suited for streaming live data. They'll briefly stop working
     if you exceed some per-second query limit which is not clearly stated in the documentation. To work around
     this, I spread the workload over four geocoders: Google, mapQuest, Open Cage, and bing. This alleviates
     the issue of maxing out the per-second limit for most instances, the exception being when you're tracking
-    a massively trending topic (recently, Villanova won the NCAA championship in dramatic fashion -- the four
-    geocoders couldn't keep up for very long, immediately after the game).
+    a massively trending topic. As a recent example, Villanova won the NCAA championship in dramatic fashion. 
+    When I used "Villanova" immediately after the game as my subject in live streaming mode, the four geocoders 
+    couldn't keep up for very long.
 
     I implement the group of geocoders with a 'turnstileCount' variable in a switch statement. 'turnstileCount'
     has four possible values, 0-3, each representing one of the geocoders. In the case for the current geocoder,
@@ -259,7 +250,7 @@ VII.      Comments on Geocoding Usage
     Google comes equipped with a geocoder constructor, which I utilize, and Open Cage and mapQuest are similar
     enough that I pass them both to the same helper function. bing rejected my CORS query attempt, so I use the
     request url as the src to a script, and include a callback in the request, such that the src script will grab
-    the data from the page and pass it to createTweetCircle.
+    the data from the src contents and pass it to createTweetCircle.
 
 
 

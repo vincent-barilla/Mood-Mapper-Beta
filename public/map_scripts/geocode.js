@@ -19,8 +19,7 @@ function geoCodeTweet(tweet){
     // Update the tweet's location, now without its id code, for display in "drawTweetCircle".
     tweet.location = location;
     switch(id){
-      
-      // Here, locations are already coordinates, and do not need geocoding.
+      // Here, locations are already coordinates and do not need geocoding.
       case 'CO:':
         var latLng = location.split(",");
         // This format for "center" is standardized across geocoder responses. This helps with the later href map panning function. 
@@ -30,7 +29,6 @@ function geoCodeTweet(tweet){
       // UL stands for "user location". Cycle through geocoders. 
       case 'UL:':
         switch(turnstileCount){
-
           // 0: Query the Google geocoder.
           case 0:
             // Increment "turnstileCount", so the next time this function is called, the next geocoder in line is used.
@@ -56,51 +54,27 @@ function geoCodeTweet(tweet){
           // 1: Query the mapquest geocoder service using the "getGeo" helper function.    
           case 1:  
             turnstileCount++;
-            getGeo(('https://www.mapquestapi.com/geocoding/v1/address?key=bTOgIMAbO4p0SvZmAgD9EIFVxqO2MocO&maxResults=1&location=' + location), 1);
+            getGeo(('https://www.mapquestapi.com/geocoding/v1/address?key=bTOgIMAbO4p0SvZmAgD9EIFVxqO2MocO&maxResults=1&location=' + location), 'mapQuest');
             break; 
 
           // 2: Query the Open Cage geocoder service using the "getGeo" helper function.     
           case 2: 
             turnstileCount++; 
-            getGeo(('https://api.opencagedata.com/geocode/v1/json?q=' + location + '&key=02b58331c3075f21b23ab96521c85d81&limit=1'), 2);
+            getGeo(('https://api.opencagedata.com/geocode/v1/json?q=' + location + '&key=02b58331c3075f21b23ab96521c85d81&limit=1'), 'OpenCage');
             break;
 
           // 3: Query the bing geocoder service.  
           case 3:
             // Here's where the "turnstileCount" is reset, such that, next time "geoCodeTweet" is called, it'll start
             // with the case 0 geocoder (Google's), then work back down the list from there. 
-            turnstileCount = 0; 
-
-url = 'https://dev.virtualearth.net/REST/v1/Locations?query=' + location + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
-            
-            var geoXHR = new XMLHttpRequest();
-            // The url here is a user-parameterized query string.  
-            geoXHR.open('GET', url);
-            geoXHR.send();  
-            geoXHR.onreadystatechange = function(){
-              if (geoXHR.readyState == XMLHttpRequest.DONE && geoXHR.status == 200) {
-                // Results from both services come as JSON strings. 
-                var response = JSON.parse(geoXHR.responseText);
-                if(response.results[0]){
-                  center = response.resourceSets[0].resources[0].point.coordinates;
-                  if (center) {     
-                    alert('CENTER WORKS NOW')
-                    createTweetCircle(tweet, center)
-                  }
-                }
-              } 
-            }; /*
-
-
+            turnstileCount = 0;
             var geocodeRequest = 'https://dev.virtualearth.net/REST/v1/Locations?query=' + location
               + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
-
             // Due to lack of CORS support for bing's service, I use a blank script ("bingScript" is included with all
             // the other scripts in the header of "index.html"), then set its "src" to the user-parameterized 
             // query string above. "bingScript" will now have the results from that query in it. When "bingCallback" 
-            // fires, it grabs data from those results, and processes them in the same pattern as the above cases. 
-            bingScript.setAttribute('src', geocodeRequest);                                             
-
+            // fires, it grabs data from those results and processes them in the same pattern as the above cases. 
+            bingScript.setAttribute('src', geocodeRequest);                                           
             // This callback fires as soon as the "geocodeRequest" is set to bingScript's "src" attribute in the above
             // line. The callback repeats the same pattern as the above cases. 
             bingCallback = function(response){ 
@@ -111,7 +85,7 @@ url = 'https://dev.virtualearth.net/REST/v1/Locations?query=' + location + '&max
                   createTweetCircle(tweet, center)
                 }
               }
-            } */
+            }
             break;
         }    
       break;
@@ -119,12 +93,12 @@ url = 'https://dev.virtualearth.net/REST/v1/Locations?query=' + location + '&max
   // If the tweet didn't have a location, send it to "tweetDump".   
   } else if (location == null){
     center = DefaultCenter;
-    // "default" will be used here for telling "tweetCircleDraw" when to highlith "tweetDump" for the user.
+    // "default" will be used here for telling "tweetCircleDraw" when to highlight "tweetDump" for the user.
     createTweetCircle(tweet, center, 'default');
   }
 
-  // This helper function makes an ajax GET query to either Open Cage or mapQuest.
-  function getGeo(url, count){
+  // This helper function makes an ajax GET query to either Open Cage or mapQuest. Used to condense their repetitive logic.
+  function getGeo(url, source){
     var geoXHR = new XMLHttpRequest();
     // The url here is a user-parameterized query string.  
     geoXHR.open('GET', url);
@@ -134,11 +108,9 @@ url = 'https://dev.virtualearth.net/REST/v1/Locations?query=' + location + '&max
         // Results from both services come as JSON strings. 
         var response = JSON.parse(geoXHR.responseText);
         if(response.results[0]){
-
-          // 1 uses mapQuest geocoder service, not 1 uses Open Cage's service. The returns from the queries
-          // do not come in the same format, which is why it's necessary to have separate assignments. The 
+          // The returns from the queries do not come in the same format, which is why it's necessary to have separate assignments. The 
           // first option is how mapQuest results must be assigned, the second is for Open Cage results.
-          count == 1 ? (center = response.results[0].locations[0].latLng) : (center = response.results[0].geometry);
+          source == 'mapQuest'? (center = response.results[0].locations[0].latLng) : (center = response.results[0].geometry);
           if (center) {     
             createTweetCircle(tweet, center)
           }

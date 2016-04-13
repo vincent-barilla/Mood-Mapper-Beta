@@ -6,17 +6,14 @@
 <body style="background-color:RGB(245,245,245); margin-left:2%; margin-right:2%">
 	<p class='formText lrg' style='line-height:125%'>
 	<br>
-		MyUnnamedApp translates tweets into colors based on their mood, then uses those colors to draw a circle, centered at the tweet's origin and sized by the tweeter's number of followers, on the map below. You'll have your choice of live streaming or seeing tweets up to a week old. </p>
+		Mood Mapper Beta shows you a worldwide map of tweets, represented as colored circles, about any subject you'd like to see. Number of followers sets a circle's size, and the mood of the tweet sets the color: blue shows positivity, and red, negativity. Circles are centered at their tweet's origin.
+		</p>
 <p class='formText lrg'style='line-height:125%'> 
-		Determing a word's mood relies on the AFINN list. AFINN words have a score between -5 and 5, not including 0, where a score below 0 indicates a negative word, and above 0, a positive word. This app uses these scores to create red, blue, and green pixels for every tweet. Red represents a negative mood, while blue/green represents a positive mood. How bright a color is indicates the extremeness of the emotion: bright red means very negative, bright blue/green means very positive. All the grays and purples in between show some mix, or ambiguity, of emotion. All tweets begin as gray, then have their color pushed one way or the other as their words are scored. </p>
-<p class='formText lrg'style='line-height:125%'> 
-		Punctuation and capitalization are also taken into account. For instance, if a tweeter says, "I LOVE PUPPIES!!!!!", that will be scored as more strongly positive than "I love puppies.". Basic emojis are also detected, and are scored as words rather than punctuation. So, ":) :) :) :D PUPPIES." will also be a big scorer. </p>
-<p class='formText lrg'style='line-height:125%'> 
-		To learn more about the AFINN list, check out this research article, written by AFINN's creator: <a style='text-decoration:none' href='http://arxiv.org/pdf/1103.2903.pdf -- courtesy of Cornell University Library.'>A new ANEW: Evaluation of a word list for sentiment analysis in microblogs</a>.  </p> 
+		 To learn more about how the tweets are translated into mood, check out <a style='text-decoration:none' href='http://arxiv.org/pdf/1103.2903.pdf -- courtesy of Cornell University Library.'> this article</a>, written by the creator of the AFINN word list. In short, this app's analysis looks for AFINN words with a positive ("love") or negative ("hate") connotation, then increases red and/or blue accordingly. The brightness of a color will show you how extreme that mood is. You'll see a lot of gray tweets; those are the ones that did not have any AFINN words.</p>
 <p class='formText lrg'style='line-height:125%'> 		
-		Or, if you'd like to see the list used in this app, which includes several additions to the original AFINN list, click 
-		<a style='text-decoration:none' href='AFINN/JSON/MasterList.json'> here.</a> Heads up: NSFW. F-bombs and such. </p>
+		If you'd like to see the words that are used in this app and their scores, click 
+		<a style='text-decoration:none' href='AFINN/JSON/MasterList.json'> here.</a> It's the AFINN list, plus a few additions. Heads up: NSFW. F-bombs and such.</p>
 <p class='formText lrg'style='line-height:125%'> 
-		Click 'Go to Search' to start, click 'Mapping Tips' for help with navigating the map -- and, enjoy! </p>
+		You'll have your choice of either live streaming or searching tweets up to a week old. Click 'Go to Search' to start, click 'Mapping Tips' to see all the map's features -- and, enjoy! </p>
 </body>	
 </html>

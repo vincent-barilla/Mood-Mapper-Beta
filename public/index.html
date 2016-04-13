@@ -2,7 +2,7 @@
 <head>  
    <link rel="stylesheet" type="text/css" href="resource/css/style.css">
    <meta charset="ISO-8859-1">
-   <title>Welcome to Mood Mapper Beta1</title>
+   <title>Welcome to Mood Mapper Beta</title>
    <link rel="shortcut icon" href="resource/icon.ico" />
    <!-- All front end JS scripts are in these. Minus comments, there was around 600 lines of JS code in a script tag below this 
         head tag, so I figured a modular approach would be a lot more readable. The order in which these scripts are listed here
@@ -75,7 +75,7 @@
            </label>   
            <label for='mode' style='display:block' class='label'>
               Select your search mode.<br>   
-              <select name="mode" form="formInput" id="mode" class='formText' onchange="buttonHandler(this)">
+              <select name="modeSelect" form="formInput" id="modeSelect" class='formText' onchange="buttonHandler(this)">
                 <option value="/getTweets">Search Twitter</option>
                 <option value="/streamTweets">Live Stream</option>
               </select>

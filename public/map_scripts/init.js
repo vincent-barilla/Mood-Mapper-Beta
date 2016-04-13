@@ -1,7 +1,7 @@
 // The Google Maps API works with a callback to initialize the map on the page's load. 
-// "initMap" is that callback. 
+// "initMap" is the callback. 
 function initMap(){
-  // I added some methods to the Map and Circle prototypes that store circles, and track 
+  // I added some methods to Google's Map and Circle prototypes that store circles and track 
   // session variables. It supports the hide/show options, as well as keeping track
   // of the most recently shown circle's id.
   addCircleStorageToMap(); 
@@ -15,7 +15,7 @@ function initMap(){
   map = new google.maps.Map(document.getElementById('map'), props);
   map.mapTypes.set('map_style', styledMap); 
   map.setMapTypeId('map_style'); 
-  // Draw the gray rectangle which houses non-located tweets.
+  // Draw the gray rectangle.
   setTweetDump();
 
   // Define the map's properties.
@@ -125,7 +125,7 @@ function initMap(){
     // on map), and vice versa. "command" is the string from the button that called this function.
     google.maps.Map.prototype._togCircVis = function(command){ 
       this.circles.forEach(function(circle){
-        // Hide the circles or show them, depending on the current display state.        
+        // Hide the circles or show them, depending on what the command is.        
         if (command == 'Hide Circles' && circle.map == map){
           circle.setMap(null);
         }
@@ -134,7 +134,7 @@ function initMap(){
         }
       })
     }
-    // Either return "id" of the last circle in "circles", or, if "reset" = "true" or "circles" is empty, return whatever
+    // Either return "id" of the last circle in "circles", or, if "reset" == "true" or "circles" is empty, return whatever
     // "lastId" is currently in storage.
     google.maps.Map.prototype._getLastId = function(){
       var id = (this.circles.length > 0) && (!this.reset) ? this.circles[this.circles.length - 1]._getId() : this.lastId;
@@ -169,7 +169,7 @@ function initMap(){
 
     // This label will tell the user why there is a gray, blurry rectangle hanging out below Hawaii. 
     var dumpLabel = new google.maps.InfoWindow({
-          'content'        : '<p>Tweets Without Location Go Here</p>',
+          'content'        : '<p>Tweets Without Location Go Here.</p>',
           'maxWidth'       : 100,
           'disableAutoPan' : true,
           'position'       : {'lat': 6.393879233, 'lng': -146.42578125}

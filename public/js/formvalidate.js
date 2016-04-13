@@ -1,7 +1,8 @@
 // Simple form validation, on form submission. 
 function formValidates(mode){
+  // Make sure the error messages from previous validation attempts aren't still showing.
   clearMessages();
-  // The stream mode operates without dates and any subject is searchable, so no validation needs to be done.
+  // Validate the subject for both modes, and also the dates in the GET mode.
   switch(mode){
     case '/streamTweets':
       return checkSubject();
@@ -11,17 +12,19 @@ function formValidates(mode){
       break;   
   }
 
-  // Make sure the error messages from previous validation attempts aren't still showing.
   function clearMessages(){
     var messageIds = ['subjecterror','starterror','enderror'];
     messageIds.forEach(function(id){
       document.getElementById(id).innerHTML = '';
     });
+    // Note that the next three are initialized in "initGlobals.js". Assign them here to overwrite any previous errors.    
+    subjectErrMsg = '';    
+    startErrMsg = ''; 
+    endErrMsg = ''; 
   }
 
   // Make sure the user entered a subject. It can be anything, including multiple words. 
   function checkSubject(){
-    subjectErrMsg = '';    
     if (document.getElementById('subject').value.length == 0){
       subjectErrMsg += 'Make sure you enter a subject.';
       return false;
@@ -35,9 +38,6 @@ function formValidates(mode){
     // The form dates must be used with the "Date" constructor to later do subtraction between dates.
     var startObj = new Date(start); 
     var endObj = new Date(end); 
-    // Note that the next two are initialized in "initGlobals.js". Assign them here to overwrite any previous errors.
-    startErrMsg = ''; 
-    endErrMsg = ''; 
     return (withinWeek() & validStart() & hasFormat()); 
 
     // Use JS date subtraction to verify that the gap between now (current time) and the entered start date is less than 
@@ -94,9 +94,9 @@ function formValidates(mode){
         return false;
       }
 
-      // If the condition is false, see if the error message already is started, and if so, add 'Also: ', and 
-      // always add "errMsg". If the condition is true, return "errMsg" unchanged.
       function setMsg(condition, errMsg){
+        // If the condition is false, see if the error message already is started, and if so, add 'Also: ', and 
+        // always add "errMsg". If the condition is true, return "errMsg" unchanged.        
         if (!condition){
           if(errMsg.length > 0){
             errMsg += 'Also: ';

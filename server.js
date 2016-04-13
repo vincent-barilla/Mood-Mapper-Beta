@@ -4,7 +4,8 @@ var url        = require('url');
 var fs         = require('fs');
 var Dispatcher = require('./dispatcher.js');
 require('./env.js');
-// Given global scope so it can be defined synchronously in "initWordBank", then passed to "Dispatcher.dispatch"
+
+// "wordBank" is given global scope so it can be defined synchronously in "initWordBank", then passed to "Dispatcher.dispatch"
 // upon requests from clients. 
 var wordBank = {}; 
 initWordBank();   
@@ -25,7 +26,8 @@ var mainServer = http.createServer(function (request, response){
 
 /* 
 	Refer to Readme.md: "I. initWordBank" in the github repo for a more detailed explanation of initWordBank,
-	including examples of both the format of the file this loads, as well as the format of the word bank it creates. 
+	including examples of both the format of the file this loads, as well as the format of the word bank it creates.\
+	 
 */
 
 // This initializes the wordBank. Sync used to make sure "wordBank" is finished before requests come in. 
@@ -44,7 +46,7 @@ function initWordBank(){
 			wordBank[key] = {};
 			list = data[key];
 			list.forEach(function(wordJson){ 
-				// "[wordJson['word']]" //==> 'love', "wordJson['score']" //==> 4
+				// What both sides of the assignment equal: "[wordJson['word']]" //==> 'love', "wordJson['score']" //==> 4
 				wordBank[key][wordJson['word']] = wordJson['score']; 
 			})
 		}	

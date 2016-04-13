@@ -1,0 +1,118 @@
+<html>
+<head>  
+   <link rel="stylesheet" type="text/css" href="resource/css/style.css">
+   <meta charset="ISO-8859-1">
+   <title>Insert title here</title>
+   <!-- All front end JS scripts are in these. Minus comments, there was around 600 lines of code in this file, 
+        so I figured a modular approach would be a lot more readable. The order in which these scripts are listed here
+        is important to the app loading correctly. If one of the scripts uses variables defined in a previous script, I 
+        mention where the original initialization of that variable is. Most global variables are initialized and/or defined
+        in "initGlobals.js". -->
+   <script src='resource/map_scripts/init.js'></script>
+   <script src='resource/js/buttonhandle.js'></script>                 
+   <script src='resource/js/formvalidate.js'></script>
+   <script src='resource/js/formsubmit.js'></script>
+   <script src='resource/js/pause.js'></script>                                                
+   <script src='resource/map_scripts/geocode.js'></script>  
+   <script src='resource/map_scripts/circledraw.js'></script>      
+   <script src='resource/js/colorboxes.js'></script>           
+   <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+   <script id='bingScript' type='text/javascript'></script>
+</head>
+<body >
+
+<!-- The top banner is used to display help files, or jump the scroll view down to an input form. -->
+<div id='bannerContentDiv' style='display:block'>
+  <!-- This iFrame will show instructions from two different sources, set according to what button is clicked.-->
+  <iframe id='banFrame' style='visibility:hidden'></iframe>    
+  <div id='contentBtns'> 
+    <button type="button" id="aboutBtn" name='about' class="label sml" onclick="buttonHandler(this)" method="post">About This App</button>
+    <button type="button" id="scrlBtn" name='scrlToForm' class="label sml" onclick="buttonHandler(this)" method="post">Go to Search Form</button>
+    <button type="button" id="instrBtn" name='mapHowTo' class="label sml" onclick="buttonHandler(this)" method="post"> </button>
+  </div>
+</div>
+
+<!-- The map and a text crawl to the right of it. -->  
+<section>  
+  <div class="map" id="map" style="display:inline-block">map goes here.</div>    
+  <div id="text" style='display:none'></div>
+</section>
+
+<!-- The mood color boxes, plus the buttons which relate to interacting with the map. -->
+<div id="hiddenDiv" style="display:none">
+  <div id='buttonDiv'>
+    <br> 
+    <button type="button" id="newSearchBtn" name='newSearch' class="label sml button" onclick="buttonHandler(this)" method="post"> </button>
+    <button type="button" id="pauseBtn" name='pause' class="label sml button" onclick="buttonHandler(this)" method="post"> </button>
+    <button type="button" id="togCircVisBtn" name='togCircVis'  class="label sml button" onclick="buttonHandler(this)" method="post"> </button>
+    <button type="button" id="clearBtn" name='clear' class="label sml button" onclick="buttonHandler(this)" method="post">Clear Map</button>        
+    <button type="button" id="togTextVisBtn" name='mapOnly' class="label sml button"onclick="buttonHandler(this)" method="post" > </button>
+  </div>
+  <div id="colorBoxGrp">
+    <div class="colorBoxDiv" id="moodDiv">Current Tweet Mood</div>
+    <div class="colorBoxDiv" id="globalMoodDiv">Average Tweet Mood</div>
+  </div>    
+</div>
+
+<!-- The form and all its labels and inputs. All inputs are handled asynchonously in the 'buttonHandler' function, thus the lack of a "submit" 
+     action for the form.-->
+<div id="formInput">
+   <br>          
+   <form id="form">
+     <fieldset class='central'>
+       <legend class='formText' style='font-size:20'>Define your search here:</legend>
+       <span id='searchInstruct' class='formText sml' style='display:none'> 
+          Click 'Resume', or 'Submit' without changing your form, to see more tweets about your current settings. Change the dates for
+          more tweets on the same subject. For all new results, change everything. 'Clear Map' prior to resuming or submitting to avoid overlapping results. 
+      </span>        
+       <div id='grp1' style='' class='grp1'>
+         <label for='subject'style='display:block' class='label'>
+              Choose your subject.<br>
+          <input type="text" id="subject" name='subject' value="BernieSanders" style="display:block" class='formText' onkeyup='buttonHandler(this)'><br>
+         </label>   
+         <label for='mode' style='display:block' class='label'>
+            Select your search mode.<br>   
+            <select name="mode" form="formInput" id="mode" class='formText' onchange="buttonHandler(this)">
+              <option value="/getTweets">Search Twitter</option>
+              <option value="/streamTweets">Live Stream</option>
+            </select>
+          </label>
+        </div>
+        <div id='grp2' style='display:inline-block' class='grp2'>  
+         <label for='startdate' style='display:block' id='startlabel' class='label'>
+            Choose a start date for a search, up to one week ago: <br>
+            <input type="text" id="startdate" value="" placeholder="day/month/2016" style="display:block" class='formText'><br>
+            <div name="error1" id="starterror" style="display:none" class='err'>Not quite. Please correct the following: </div>   
+         </label> 
+         <label for='enddate' style='display:block' id='endlabel' class='label'>
+            Choose an end date for your search: <br>
+            <input type="text" id="enddate" value="javascript:setDate()" placeholder="day/month/2016" style="display:block" class='formText'><br>       
+            <div name="error2" id="enderror"  style="display:none" class='err'>Not quite. Please correct the following: </div>   
+         </label>
+        </div>
+         <br><br>
+         <button type="button" id="submitBtn" onclick="buttonHandler(this)" name='submit' style='display: block' class='formText label submit' 
+                 method="post">Submit</button>  
+     </fieldset>
+   </form>
+   <div style='height:200px'>
+    <!-- this pads the bottom of the page, giving the form more breathing room, allowing for the view to center around it better when the user 
+    fires the "Go to Search" window scrolling. -->
+   </div>
+</div>
+
+<!--I initialize the global variables here, after  all the DOM elements above are defined, so this can set some of their starting properties. --> 
+<script src='resource/js/initGlobals.js'></script>   
+<script type="text/javascript">
+
+  /* 
+
+   All javascript traffic is directed through buttonhandler.js, the de facto front-end dispatcher. See the script tags at the top of this file 
+   for a list of all JS scripts used, in roughly the order in which they are executed in the app's work flow. 
+    
+  */
+
+</script>
+
+</body>
+</html>

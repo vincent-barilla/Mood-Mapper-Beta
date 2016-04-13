@@ -1,9 +1,10 @@
 // Several DOM displays are best set programatically. Those are done here. 
   
 // This adjusts map height to the user's screen size, then takes off a bit to make room for the buttons to show beneath
-// the map. Set the map-dependent DOM elements by this value in the three lines after this.
+// the map. 
 (function onLoadSetMapHeight(){
   var mapHeight = window.innerHeight - 55;
+  // Set the map-dependent DOM elements by this value in the three lines.  
   document.getElementById('mainViewSection').style.height = mapHeight;
   document.getElementById('map').style.height = mapHeight;
   document.getElementById('text').style.height = mapHeight;
@@ -30,7 +31,8 @@
   document.getElementById('contentBtns').style.bottom = "5px";
 })();
 
-// All these follow the pattern used in "buttonDisp": set the "firstChild.data" of the key to its value. 
+// All these follow the pattern used in "buttonDisp": set the "firstChild.data" of the element with "key" as its id to 
+// "key"'s value. Set as strings so that "buttonHandler" in "buttonhandle.js" will be able to use them.
 (function onLoadSetButtonText(){
   var buttons = {'pauseBtn': 'Pause',
                  'togCircVisBtn': 'Hide Circles',
@@ -40,7 +42,6 @@
                };
   buttonDisp(buttons);
 
-  // Set a given string to appear on a given button; ensures it is ok for the toggling in "buttonHandler". 
   function buttonDisp(htmls){
     var key;
     for (key in htmls){
