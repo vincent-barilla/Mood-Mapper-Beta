@@ -1,6 +1,6 @@
 Explaining some of the denser coding blocks and general engineering concerns for this app: 
 
-Intro -- A note on commenting: I tried to put the more extensive comments, especially
+A note on commenting: I tried to put the more extensive comments, especially
 those that called for examples, here in the readme. References will be placed in the 
 code to indicate when to use these comments.
 
@@ -36,7 +36,7 @@ I.     initWordBank()
   
   		    wordBank['english']['love']; // ==> 4  
       OR 	wordBank['english']['odio']; // ==> undefined
-      OR  wordBank['spanish']['odio']; // ==> 4
+      OR  wordBank['spanish']['odio']; // ==> -4
   
   There are multiple wordBanks available for each analysis. tweetAnalyzer checks the Tweet's language and assigns 
   a wordBank accordingly every time it is called. 
@@ -46,8 +46,8 @@ I.     initWordBank()
   
 II. Concerns About Twitter Stream Usage Limits
 
-  Note that I customize the get request (the stream) to Twitter for each user. This is NOT a good solution, 
-  according to Twitter. Twitter may, in fact, block apps that make too many connections from the same IP address. 
+  Note that I customize the get request (the stream) to Twitter for each user. This is not a good solution, 
+  according to Twitter. It may, in fact, block apps that make too many connections from the same IP address. 
 
   That's a big limitation to the streaming mode of my app. Luckily, Twitter is developing something 
   that would solve this problem perfectly: Twitter's Site Streaming API is currently in closed beta, but,
@@ -111,9 +111,9 @@ IV.     Why Track "lastId"?
   map over and over again, till the form values are changed and a new GET request sends. 
 
   To solve this, the id of the the last tweet that reached the client must be stored, so it can then be 
-  used in the "max_id" parameter of a Twitter GET request. "max_id" tells Twitter to respond with 
+  used in the "max_id" parameter of the next Twitter GET request. "max_id" tells Twitter to respond with 
   only tweets that are older than the one corresponding to this id. The user will now see all new tweets 
-  every time they hit "Submit" on the front end, even if they use the identical form, multiple times.  
+  every time they hit "Submit" on the front end, even if they use the identical form multiple times.  
 
   Because "lastId" only pertains to the current parameters of a user's search, it will be wiped clean 
   every time the user changes the input. This is done via an 'onkeyup' callback on all the input 
@@ -216,10 +216,10 @@ VI. function preventCrossToggling(source){
         action -- here, showing the iFrame -- starts. If the two elements in the array are different, nothing
         happens -- the iFrame stays visible, while the above cases will have set its contents.
 
-        If the user has clicked both button once to see both help files, then togSources will have reset to []. 
-        The next click  becomes the first and only element in a new togSources, and, since the above condition will toggle the
+        If the user has clicked both buttons once to see both help files, then togSources will have reset to []. 
+        The next click becomes the first and only element in a new togSources. Since the above condition will toggle the
         actions when togSources.length == 1, the toggle actions will fire again. The previous state of the toggle has
-        the iFrame being visible, so it will now toggle to closed. 
+        the iFrame being visible, so it will now toggle to being closed. 
 
         It's a bit of a convoluted piece of coding. My reason for doing this is to provide a smoother viewing experience 
         of the help files. Without it, the user has to click once to open the iFrame, once more to close it, then a  
@@ -256,7 +256,8 @@ VII.      Comments on Geocoding Usage:
   Google comes equipped with a geocoder constructor, which I utilize, and Open Cage and mapQuest are similar
   enough that I pass them both to the same helper function. bing rejected my query attempt due to lack of CORS support, 
   so I use the request url as the src to a script, and include a callback in the request, such that the src
-  script will grab the data from the src contents and pass it to createTweetCircle.
+  script will grab the data from the src contents and pass it to createTweetCircle as soon as it is assigned into 
+  bingScript (initialized in "index.html", in the header's script tags).
 
 
 
