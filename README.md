@@ -2,30 +2,26 @@ Contents:
 
 (Order within each group is alphabetical, not the order in which the scripts need to be invoked.)
 
-###Server files: 
-  *server.js        - Main server.
+####Server files: 
+    server.js        - Main server.
+    dispatcher.js    - Gets the requests from the server, parses them, sends them onward for further processing.
+    restServlet.js   - Make queries for Twitter RESTful API.
+    streamServlet.js - Make queries for Twitter streaming API.
+    tweetAnalyzer.js - Analyze a tweet's text for inferred mood.
 
-  *dispatcher.js    - Gets the requests from the server, parses them, sends them onward for further processing.
-
-  *restServlet.js   - Make queries for Twitter RESTful API.
-
-  *streamServlet.js - Make queries for Twitter streaming API.
-
-  *tweetAnalyzer.js - Analyze a tweet's text for inferred mood.
-
-###Data files: 
+####Data files: 
     public/AFINN/JSON/MasterList.json - AFINN word list.
 
-###Help files: 
+####Help files: 
     Readme.md             - Readme for the whole project.
     public/aboutThis.html - About the app.
     public/mapTips.html   - About map features.
 
-Mark-up and styles: 
+####Mark-up and styles: 
     public/css/style.css - CSS style sheet.
     public/index.html    - Home view markup.
 
-Front-end JS files:  
+####Front-end JS files:  
     public/js/buttonhandle.js - All buttons invoke one handler, it then executes actions according to what was pushed.
     public/js/colorboxes.js   - Update averaged tweet moods as RGB colors.
     public/js/formsubmit.js   - Send user parameters to the server (server.js).
@@ -47,7 +43,7 @@ A note on commenting: I tried to put the more extensive comments, especially
 those that called for examples, here in the readme. References will be placed in the 
 code to indicate when to use these comments.
 
-I.     initWordBank()
+####I.     initWordBank()
 
   Read in data from a local file path, then reformat it into a wordBank that is tailored
   to the needs of tweetAnalyzer. A sample of the start product:
@@ -87,7 +83,7 @@ I.     initWordBank()
 
   
   
-II. Concerns About Twitter Stream Usage Limits
+####II. Concerns About Twitter Stream Usage Limits
 
   Note that I customize the get request (the stream) to Twitter for each user. This is not a good solution, 
   according to Twitter. Twitter may, in fact, block apps that make too many connections from the same IP address. 
@@ -103,7 +99,7 @@ II. Concerns About Twitter Stream Usage Limits
 
 
 
-III.   Delimiting Stream Response
+####III.   Delimiting Stream Response
     
     /* What I did: 
 
@@ -147,7 +143,7 @@ III.   Delimiting Stream Response
 	
 
 	
-IV.     Why Track "lastId"? 
+####IV.     Why Track "lastId"? 
 
   GET requests to Twitter using the same set of parameters will usually return the same batch of tweets 
   in response. For the user, this means he or she will see the same medley of circles show up on the 
@@ -168,7 +164,7 @@ IV.     Why Track "lastId"?
 
 
 
-V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
+####V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
 
           /* Paraphrasing the arguments:
 
@@ -215,7 +211,7 @@ V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMth
 
 
 
-VI. function preventCrossToggling(source){
+####VI. function preventCrossToggling(source){
 
     /* What this does, in a nutshell: 
 
@@ -255,7 +251,7 @@ VI. function preventCrossToggling(source){
 
 
 
-VII.      Comments on Geocoding Usage:
+####VII.      Comments on Geocoding Usage:
 
   I've found that geocoders are not very well-suited for streaming live data. They'll briefly stop working
   if you exceed some per-second query limit which is not clearly stated in the documentation. To work around
