@@ -1,12 +1,10 @@
 // All button "onclick" events get processed here. Essentially, a front-end dispatcher/router.  
 function buttonHandler(source){
-  
   // Check which button was clicked. Its name will indicate what case to use in the switch below.
   var name = source.name;
   var mode = document.getElementById('mode').value;
 
   switch (name){
-
     // Show background info about the app, namely how the mood sentiment scoring is performed.
     case 'about':
       // Toggle the button's text back and forth between 'Got it' and 'What Does This App Do?'
@@ -14,7 +12,7 @@ function buttonHandler(source){
       // Instructions are in a local html file, 'aboutThis.html.' Show them in an iFrame.          
       document.getElementById('banFrame').src = 'resource/aboutThis.html';    
       // Both 'about' and 'mapHowTo' use the iFrame. This ensures that the toggling of one button 
-      // does not mess up the toggling of the other. 
+      // does untoggle that of the other. 
       preventCrossToggling(name);                           
       break;
 
@@ -38,7 +36,7 @@ function buttonHandler(source){
 
     // Show/hide the text crawl to the right of the map. Starts as shown. 
     case 'mapOnly':
-      // Toggle the text of the togTextVis button from 'Hide Text Crawl' to 'Show Text Crawl' 
+      // Toggle the text of the "togTextVis" button from 'Hide Text Crawl' to 'Show Text Crawl' 
       toggleWithOptCb(document.getElementById('togTextVisBtn').firstChild, 'data', 'Show Text Crawl', 'Hide Text Crawl');
       // Toggle the display of the text crawl from 'inline-block' to 'none'
       toggleWithOptCb(document.getElementById('text').style, 'display', 'none', 'inline-block');
@@ -46,10 +44,9 @@ function buttonHandler(source){
       toggleWithOptCb(document.getElementById('map').style, 'width', '100%', '73%');
       break;
 
-    // An 'onkeyup' event in any of the three inpux boxes in the form causes this event. 
+    // An 'onkeyup' event in any of the three inpux boxes will call this, to reset the "lastId" to "". 
     case 'formChange':
-      // When the user changes the subject, the previously stored "lastId" is no longer relevant. See "mapInit" in 
-      // "init.js" for details about what "lastId" does.
+      // See "mapInit" in "init.js" for details about what "lastId" does. 
       map._resetLastId.call(map, ""); 
       break;
 
@@ -59,9 +56,9 @@ function buttonHandler(source){
       toggleWithOptCb(document.getElementById('endlabel').style, 'display', 'none','block');      
       break;
 
-    // Execute all actions for the form submission.
+    // Execute all actions for the form submission, including validation and view toggling.
     case 'submit':
-      // Only execute all those action IF the form validates. 
+      // Only execute all those action after the form validates. 
       if (formValidates(mode)){
         // Show the buttons and colored boxes below the map
         document.getElementById('hiddenDiv').style.display = 'block';
@@ -73,7 +70,7 @@ function buttonHandler(source){
         document.getElementById('map').style.width = '73%'
         // Show the crawl.
         document.getElementById('text').style.display = 'inline-block';
-        // Make scroll able to zoom in on the map. Disabled upon initialization to allow easier page scrolling.
+        // Make scrollwheel able to zoom in on the map. Disabled upon initialization to allow easier page scrolling.
         map.set('scrollwheel', true);
       } else {
         // Validation fails, show the error messages. 
@@ -81,13 +78,13 @@ function buttonHandler(source){
       }
       break;
 
-    // Toggle between pausing and resuming the mapping. 
+    // Toggle between pausing and resuming mapping. 
     case 'pause':
-    //As resuming means a form resubmission, validation is again required.  
+      //As resuming means a form resubmission, validation is again required.  
       if (formValidates(mode)){
-        // Note the callbacks being used. One submits the form, the other requests the Twitter stream stop.
+        // Note the callbacks being used. One submits the form, the other requests the Twitter stream to stop.
         toggleWithOptCb(document.getElementById('pauseBtn').firstChild, 'data', 'Resume', 'Pause', formSubmit, pauseStream);
-        // Set 'togCircVisBtn' to 'Hide Circles', so a 'show' option isn't given when they're already visible.
+        // Set 'togCircVisBtn' to 'Hide Circles', so a "show" option isn't given when they're already visible.
         document.getElementById('togCircVisBtn').firstChild.data = 'Hide Circles';
       } else {
         // Show error messages if validation failed.
@@ -95,13 +92,13 @@ function buttonHandler(source){
       }              
       break;  
 
-    // Jump down to the form. The map makes scrolling down the page annoying; this helps make it easier.  
+    // Jump down to the form. The map makes scrolling down the page annoying; this makes it easier.  
     case 'newSearch':
       // Jump the view down to the form. The 'submit' case will be triggered from clicking 'Submit' button. 
       window.scrollTo(0, yOffsetForm);                   
       break;
 
-    // Toggle text of 'togCircVis', always fire "._togCircVis" -- shows hidden circles, hides shown circles. 
+    // Toggle text of 'togCircVis', always fire "._togCircVis", which shows hidden circles/hides shown circles. 
     case 'togCircVis':
       toggleWithOptCb(document.getElementById('togCircVisBtn').firstChild, 'data', 'Show Circles', 'Hide Circles',
                          map._togCircVis.call(map, document.getElementById('togCircVisBtn').firstChild.data));
@@ -112,7 +109,10 @@ function buttonHandler(source){
       // Decouple references of all currently showing circles from the map. 
       map._clearCircles();
       // Reset the mood tracking variables to their start values. 
-      globalMood = {"mood" : [0,0,0], "count" : 1 };
+      globalMood = {'mood' : [0,0,0], 'count' : 1 };
+      // Reset mood box background colors to their starting values. 
+      document.getElementById('moodDiv').style = 'background-color: RGB(127,127,127)'
+      document.getElementById('globalMoodDiv').style = 'background-color: RGB(127,127,127)'      
       // Set the text crawl to be blank. 
       document.getElementById('text').innerHTML = '';
       // Show the user 'No Circles' on this button. 
@@ -121,24 +121,26 @@ function buttonHandler(source){
   }
 
 /*
-  Refer to Readme.md "V: toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd)" for extended comments on this
-  function.
+
+  Refer to Readme.md "V: toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd)" for extended comments on the
+  following function.
+
 */ 
 
   // Toggle between two values for an html element, optionally firing callbacks with every click (5th and 6th args are callbacks).
   function toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
-    // When the element shows "oldVal", switch the value to "newVal", and maybe fire a callback. Reverse when it doesn't -- i.e., toggle.
+    // When the element's property is "oldVal", switch element's property to "newVal" and maybe fire a callback. Reverse (toggle) when it doesn't.
     elem[prop] == oldVal ? clickAction(newVal, oldOnClickMthd) : clickAction(oldVal, newOnClickMthd);
 
     // Always set the element's property to "value". Fire a callback, depending on the number of arguments given to the outer function.
     function clickAction(value, callback){
       elem[prop] = value;
-      // Fire no callbacks, if none were given. If one callback was given, always use it. If both are given, toggle between them.
+      // Fire no callbacks, if none were given. If one callback was given, always use it. If both are given, toggle between them. 
       if (!callback && newOnClickMthd){
-        // The first callback given (5th argument into "toggleWithOptCb") will always be used, in this condition. 
+        // The first callback given (5th argument into "toggleWithOptCb") will be used as callback for both values.
         callback = newOnClickMthd;
       }
-      // If no callback is given ("toggleWithOptCb" has 4 arguments), nothing happens here, "elem[prop] =  value" is all that happens.
+      // If no callback is given ("toggleWithOptCb" has 4 arguments), nothing happens here. "elem[prop] =  value" is all that happens.
       if (callback){        
         callback();
       }
@@ -146,14 +148,17 @@ function buttonHandler(source){
   }
 
 /*
-  Refer to Readme.md "VI: preventCrossToggling(source)" for extended comments on this function.
+
+  Refer to Readme.md "VI: preventCrossToggling(source)" for extended comments on the following function.
+
 */ 
 
   // If 'banFrame' is hidden and minimized, maximize and show it. Keep it open, with new contents, if the user jumps between help files.
   function preventCrossToggling(source){
     // Push the current origin of the click into the array. 
     togSources.push(source);
-    // Toggle iFrame's visibility back to invisible ONLY when the same button calls this function twice in a row.  
+    // Toggle iFrame's visibility back to invisible ONLY when the same button calls this function twice in a row, OR on the third click, after
+    // two different buttons have been clicked.   
     if (togSources.length == 1 || togSources[0] == togSources[1]){
       toggleWithOptCb(document.getElementById('bannerContentDiv').style, 'height', '500px','60px');
       toggleWithOptCb(document.getElementById('contentBtns').style, 'bottom', '3.5%','5px');      
@@ -172,10 +177,11 @@ function buttonHandler(source){
     })
   }
 
-  // Show error messages. They were set in "formValidates" and will be blank if the validation succeeded. 
+  // Set and show error messages. They were set in "formValidates" in "formvalidates.js" and will be blank if form is valid. 
   function showErrorMsgs(){
     show(startErrMsg, 'starterror');
     show(endErrMsg, 'enderror');
+    show(subjectErrMsg, 'subjecterror');
 
     // Show the error message, if it's not an empty string. 
     function show(msg, html){

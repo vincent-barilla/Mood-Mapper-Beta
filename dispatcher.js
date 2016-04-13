@@ -2,13 +2,11 @@ var fs            = require('fs');
 var path          = require('path');
 var mime          = require('mime');
 var util          = require('util');
-
 // The next two custom modules will handle the streaming and RESTful requests to Twitter. 
 var streamServlet = require('./streamServlet.js'); 
 var restServlet   = require('./restServlet.js'); 
 
-// Check the address of a request, send it to the appropriate function. Like a forward controller, 
-// in an MVC design. 
+// Check the address of a request, send it to the appropriate function. Like a forward controller in an MVC design. 
 this.dispatch = function(request, response, wordBank){
 
 	// First, check if the user only wants to see the home page. If so, serve the home view. If not, 
@@ -18,13 +16,12 @@ this.dispatch = function(request, response, wordBank){
 	} else {			
 		// Initialize this to receive data from the user in ajax requests below. 
 		var dataJson;
-		// The next 3 lines pull out the action of the request -- "action" being the indicator of where 
-		// to send the request's data. "argument" contains the user's parameters.						
+		// The next 3 lines pull out the action of the request -- "action" being where to send the request's data. 
+		// "argument" contains the user's parameters.						
 		var parts = request.url.split('/'); 
 		var action = parts[1];
-		// Take everything left after pulling out the action from "parts", put it back into "/folder/file" format.				
+		// Take everything left in "parts" after "action", put it back into "/folder/file" format.				
 		var argument = parts.slice(2, parts.length).join('/');
-
 		// The switch statement cases control the flow of non-home requests.
 		switch(action){
 
@@ -35,7 +32,8 @@ this.dispatch = function(request, response, wordBank){
 				break;
 
 			// Pull the data out from the request, convert it from a url-encoded string to JSON, pass it
-			// to "streamServlet.query" to connect to Twitter Public Streaming API
+			// to "streamServlet.query" to connect to Twitter Public Streaming API, analyze data as it streams to server 
+			// and write the results of analysis back to the client.
 			case 'streamTweets': 
 				request.on('data', function(data){
 					dataJson = jsonifyRequest(data.toString());
@@ -43,8 +41,8 @@ this.dispatch = function(request, response, wordBank){
 				});
 				break;
 
-			// Pull the data from the request, convert it from a url-encoded string to JSON, pass it 
-			// to "restServlet.query" to get a batch of data from a Twitter GET request.
+			// Pull the data from the request, convert it from a url-encoded string to JSON, pass it to "restServlet.query" to 
+			// analyze a batch of data from a Twitter GET request and write the results of analysis back to the client.
 			case 'getTweets':
 				request.on('data', function(data){			
 					dataJson = jsonifyRequest(data.toString()); 
@@ -53,8 +51,8 @@ this.dispatch = function(request, response, wordBank){
 				break;
 
 			// Cut off the current request. Note: requests to the Twitter streaming API are held open on 
-			// Twitter's end until this is called. Read the entry in Readme.md about streaming concerns
-			//  for more details. 
+			// Twitter's end until this is called. Read "II. Concerns About Twitter Stream Usage Limits"
+			// in Readme.md about streaming concerns for more details.
 			case 'pauseStream': 
 				streamServlet.kill(response);
 				break;
@@ -81,7 +79,7 @@ this.dispatch = function(request, response, wordBank){
 					} else {
 						// The mime.lookup grants flexibility, so any file can be passed through
 						// the preceding error checks, and will then have their contents read. 
-						// I use this both for HTML views and .js scripts.						
+						// I use this both for HTML-based views and .js scripts.						
 						response.writeHead(200, {'Content-Type': mime.lookup(path.basename(filePath))}); 
 						response.end(data);	
 					}

@@ -1,22 +1,25 @@
-var util 			 = require('util');
-var Oauth 	         = require('oauth');
-var TweetAnalyzer    = require('./tweetAnalyzer.js'); 
-
-// Initialize stream here to give it global scope, so it can initiate writes to the front end in "query",
-// and kill the sream in "kill". 
+var util 	      = require('util');
+var Oauth 	      = require('oauth');
+var TweetAnalyzer = require('./tweetAnalyzer.js'); 
+// Initialize stream here to give it global scope. It can now trigger writes to the front end in "query",
+// and disconnect the sream form Twitter in "kill". 
 var stream;
 
-// Query the Twitter public stream API. Receive a sample of real-time tweets that match query parameters.
-// "data" came from the front end, contains the parameters to define the query to Twitter. "response", 
-// "request", are from the main server, so when response.write is used, it goes back to the front end. 
-this.query = function(data, response, request, wordBank){ 
+	/*
 
+	 Refer to Readme.md: "II.  Concerns About Twitter Stream Usage Limits" in the github repo for a consideration of
+	  stream usage limits for this app.  	
+	
+	*/
+
+// Query the Twitter Public Stream API. Receive a sample of real-time tweets that match query parameters.
+// "data" came from the front end, contains the parameters to define the query to Twitter. "response", 
+// "request", are from the main server, so when "response.write" is used, JSON.stringified data goes back to the client. 
+this.query = function(data, response, request, wordBank){ 
 	// "octet-stream" alleviates a strange buffering issue I experienced when writing to Chrome. 
 	response.writeHead(200,{'Content-Type': 'application/octet-stream'});
 
-	// I used an npm module for the oauth 1.0 authentication. See env.js for the keys. If I don't show code
-	// in env.js for how I got the keys, then they were generated in my Twitter account, then copied and 
-	// pasted into env.js.  
+	// I used an npm module for the oauth 1.0 authentication. See "env.js" for the keys. 
 	var oauth = new Oauth.OAuth(
 		'https://api.twitter.com/oauth/request_token', 
 	  	'https://api.twitter.com/oauth/access_token',
@@ -34,18 +37,13 @@ this.query = function(data, response, request, wordBank){
 								 process.env.TWITTER_ACCESS_TOKEN_KEY, 
 								 process.env.TWITTER_ACCESS_TOKEN_SECRET);
 
-	// Since the stream connection comes from a GET request, the request must be ended. 
+	// Since the stream connection comes from a GET request, the request must be ended.  
 	stream.end(); 
 
-	/*
-	 Refer to Readme.md: "II. Concerns about Twitter" in the github repo for a consideration of stream usage limits 
-	 for this app.  	
-	*/
-
-	// This response will contain the incoming tweet data. The variables initialized here will be used to delimit
-	// complete tweets. Unlike the RESTful query, no 'end' event is generated with this response, so I can't wait 
-	// till all the data has reached the server before cutting it up.
+	// This response will contain the incoming tweet data. Unlike the RESTful query, no 'end' event is generated with 
+	// this response, so the code can't wait till all the data has reached the server before cutting it up.
 	stream.addListener('response', function (twitResponse){ 
+		// The variables initialized here will delimit complete tweets. 		
 		var startInd; 
 		var endInd;   
 		var string = "";
@@ -53,13 +51,16 @@ this.query = function(data, response, request, wordBank){
 		var result; 
 
 		/*
+
 			Refer to Readme.md "III. Delimiting Stream Response" for expanded comments on the methodology I used 
 			in the "twitResponse.addListener" code block.
+
 		*/
 
 		// Data come in chunks, NOT complete tweets, so I use '\r\n{"created_at":"' to delimt the start and end 
 		// indices of new, whole tweets.
 		twitResponse.addListener('data', function(data){ 
+			// Concatenate incoming chunks into one, long string. 
 			string += data; 
 			startInd = string.indexOf('\r\n{"created_at":"'); 
 			endInd = string.lastIndexOf('\r\n{"created_at":"');
@@ -71,14 +72,12 @@ this.query = function(data, response, request, wordBank){
 				result = TweetAnalyzer.analyze(JSON.parse(tweet), wordBank);
 				string = "";				
 				response.write(JSON.stringify(result));
-				console.log(JSON.stringify(result));
-				console.log('\n')
 			}
 		})
 	})
 };
 
-// Twitter will keep the http responses flowing in until you manually abort the request.
+// Twitter will keep the responses flowing in until you manually abort the request.
 this.kill = function(response){
 	stream.abort();
 	response.writeHead(200,{'Content-Type': 'text/plain; charset=UTF-8'});

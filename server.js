@@ -1,12 +1,11 @@
-
-var util          = require('util'); 
-var http          = require('http');
-var url           = require('url');
-var fs            = require('fs');
-var Dispatcher    = require('./dispatcher.js'); // Custom-made dispatcher script. 
-
-require('./env.js'); // The environment variables (Twitter authentication/access keys and tokens).
-
+var util       = require('util'); 
+var http       = require('http');
+var url        = require('url');
+var fs         = require('fs');
+var Dispatcher = require('./dispatcher.js');
+require('./env.js');
+// Given global scope so it can be defined synchronously in "initWordBank", then passed to "Dispatcher.dispatch"
+// upon requests from clients. 
 var wordBank = {}; 
 initWordBank();   
 
@@ -29,24 +28,23 @@ var mainServer = http.createServer(function (request, response){
 	including examples of both the format of the file this loads, as well as the format of the word bank it creates. 
 */
 
-// This initializes the wordBank (effectively, the app's database). Sync used to make sure "wordBank" 
-// is finished being read in before requests come in. 
+// This initializes the wordBank. Sync used to make sure "wordBank" is finished before requests come in. 
 function initWordBank(){
 	var data = fs.readFileSync('./public/AFINN/JSON/MasterList.json').toString(); 
 	data = JSON.parse(data); 
 	setWordBank(); 
 
 	// The end result will allow for the following use: wordBank['english']['love'] //==> 4. 
-	// (See Readme.md for details. )
 	function setWordBank(){
-		// Separating the initialization of variables from the loop, to prevent re-initializing a variable
-		// over and over (there are around 5k lines to parse in the original file).  
+		// Separating the initialization of variables from the loop, to prevent re-initializing them over and over 
+		// (there are around 5k lines to parse in the original file).  
 		var key;
 		var list;
 		for (key in data){ 
 			wordBank[key] = {};
 			list = data[key];
 			list.forEach(function(wordJson){ 
+				// "[wordJson['word']]" //==> 'love', "wordJson['score']" //==> 4
 				wordBank[key][wordJson['word']] = wordJson['score']; 
 			})
 		}	

@@ -43,7 +43,7 @@ I.     initWordBank()
 
   
   
-II. Concerns about Twitter stream usage limits (see streamServlet.js)
+II. Concerns About Twitter Stream Usage Limits
 
   Note that I customize the get request (the stream), making a unique connection to Twitter 
   for each user. This is NOT a good solution, according to Twitter. Twitter will, in fact, 
@@ -241,7 +241,7 @@ VI. function preventCrossToggling(source){
 
 
 
-VII.      Comments on geocoding usage
+VII.      Comments on Geocoding Usage
 
     I've found that geocoders are not very well-suited for streaming live data.  They'll briefly stop working
     if you exceed some per-second query limit which is not clearly stated in the documentation. To work around

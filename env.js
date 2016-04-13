@@ -4,19 +4,23 @@ process.env['TWITTER_CONSUMER_SECRET']     = "XvZDvmkbt11JEIoX6mcYjfZm6UbXQVsXek
 process.env['TWITTER_ACCESS_TOKEN_KEY']    = "3168061382-ohkKrBin00UF7rfwYJYGPeGJxpXpo4XHegBN77P";
 process.env['TWITTER_ACCESS_TOKEN_SECRET'] = "cmexYA9DJSqq2WJfp79h5d7UylrIq87tXlJHvpHEMDyIO";
 
-// For oAuth 1.2 (application-only usage of Twitter, the status searches)
+// For oAuth 1.2 (application-only usage of Twitter, the GET requests)
 process.env['BEARER_TOKEN_CREDENTIALS']         = process.env['TWITTER_CONSUMER_KEY'] + ":" + process.env['TWITTER_CONSUMER_SECRET'];
 process.env['ENCODED_BEARER_TOKEN_CREDENTIALS'] = "VWFXSXFBZkFRcFZhQ1ZEQkgwMEo0c2ZSSzpYdlpEdm1rYnQxMUpFSW9YNm1jWWpmWm02VWJYUVZzWGVrT0VqSHR6akRZemZEY042Mw==";
 process.env['BEARER_ACCESS_TOKEN']              = "AAAAAAAAAAAAAAAAAAAAANazuAAAAAAAJEN7WlBpaEkjxSoBtqmT1FYAp2U%3DcAWPTNT0KWQddAuKhntfkiBgNy68EZLd0GxiylkpCemBiwBY3r";
 
-/* 
-	Code used to generate process.end['ENCODED_BEARER_TOKEN_CREDENTIALS'] = btoa(process.end['BEARER_TOKEN_CREDENTIALS']); // btoa == Javascript's base64 encoder
-	
+// Note: If I don't show code below for how I got the keys, then they were generated in my Twitter account, then copied and pasted above.  
+
+/*  // "btoa" is Javascript's base64 encoder
+
+	Code used to generate process.end['ENCODED_BEARER_TOKEN_CREDENTIALS'] :
+
+		btoa(process.end['BEARER_TOKEN_CREDENTIALS']); 
 
 
 	Code used to generate process.env['BEARER_TOKEN']:
 
-	var https = require('https');
+		var https = require('https');
 
 		(function requestAuthFromTwit(){
 

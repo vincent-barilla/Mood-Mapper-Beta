@@ -1,22 +1,21 @@
 // The Google Maps API works with a callback to initialize the map on the page's load. 
 // "initMap" is that callback. 
 function initMap(){
-
   // I added some methods to the Map and Circle prototypes that store circles, and track 
   // session variables. It supports the hide/show options, as well as keeping track
   // of the most recently shown circle's id.
   addCircleStorageToMap(); 
-
   // Set the initial properties of the Map (such things as zoom level, whether or not to show
   // roads and landmarks, etc.).
   var props = setProperties(); 
   var styles = setStyles(); 
   var styledMap = new google.maps.StyledMapType(styles, {name: 'Styled Map'});
-  // "geoCoder" initialized as global in "initGlobals" in "initGlobals.js".
+  // "geoCoder" is initialized as global in "initGlobals" in "initGlobals.js".
   geoCoder = new google.maps.Geocoder(); 
   map = new google.maps.Map(document.getElementById('map'), props);
   map.mapTypes.set('map_style', styledMap); 
   map.setMapTypeId('map_style'); 
+  // Draw the gray rectangle which houses non-located tweets.
   setTweetDump();
 
   // Define the map's properties.
@@ -33,7 +32,7 @@ function initMap(){
     };
   }
 
-  // Styles which were set with the very helpful Google Styled Maps Wizard.
+  // Styles were set with the very helpful Google Styled Maps Wizard.
   function setStyles(){
     return [
       {
@@ -79,45 +78,35 @@ function initMap(){
 
   // Give the map a way to store circles, so I can later toggle their visibility, store data, etc.
   function addCircleStorageToMap(){
-
     // All circles will have listeners of these events. 
     var listeners = ['click','dblclick','drag','dragend','mouseover','mouseout']; 
-
     // Store all circles in an array.
     google.maps.Map.prototype.circles = []; 
-
     // Getter method for the circles array.  
     google.maps.Map.prototype._getCircles = function(){ 
       return this.circles;
     };    
-
     // Store the id of the last circle drawn. 
     google.maps.Map.prototype.lastId = "";
-
     // Track whether or not the user has reset a search parameter. 
     google.maps.Map.prototype.reset = false;
-
     // The method to reset "lastId". 
     google.maps.Map.prototype._resetLastId = function(str){
       this.lastId = str;
       this.reset = true;
     }
-
-    // Store the circle's id (from Twitter, this is id_str).
+    // Store the circle's id (in a Twitter response, this is "id_str").
     google.maps.Circle.prototype.id = "";
-
     // Setter method for the circle's id. 
     google.maps.Circle.prototype._setId = function(idStr){
       this.id = idStr;
     }
-
     // Getter method for the circle's id. 
     google.maps.Circle.prototype._getId = function(){
       return this.id;
     }; 
-
-    // Goes through the circle array, decouples them first from their listeners, then from the map 
-    // itself, then rewrites the circle array -- effectively erasing them. 
+    // Goes through the circle array, decouples circles first from their listeners, then from the map 
+    // itself, then rewrites the circle array -- effectively erasing the circles. 
     google.maps.Map.prototype._clearCircles = function(){ 
       this.circles.forEach(function(circle){        
         listeners.forEach(function(listener){ 
@@ -129,16 +118,14 @@ function initMap(){
        });
       // Make sure the id of the last circle in the array (the last return from the server) is stored.
       this.lastId = this.circles[this.circles.length - 1]._getId();
-      // This is the step that full removes the circles from future access.
+      // This is the step that fully removes the circles.
       this.circles = []; 
     };
-
     // If the map is currently set to null (circle invisible), reset it to map (circle now shows
-    // on map), and vice versa. "command" is the display string from the button that called this function.
+    // on map), and vice versa. "command" is the string from the button that called this function.
     google.maps.Map.prototype._togCircVis = function(command){ 
       this.circles.forEach(function(circle){
-        // Make sure the "setMap" makes sense for what the button shows, and what the current setting of circles are.
-        // Without these two checks, the toggling gets confused after the map is cleared.        
+        // Hide the circles or show them, depending on the current display state.        
         if (command == 'Hide Circles' && circle.map == map){
           circle.setMap(null);
         }
@@ -147,15 +134,13 @@ function initMap(){
         }
       })
     }
-
-    // Either return "id" of the last circle in "circles", or, if "reset" = true or "circles" is empty, return whatever
-    // "lastId" is currently in storage vis a vis "tis.lastId".
+    // Either return "id" of the last circle in "circles", or, if "reset" = "true" or "circles" is empty, return whatever
+    // "lastId" is currently in storage.
     google.maps.Map.prototype._getLastId = function(){
       var id = (this.circles.length > 0) && (!this.reset) ? this.circles[this.circles.length - 1]._getId() : this.lastId;
       this.reset = false;
       return id;
     }
-
     // Called every time a circle is made in "drawTweetCircle" in "circledraw.js". Pushes the array into storage in "circles".
     google.maps.Circle.prototype._storeInMap = function(map){ 
       if(map){                                               
@@ -164,7 +149,7 @@ function initMap(){
     }
   }
 
-// Make the "tweetDump" default location rectanlge.
+  // Make the "tweetDump" default location rectanlge.
   function setTweetDump(){
     // Construct "tweetDump". 
     tweetDump = new google.maps.Rectangle({
@@ -182,8 +167,7 @@ function initMap(){
       }
     });
 
-    // This label will tell the user why there is a gray, blurry rectangle floating around 
-    // below Hawaii. 
+    // This label will tell the user why there is a gray, blurry rectangle hanging out below Hawaii. 
     var dumpLabel = new google.maps.InfoWindow({
           'content'        : '<p>Tweets Without Location Go Here</p>',
           'maxWidth'       : 100,

@@ -1,10 +1,9 @@
 // For context, this was the original proof-of-concept, for when I was figuring out
 // how to get any data from the back end and turn it into colors on the front. I 
 // started with returning an array of three randomized integers from "tweetAnalyzer"
-// and displaying those as RGB colors in these boxes.
+// and displaying those as RGB colors here.
 function updateMoodBoxes(mood){
-  
-  // "RGB" represents the overall mood of the current session. 
+  // "RGB" represents the averaged mood of the current search. 
   var RGB = [];
   // Update the colors every time data from the server's response is parsed .
   updateRGB();
@@ -13,7 +12,7 @@ function updateMoodBoxes(mood){
   // Used for averaging the overall mood of all parsed tweets.
   globalMood.count++;
 
-  // The heper function to update the mood of the session. 
+  // The helper function to update the mood of the session. 
   function updateRGB(){
     mood.forEach(function(value, i){
       globalMood.mood[i] += Number(value);
@@ -21,7 +20,7 @@ function updateMoodBoxes(mood){
     })
   }
 
-  // Sets a given html to a given color (mood of the current tweet, then overall mood). 
+  // Sets a given color as the background color of a given color box. 
   function colorBox(html, mood){
     mood = mood.toString();
     html.style = 'background-color: RGB(' + mood + ')';  

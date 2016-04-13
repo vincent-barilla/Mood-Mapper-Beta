@@ -1,12 +1,13 @@
 /*
-  See Readme VII: "Comments on geocoding usage" for a discussion on why I use four geocoders, and 
-  general issues of working with them, with live data.
+
+  See Readme VII: "Comments on Geocoding Usage" for why I use four geocoders and general issues of using 
+  them with streaming data.
+
 */
 
 // The basic pattern here is: 1) Grab the location from a tweet, 2) send the location to a geocoder
-// service, 3) pass the response to "createTweetCircle", 4) see a circle mapped at the returned coordinates. 
-// This is done for one geocoder at a time, with a cycle of four geocoders being used to handle the load
-// of live data. 
+// service, 3) pass the response to "createTweetCircle". This is done for one geocoder at a time, with 
+// a cycle of four geocoders used.
 function geoCodeTweet(tweet){
   var center;
   // If the user location is null, the tweet will go to the center of "tweetDump". 
@@ -22,19 +23,19 @@ function geoCodeTweet(tweet){
       // Here, locations are already coordinates, and do not need geocoding.
       case 'CO:':
         var latLng = location.split(",");
-        // This format for "center" is standardized across all cases. This helps with the later href map panning function. 
+        // This format for "center" is standardized across geocoder responses. This helps with the later href map panning function. 
         center = {'lat': Number(latLng[0]), 'lng': Number(latLng[1])};
         break;
 
-      // UL stands for "user location". Cycle through geocoders. (I use "turnstileCount" as this invokes the image of a turnstile, for me.) 
+      // UL stands for "user location". Cycle through geocoders. 
       case 'UL:':
         switch(turnstileCount){
 
           // 0: Query the Google geocoder.
           case 0:
+            // Increment "turnstileCount", so the next time this function is called, the next geocoder in line is used.
             turnstileCount++; 
-            // Google requires an https request be made, so I can't use "getGeo" for the Google coder. Luckily, Google makes a
-            // geocoder object available, which I use here. 
+            // Use Google's geocoder object to make a query.
             geoCoder.geocode({'address':location}, function(results, status){
               if (status == google.maps.GeocoderStatus.OK){
                   // Make sure the results exist where I'm expecting them before making an assignment to "center".
@@ -68,7 +69,29 @@ function geoCodeTweet(tweet){
           case 3:
             // Here's where the "turnstileCount" is reset, such that, next time "geoCodeTweet" is called, it'll start
             // with the case 0 geocoder (Google's), then work back down the list from there. 
-            turnstileCount = 0;
+            turnstileCount = 0; 
+
+url = 'https://dev.virtualearth.net/REST/v1/Locations?query=' + location + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
+            
+            var geoXHR = new XMLHttpRequest();
+            // The url here is a user-parameterized query string.  
+            geoXHR.open('GET', url);
+            geoXHR.send();  
+            geoXHR.onreadystatechange = function(){
+              if (geoXHR.readyState == XMLHttpRequest.DONE && geoXHR.status == 200) {
+                // Results from both services come as JSON strings. 
+                var response = JSON.parse(geoXHR.responseText);
+                if(response.results[0]){
+                  center = response.resourceSets[0].resources[0].point.coordinates;
+                  if (center) {     
+                    alert('CENTER WORKS NOW')
+                    createTweetCircle(tweet, center)
+                  }
+                }
+              } 
+            }; /*
+
+
             var geocodeRequest = 'https://dev.virtualearth.net/REST/v1/Locations?query=' + location
               + '&maxResults=1&key=Ap-VHxhCSyNJIBPYQptUIuYtx-CRsgCFFbWSLk6bmynl5Di_xn0CerxeblD-kVEb&jsonp=bingCallback';
 
@@ -88,7 +111,7 @@ function geoCodeTweet(tweet){
                   createTweetCircle(tweet, center)
                 }
               }
-            }
+            } */
             break;
         }    
       break;

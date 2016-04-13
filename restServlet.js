@@ -5,15 +5,9 @@ var https            = require('https');
 // "data", here, came from the front end, contains the parameters to define the query to Twitter. "response" 
 // and "request" are from the main server, so when "response.write" is used, it's writing back to the front end.
 this.query = function(data, response, request, wordBank){ 
-
 	// "octet-stream" alleviates a strange buffering issue I experienced when writing to Chrome. 
 	response.writeHead(200,{'Content-Type': 'application/octet-stream'});	
 
-	console.log('ID IS: ')
-	console.log(data.id)
-
-	// Here's a sample query string: 
-	//'/1.1/search/tweets.json?q=DonaldTrump%20since%3A2016-03-25%20until%3A2016-03-28&count=3'.
 	// Note the full customization via user parameters. I keep 100 as count, as its the max, and the 
 	// user can pause at any time on the front end.
 	var queryString = '/1.1/search/tweets.json?q=' + data.subject 
@@ -22,8 +16,9 @@ this.query = function(data, response, request, wordBank){
 	                + '&max_id='  + (data.id)
 	                + '&count=100';
 
-	// Fairly standard get request, using a user-parameterized search string. The code that produced my 
-	// access token is in "env.js".
+	// Here's a sample query string: '/1.1/search/tweets.json?q=Puppies%20since%3A2016-03-25%20until%3A2016-03-28&count=3'.
+
+	// Fairly standard get request, using a user-parameterized search string. Access token in "env.js".
 	var options = {
 		'path'	   : queryString,
 		'hostname' : 'api.twitter.com',
@@ -35,7 +30,7 @@ this.query = function(data, response, request, wordBank){
 	var req = new https.request(options, function(res){
 		var responseString = ""; 
 
-		// As data arrives in chunks, add it to the string.
+		// As data arrives in chunks, add them to the string.
 		res.on('data', function(tweet){
 			responseString += tweet; 
 		})
@@ -43,7 +38,7 @@ this.query = function(data, response, request, wordBank){
 		// "end" indicates all the data from the query is done sending. "responseString" can now be parsed 
 		// into an object which contains "statuses", which contains an array of the individual tweets as 
 		// JSON objects. Loop through that array, pass each tweet to "tweetAnalyzer", then write the result 
-		// to the front end with "response.write". Use a timeout to throttle the writing, to avoid overtaxing 
+		// to the front end with "response.write". Use a timeout to throttle the writing to avoid overtaxing 
 		// the geocoders.
 		res.on('end', function(){ 
 			var tweets = JSON.parse(responseString).statuses;
@@ -57,7 +52,7 @@ this.query = function(data, response, request, wordBank){
 						if (result){
 							response.write(JSON.stringify(result)); 
 						}
-					}, i * 500); // The half-second interval is arbitrary/aesthetic.									       
+					}, i * 500); // The half-second interval is arbitrary/aesthetic/sufficient time for the geocoders.									       
 				})(i); // Closure needed to correctly stagger timeout.
 			};	
 		});
