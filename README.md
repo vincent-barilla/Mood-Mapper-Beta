@@ -1,4 +1,4 @@
-Contents:
+###Contents:
 
 (Order within each group is alphabetical, not the order in which the scripts need to be invoked.)
 
@@ -30,7 +30,7 @@ Contents:
     public/js/initGlobals.js  - Initialize several global variables on page load.
     public/js/pause.js        - Pause mapping, sever connection to Twitter stream API.
 
-Google Map-specific JS files:  
+####Google Map-specific JS files:  
     public/map_scripts/circledraw.js - Draw a color-coded circle for each tweet on the map. 
     public/map_scripts/geocode.js    - Take a tweet's location string, query a geocoder service, get coordinates. 
     public/map_scripts/init.js       - Initialize the Google Map. 
@@ -43,7 +43,7 @@ A note on commenting: I tried to put the more extensive comments, especially
 those that called for examples, here in the readme. References will be placed in the 
 code to indicate when to use these comments.
 
-####I.     initWordBank()
+###I.     initWordBank()
 
   Read in data from a local file path, then reformat it into a wordBank that is tailored
   to the needs of tweetAnalyzer. A sample of the start product:
@@ -83,7 +83,7 @@ code to indicate when to use these comments.
 
   
   
-####II. Concerns About Twitter Stream Usage Limits
+###II. Concerns About Twitter Stream Usage Limits
 
   Note that I customize the get request (the stream) to Twitter for each user. This is not a good solution, 
   according to Twitter. Twitter may, in fact, block apps that make too many connections from the same IP address. 
@@ -99,7 +99,7 @@ code to indicate when to use these comments.
 
 
 
-####III.   Delimiting Stream Response
+###III.   Delimiting Stream Response
     
     /* What I did: 
 
@@ -143,7 +143,7 @@ code to indicate when to use these comments.
 	
 
 	
-####IV.     Why Track "lastId"? 
+###IV.     Why Track "lastId"? 
 
   GET requests to Twitter using the same set of parameters will usually return the same batch of tweets 
   in response. For the user, this means he or she will see the same medley of circles show up on the 
@@ -164,7 +164,7 @@ code to indicate when to use these comments.
 
 
 
-####V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
+###V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMthd){
 
           /* Paraphrasing the arguments:
 
@@ -211,7 +211,7 @@ code to indicate when to use these comments.
 
 
 
-####VI. function preventCrossToggling(source){
+###VI. function preventCrossToggling(source){
 
     /* What this does, in a nutshell: 
 
@@ -251,7 +251,7 @@ code to indicate when to use these comments.
 
 
 
-####VII.      Comments on Geocoding Usage:
+###VII.      Comments on Geocoding Usage:
 
   I've found that geocoders are not very well-suited for streaming live data. They'll briefly stop working
   if you exceed some per-second query limit which is not clearly stated in the documentation. To work around
