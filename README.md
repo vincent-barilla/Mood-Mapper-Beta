@@ -63,13 +63,13 @@ III.   Delimiting Stream Response
     
     /* What I did: 
 
-  Data come in chunks, NOT complete tweets, so I use '\r\n{"created_at":"' to delimt the start 
-  and end indices of new, whole tweets. I then take indexOf to get the first index of my delimiter,
-  and lastIndexOf to get its last index. Using "endInd > startInd" precludes the possibility 
-  that the substring was not found or that the delimiter only appears once: if it appears once, both 
-  "lastIndexOf" and "indexOf" will return the same thing; if it doesn't appear at all, both will 
-  equal -1. (This seemed dicey at first,to me, but it has held up very well. I've never, after thousands  
-  of trials, had the delimiters fail.) 
+      Data come in chunks, NOT complete tweets, so I use '\r\n{"created_at":"' to delimt the start 
+      and end indices of new, whole tweets. I then take indexOf to get the first index of my delimiter,
+      and lastIndexOf to get its last index. Using "endInd > startInd" precludes the possibility 
+      that the substring was not found or that the delimiter only appears once: if it appears once, both 
+      "lastIndexOf" and "indexOf" will return the same thing; if it doesn't appear at all, both will 
+      equal -1. (This seemed dicey at first,to me, but it has held up very well. I've never, after thousands  
+      of trials, had the delimiters fail.) 
     
     */  
     twitResponse.addListener('data', function(data){ 
@@ -79,16 +79,16 @@ III.   Delimiting Stream Response
 
       /* The downside to what I did, and why I have left it as-is: 
 
-  I use startInd and endInd to pull out the entire tweet, pass it through tweetAnalyzer, reset the 
-  string for the next incoming tweet, and write the result, in JSON, back to the front end. 
+        I use startInd and endInd to pull out the entire tweet, pass it through tweetAnalyzer, reset the 
+        string for the next incoming tweet, and write the result, in JSON, back to the front end. 
 
-  The downside: setting string to "" wipes out the tail of the string, which could have been coupled with the 
-  beginning of the next data chunk to form another tweet. This means I'm losing about half the tweets 
-  that I could be returning to the front end. 
+        The downside: setting string to "" wipes out the tail of the string, which could have been coupled with the 
+        beginning of the next data chunk to form another tweet. This means I'm losing about half the tweets 
+        that I could be returning to the front end. 
 
-  Because the streaming is already very close to maxing out the geocoders on the front end, I'm leaving that alone. 
-  Losing tweets actually acts as a de facto throttling measure; fixing it would double the load on geocoders, 
-  which they cannot support. If I can further boost the geocoders, then I can support the additional load. 
+        Because the streaming is already very close to maxing out the geocoders on the front end, I'm leaving that alone. 
+        Losing tweets actually acts as a de facto throttling measure; fixing it would double the load on geocoders, 
+        which they cannot support. If I can further boost the geocoders, then I can support the additional load. 
 
       */
       if (endInd > startInd){ 
@@ -128,16 +128,16 @@ V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMth
 
           /* Paraphrasing the arguments:
 
-  elem: The html element you want to change. 
-  prop: The property of that element you want to change. 
-  newVal: The new value you want. 
-  oldVal: The value it currently is, which it will then be toggled back to, on the next click. 
-  newOnClickMthd: A callback that you want to fire whenever the button is clicked - OR - a callback
-                  you want to fire only when the element's property is set to arguments[2]. Whether or not
-                  there is a sixth argument determines between the two options. 
-  oldOnClickMthd: A callback that you want to fire when the element's property is set to the value found 
-                  in arguments[3]. Including this means the callback in agument[4] will be 
-                  associated with the value in arguments[2].
+              elem: The html element you want to change. 
+              prop: The property of that element you want to change. 
+              newVal: The new value you want. 
+              oldVal: The value it currently is, which it will then be toggled back to, on the next click. 
+              newOnClickMthd: A callback that you want to fire whenever the button is clicked - OR - a callback
+                              you want to fire only when the element's property is set to arguments[2]. Whether or not
+                              there is a sixth argument determines between the two options. 
+              oldOnClickMthd: A callback that you want to fire when the element's property is set to the value found 
+                              in arguments[3]. Including this means the callback in agument[4] will be 
+                              associated with the value in arguments[2].
 
           */
 
@@ -145,15 +145,14 @@ V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMth
               
               /* What clickAction does, here:
 
-  If only the first 4 arguments are given, this function will toggle the element between 
-  oldVal and newVal, and not fire any callbacks. If there's one callback given, use that 
-  callback whenever this button is clicked. If both callbacks are given, use the first 
-  when element shows newVal, and the second when the element shows oldVal. 
-
-  I find it counter-intuitive to order the callbacks new before old, but doing so allows 
-  the single callback to be entered, and used for both sides of the toggle. That's why 
-  I ordered them as such.
-  
+                  If only the first 4 arguments are given, this function will toggle the element between 
+                  oldVal and newVal, and not fire any callbacks. If there's one callback given, use that 
+                  callback whenever this button is clicked. If both callbacks are given, use the first 
+                  when element shows newVal, and the second when the element shows oldVal. 
+              
+                  I find it counter-intuitive to order the callbacks new before old, but doing so allows 
+                  the single callback to be entered, and used for both sides of the toggle. That's why 
+                  I ordered them as such.
               */
 
             function clickAction(value, callback){
@@ -182,9 +181,9 @@ VI. function preventCrossToggling(source){
 
     /* What this does, in a nutshell: 
 
-  If 'banFrame' is hidden and minimized, maximize and show it. This will contain how-to info for 
-  the app. As two buttons set the 'src' of the iFrame, this function checks to make sure one button isn't 
-  toggling 'hidden' when the other one is expecting 'visible.'
+      If 'banFrame' is hidden and minimized, maximize and show it. This will contain how-to info for 
+      the app. As two buttons set the 'src' of the iFrame, this function checks to make sure one button isn't 
+      toggling 'hidden' when the other one is expecting 'visible.'
     
     /*  
 
@@ -194,20 +193,20 @@ VI. function preventCrossToggling(source){
 
       /* What happens when the length is either one, or both elements are the same?  
 
-  If only one source has been kept track of so far, go ahead and let it start its toggle action. Then,
-  the next time a button is clicked, compare it to the first one. If they're different, then do not 
-  let the first button's action be un-toggled. 
+        If only one source has been kept track of so far, go ahead and let it start its toggle action. Then,
+        the next time a button is clicked, compare it to the first one. If they're different, then do not 
+        let the first button's action be un-toggled. 
 
-  In practice, this means either 'action' or 'mapHowTo' can toggle the iFrame to be visible, but it
-  will only toggle to be hidden if the same button is clicked consecutively. If the user first 
-  clicks one button to open the iFrame, then clicks the other button, iFrame now will stay open, even 
-  though the contents have been changed (see the cases above for the assignment of 'src' of the iFrame,
-  for where the contents are set.)
+        In practice, this means either 'action' or 'mapHowTo' can toggle the iFrame to be visible, but it
+        will only toggle to be hidden if the same button is clicked consecutively. If the user first 
+        clicks one button to open the iFrame, then clicks the other button, iFrame now will stay open, even 
+        though the contents have been changed (see the cases above for the assignment of 'src' of the iFrame,
+        for where the contents are set.)
 
-  My reason for doing this is to provide a smoother viewing experience of the help files. Without it,
-  the user has to click once to open the iFrame, once more to close it, then a third time to reopen 
-  it with new contents. This function cuts that down by one needless click. Or, if the user is finished with the
-  iFrame, it'll still close after two clicks, so long as the same button is clicked twice in a row.
+        My reason for doing this is to provide a smoother viewing experience of the help files. Without it,
+        the user has to click once to open the iFrame, once more to close it, then a third time to reopen 
+        it with new contents. This function cuts that down by one needless click. Or, if the user is finished with the
+        iFrame, it'll still close after two clicks, so long as the same button is clicked twice in a row.
 
       */
 
@@ -219,10 +218,10 @@ VI. function preventCrossToggling(source){
 
     /* Why wipe out the array, when length == 2? 
         
-  This makes it so only the last two button clicks are considered. Notice that the 'push' at the start
-  of this function ensures that the length will always be at least 1. When it is 1, the first toggle
-  action -- here, showing the iFrame -- starts. If the two elements in the array are different, nothing
-  happens -- the iFrame stays visible, while the above cases will have set its contents.
+        This makes it so only the last two button clicks are considered. Notice that the 'push' at the start
+        of this function ensures that the length will always be at least 1. When it is 1, the first toggle
+        action -- here, showing the iFrame -- starts. If the two elements in the array are different, nothing
+        happens -- the iFrame stays visible, while the above cases will have set its contents.
 
     */
     if (togSources.length == 2){
