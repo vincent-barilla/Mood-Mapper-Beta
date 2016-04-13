@@ -2,60 +2,61 @@ Explaining some of the denser coding blocks and general engineering concerns for
 
 Intro -- A note on commenting: I tried to put the more extensive comments, especially
 those that called for examples, here in the readme. References will be placed in the 
-code to indicate when to use these comments.. 
+code to indicate when to use these comments.
 
 I.     initWordBank()
 
   Read in data from a local file path, then reformat it into a wordBank that is tailored
   to the needs of tweetAnalyzer. A sample of the start product:
   
-  		var wordFile = {'english':[ 
-                       {'word': 'love',
-  								  	 'score': 4},
-  								     {'word': 'hate',
-  								     'score': -4} ],
-  					         'spanish':[ 
-                       {'word': 'amor',
-  					    			 'score': 4},
-  					     			 {'word': 'odio',
-  					     			 'score': -4} ] };
+  		var wordFile = {
+      'english':[ 
+                   {'word': 'love',
+      				  	 'score': 4},
+      				     {'word': 'hate',
+      				     'score': -4} ],
+       'spanish':[ 
+                   {'word': 'amor',
+      	    			 'score': 4},
+      	     			 {'word': 'odio',
+      	     			 'score': -4} ] };
   
    And a sample of the end product:
   
-  		var wordBank = {'english': 
-                         {'love': 4,
-  								    	 'hate': -4},
-  			        		'spanish': 
-                         {'amor': 4,
-  						 		   	   'odio': -4} };
+  		var wordBank = {
+      'english': 
+                 {'love': 4,
+					    	 'hate': -4},
+  		'spanish': 
+                 {'amor': 4,
+			 		   	   'odio': -4} };
   
   This allows for tweetAnalyzer to make rapid checks to see if a word is in a wordBank, 
   with the following: 
   
-  		wordBank['english']['love']; // ==> 4  
+  		    wordBank['english']['love']; // ==> 4  
       OR 	wordBank['english']['odio']; // ==> undefined
       OR  wordBank['spanish']['odio']; // ==> 4
   
-  tweetAnalyzer checks the Tweet's language and assigns a wordBank accordingly every 
-  time it is called. 
+  There are multiple wordBanks available for each analysis. tweetAnalyzer checks the Tweet's language and assigns 
+  a wordBank accordingly every time it is called. 
   
 
   
   
 II. Concerns About Twitter Stream Usage Limits
 
-  Note that I customize the get request (the stream), making a unique connection to Twitter 
-  for each user. This is NOT a good solution, according to Twitter. Twitter will, in fact, 
-  block accounts who make too many connections from the same IP address. 
+  Note that I customize the get request (the stream) to Twitter for each user. This is NOT a good solution, 
+  according to Twitter. Twitter may, in fact, block apps that make too many connections from the same IP address. 
 
-  That's a big limitation to the streaming mode of my app. All the solutions that I can think 
-  of would ask Twitter's public stream to do something it wasn't meant to. My best approach is 
-  probably to just keep my code as is, demo for you the idea as I originally saw it, and then 
-  wait on a new tech to come out. This may not take so long: Twitter is actually developing something 
-  that	would be perfect for this app: Twitter's Site Streaming API is currently in closed beta, but,
-  when open, it will do exactly what I'm talking about here -- make customized connections per user, 
-  for many users, for your app. When Site Stream comes out, it should be an easy inclusion to this app. 
+  That's a big limitation to the streaming mode of my app. Luckily, Twitter is developing something 
+  that would solve this problem perfectly: Twitter's Site Streaming API is currently in closed beta, but,
+  when open, it will do exactly what I'm talking about -- make customized connections per user, 
+  for many users, for an app. 
 
+  When Site Stream comes out, it should be an easy inclusion to this app. Till then, I'm going to leave 
+  things as they are, consider the streaming mode of my app in a closed beta stage itself, rather than try 
+  developing work-arounds to make the public streaming API do something it really is not meant to. 
 
 
 
@@ -68,10 +69,11 @@ III.   Delimiting Stream Response
       and lastIndexOf to get its last index. Using "endInd > startInd" precludes the possibility 
       that the substring was not found or that the delimiter only appears once: if it appears once, both 
       "lastIndexOf" and "indexOf" will return the same thing; if it doesn't appear at all, both will 
-      equal -1. (This seemed dicey at first,to me, but it has held up very well. I've never, after thousands  
+      equal -1. (This seemed dicey at first, to me, but it has held up very well. I've never, after thousands  
       of trials, had the delimiters fail.) 
     
     */  
+
     twitResponse.addListener('data', function(data){ 
       string += data; 
       startInd = string.indexOf('\r\n{"created_at":"'); 
@@ -84,13 +86,14 @@ III.   Delimiting Stream Response
 
         The downside: setting string to "" wipes out the tail of the string, which could have been coupled with the 
         beginning of the next data chunk to form another tweet. This means I'm losing about half the tweets 
-        that I could be returning to the front end. 
+        that I could be returning to the client. 
 
-        Because the streaming is already very close to maxing out the geocoders on the front end, I'm leaving that alone. 
+        But, because the streaming is already very close to maxing out the geocoders on the front end, I'm leaving that alone. 
         Losing tweets actually acts as a de facto throttling measure; fixing it would double the load on geocoders, 
         which they cannot support. If I can further boost the geocoders, then I can support the additional load. 
 
       */
+
       if (endInd > startInd){ 
         tweet = string.substring(startInd, endInd); 
         result = TweetAnalyzer.analyze(JSON.parse(tweet), wordBank);
@@ -103,24 +106,22 @@ III.   Delimiting Stream Response
 	
 IV.     Why Track "lastId"? 
 
-  All GET requests to Twitter using the same set of parameters will return the same batch of tweets 
+  GET requests to Twitter using the same set of parameters will usually return the same batch of tweets 
   in response. For the user, this means he or she will see the same medley of circles show up on the 
   map over and over again, till the form values are changed and a new GET request sends. 
 
-  To solve this, the id of the the last tweet must be stored. It can then be used in the "max_id" 
-  parameter of the GET request. "mad_id" tells Twitter to only respond with tweets that are older* than the one 
-  corresponding to this id. The user will now see all new tweets every time they hit "Submit" on the 
-  front end, even if they use the identical form, multiple times.  
+  To solve this, the id of the the last tweet that reached the client must be stored, so it can then be 
+  used in the "max_id" parameter of a Twitter GET request. "max_id" tells Twitter to respond with 
+  only tweets that are older than the one corresponding to this id. The user will now see all new tweets 
+  every time they hit "Submit" on the front end, even if they use the identical form, multiple times.  
 
-  Because this id only pertains to the current subject of a user's search, it will be wiped clean 
-  every time the user changes subject. This is done via and 'onkeyup' callback to the subject input 
-  box in "index.html". 
+  Because "lastId" only pertains to the current parameters of a user's search, it will be wiped clean 
+  every time the user changes the input. This is done via an 'onkeyup' callback on all the input 
+  boxes in "index.html". 
+ 
 
-  Note that Twitter will accept a query string with "max_id=&next_param=value" -- an empty value for
-   "max_id". This empty string is what "._getLastId" will return**. 
-
-  * Twitter responds with newest-to-oldest ordering.
-  ** See "initMap" in "init.js" for the function definition, and "formSubmit" in "formsubmit.js" for its use)
+  Note: Twitter responds with newest-to-oldest ordering in its tweets; the "max_id" tells Twitter to send tweets
+  with an "id" smaller than this number.
 
 
 
@@ -130,14 +131,18 @@ V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMth
 
               elem: The html element you want to change. 
               prop: The property of that element you want to change. 
-              newVal: The new value you want. 
-              oldVal: The value it currently is, which it will then be toggled back to, on the next click. 
+              newVal: The new value you want that property to have. 
+              oldVal: The value the property currently has, which it will then be toggled back to, on the next click. 
               newOnClickMthd: A callback that you want to fire whenever the button is clicked - OR - a callback
                               you want to fire only when the element's property is set to arguments[2]. Whether or not
                               there is a sixth argument determines between the two options. 
               oldOnClickMthd: A callback that you want to fire when the element's property is set to the value found 
                               in arguments[3]. Including this means the callback in agument[4] will be 
                               associated with the value in arguments[2].
+
+              In other words: Add one callback, and calling toggleWithOptCb fires it whenever a button is clicked, while
+              toggling a view state simultaneously. Add a second callback to have the callbacks toggle their firing
+              to coincide to the toggling view states.
 
           */
 
@@ -153,17 +158,11 @@ V.     toggleWithOptCb(elem, prop, newVal, oldVal, newOnClickMthd, oldOnClickMth
                   I find it counter-intuitive to order the callbacks new before old, but doing so allows 
                   the single callback to be entered, and used for both sides of the toggle. That's why 
                   I ordered them as such.
+
               */
 
             function clickAction(value, callback){
               elem[prop] = value;
-
-              /* What the "if" statement is doing:
-
-                  This condition applies to when only the first callback is given. In that case, assign 
-                  callback to "newOnClickMthd", and fire it whenever the button is clicked.
-
-              */    
               if (!callback && newOnClickMthd){
                 callback = newOnClickMthd;
               }
@@ -200,13 +199,7 @@ VI. function preventCrossToggling(source){
         In practice, this means either 'action' or 'mapHowTo' can toggle the iFrame to be visible, but it
         will only toggle to be hidden if the same button is clicked consecutively. If the user first 
         clicks one button to open the iFrame, then clicks the other button, iFrame now will stay open, even 
-        though the contents have been changed (see the cases above for the assignment of 'src' of the iFrame,
-        for where the contents are set.)
-
-        My reason for doing this is to provide a smoother viewing experience of the help files. Without it,
-        the user has to click once to open the iFrame, once more to close it, then a third time to reopen 
-        it with new contents. This function cuts that down by one needless click. Or, if the user is finished with the
-        iFrame, it'll still close after two clicks, so long as the same button is clicked twice in a row.
+        though the contents have been changed.
 
       */
 
@@ -223,7 +216,20 @@ VI. function preventCrossToggling(source){
         action -- here, showing the iFrame -- starts. If the two elements in the array are different, nothing
         happens -- the iFrame stays visible, while the above cases will have set its contents.
 
+        If the user has clicked both button once to see both help files, then togSources will have reset to []. 
+        The next click  becomes the first and only element in a new togSources, and, since the above condition will toggle the
+        actions when togSources.length == 1, the toggle actions will fire again. The previous state of the toggle has
+        the iFrame being visible, so it will now toggle to closed. 
+
+        It's a bit of a convoluted piece of coding. My reason for doing this is to provide a smoother viewing experience 
+        of the help files. Without it, the user has to click once to open the iFrame, once more to close it, then a  
+        third time to reopen it with new contents. This function cuts that down by one needless click. Or, if the
+        user is finished with the iFrame, it'll still close after two clicks, so long as the same button is clicked twice 
+        in a row.
+
     */
+
+    // Here's the reset to [], whenever a second click, regardless of source, calls this function.
     if (togSources.length == 2){
       togSources = [];
     }
@@ -248,9 +254,9 @@ VII.      Comments on Geocoding Usage:
   again.  
 
   Google comes equipped with a geocoder constructor, which I utilize, and Open Cage and mapQuest are similar
-  enough that I pass them both to the same helper function. bing rejected my CORS query attempt, so I use the
-  request url as the src to a script, and include a callback in the request, such that the src script will grab
-  the data from the src contents and pass it to createTweetCircle.
+  enough that I pass them both to the same helper function. bing rejected my query attempt due to lack of CORS support, 
+  so I use the request url as the src to a script, and include a callback in the request, such that the src
+  script will grab the data from the src contents and pass it to createTweetCircle.
 
 
 
