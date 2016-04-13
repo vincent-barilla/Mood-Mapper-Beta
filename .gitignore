@@ -1,5 +1,5 @@
-
+backup/*
 env.js
 test.js
-
+public/test logs/*
 "node_modules" 
