@@ -2,17 +2,21 @@ Contents:
 
 (Order within each group is alphabetical, not the order in which the scripts need to be invoked.)
 
-#Server files: 
-*server.js        - Main server.
-*dispatcher.js    - Gets the requests from the server, parses them, sends them onward for further processing.
-*restServlet.js   - Make queries for Twitter RESTful API.
-*streamServlet.js - Make queries for Twitter streaming API.
-*tweetAnalyzer.js - Analyze a tweet's text for inferred mood.
+###Server files: 
+  *server.js        - Main server.
 
-Data files: 
+  *dispatcher.js    - Gets the requests from the server, parses them, sends them onward for further processing.
+
+  *restServlet.js   - Make queries for Twitter RESTful API.
+
+  *streamServlet.js - Make queries for Twitter streaming API.
+
+  *tweetAnalyzer.js - Analyze a tweet's text for inferred mood.
+
+###Data files: 
     public/AFINN/JSON/MasterList.json - AFINN word list.
 
-Help files: 
+###Help files: 
     Readme.md             - Readme for the whole project.
     public/aboutThis.html - About the app.
     public/mapTips.html   - About map features.
