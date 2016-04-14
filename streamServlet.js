@@ -64,7 +64,13 @@ this.query = function(data, response, request, wordBank){
 			// for the next incoming tweet, and write the result, in JSON, back to the front end.
 			if (endInd > startInd){ 
 				tweet = string.substring(startInd, endInd); 
-				result = TweetAnalyzer.analyze(JSON.parse(tweet), wordBank);
+				// As a fail-safe, wrap this in a try-catch block. Heroku crashed and indicated the below statement may
+				// have been the cause.
+				try {
+					result = TweetAnalyzer.analyze(JSON.parse(tweet), wordBank);
+				} catch (error) {
+					console.log(error);
+				}
 				// Clear string to prepare it for the next chunk.
 				string = "";				
 				response.write(JSON.stringify(result));
@@ -75,7 +81,10 @@ this.query = function(data, response, request, wordBank){
 
 // Twitter will keep the responses flowing in until you manually abort the request from the front end.
 this.kill = function(response){
-	stream.abort();
+	// Wrap in an "if" check as a fail-safe.
+	if (stream){
+		stream.abort();
+	}	
 	response.writeHead(200,{'Content-Type': 'text/plain; charset=UTF-8'});
 	response.end("Stream ended.");
 }
