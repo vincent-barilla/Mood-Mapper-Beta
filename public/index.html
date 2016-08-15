@@ -1,13 +1,21 @@
 <html>
 <head>  
    <link rel="stylesheet" type="text/css" href="resource/css/style.css">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
    <meta charset="ISO-8859-1">
    <title>Welcome to Mood Mapper Beta</title>
    <link rel="shortcut icon" href="resource/icon.ico" />
    <!-- All front end JS scripts are in these. Minus comments, there was around 700 lines of JS code in a script tag below this 
         head tag, so I figured a modular approach would be a lot more readable. The order in which these scripts are listed here
         is important to the app running correctly. If one of the scripts uses variables defined in a previous script, I mention 
-        where the original initialization of that variable is. Most global variables are initialized and/or defined in "initGlobals.js". -->      
+        where the original initialization of that variable is. Most global variables are initialized and/or defined in "initGlobals.js". -->  
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="https://fb.me/react-with-addons-0.14.6.js"></script>
+    <script src="https://fb.me/react-dom-0.14.6.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+
    <script src='resource/map_scripts/init.js'></script>
    <script src='resource/js/buttonhandle.js'></script>                 
    <script src='resource/js/formvalidate.js'></script>
@@ -106,6 +114,11 @@
       fires the "Go to Search" window scrolling. -->
      </div>
   </div>
+  <br>
+  <br>
+  <br>
+
+
 
   <!--I initialize the global variables here. --> 
   <script src='resource/js/initGlobals.js'></script>

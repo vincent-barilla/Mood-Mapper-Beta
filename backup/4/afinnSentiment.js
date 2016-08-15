@@ -1,4 +1,0 @@
-
-	this.analyzeMood = function(text){
-
-	}

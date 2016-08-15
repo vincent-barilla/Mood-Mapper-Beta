@@ -1,0 +1,31 @@
+'use strict';
+
+// For context, this was the original proof-of-concept when I was figuring out
+// how to get any data from the back end and turn it into colors on the front. I 
+// started with returning an array of three randomized integers from "tweetAnalyzer"
+// and displaying those as RGB colors here.
+function updateMoodBoxes(mood) {
+  // "RGB" represents the averaged mood of the current search. 
+  var RGB = [];
+  // Update the colors every time data from the server's response is parsed.
+  updateRGB();
+  colorBox(document.getElementById('moodDiv'), mood);
+  colorBox(document.getElementById('globalMoodDiv'), RGB);
+  // Used for averaging the overall mood of all parsed tweets.
+  globalMood.count++;
+
+  // The helper function to update the mood of the session. 
+  function updateRGB() {
+    mood.forEach(function (value, i) {
+      globalMood.mood[i] += Number(value);
+      RGB[i] = (globalMood.mood[i] / globalMood.count).toFixed(0);
+    });
+  }
+
+  // Sets a given color as the background of a given box. 
+  function colorBox(html, mood) {
+    mood = mood.toString();
+    html.style = 'background-color: RGB(' + mood + ')';
+  }
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3B1YmxpYy9qcy9jb2xvcmJveGVzLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQSxTQUFTLGVBQVQsQ0FBeUIsSUFBekIsRUFBOEI7QUFDNUI7QUFDQSxNQUFJLE1BQU0sRUFBVjtBQUNBO0FBQ0E7QUFDQSxXQUFTLFNBQVMsY0FBVCxDQUF3QixTQUF4QixDQUFULEVBQTZDLElBQTdDO0FBQ0EsV0FBUyxTQUFTLGNBQVQsQ0FBd0IsZUFBeEIsQ0FBVCxFQUFtRCxHQUFuRDtBQUNBO0FBQ0EsYUFBVyxLQUFYOztBQUVBO0FBQ0EsV0FBUyxTQUFULEdBQW9CO0FBQ2xCLFNBQUssT0FBTCxDQUFhLFVBQVMsS0FBVCxFQUFnQixDQUFoQixFQUFrQjtBQUM3QixpQkFBVyxJQUFYLENBQWdCLENBQWhCLEtBQXNCLE9BQU8sS0FBUCxDQUF0QjtBQUNBLFVBQUksQ0FBSixJQUFTLENBQUMsV0FBVyxJQUFYLENBQWdCLENBQWhCLElBQXFCLFdBQVcsS0FBakMsRUFBd0MsT0FBeEMsQ0FBZ0QsQ0FBaEQsQ0FBVDtBQUNELEtBSEQ7QUFJRDs7QUFFRDtBQUNBLFdBQVMsUUFBVCxDQUFrQixJQUFsQixFQUF3QixJQUF4QixFQUE2QjtBQUMzQixXQUFPLEtBQUssUUFBTCxFQUFQO0FBQ0EsU0FBSyxLQUFMLEdBQWEsMkJBQTJCLElBQTNCLEdBQWtDLEdBQS9DO0FBQ0Q7QUFDRiIsImZpbGUiOiJjb2xvcmJveGVzLmpzIiwic291cmNlc0NvbnRlbnQiOlsiLy8gRm9yIGNvbnRleHQsIHRoaXMgd2FzIHRoZSBvcmlnaW5hbCBwcm9vZi1vZi1jb25jZXB0IHdoZW4gSSB3YXMgZmlndXJpbmcgb3V0XG4vLyBob3cgdG8gZ2V0IGFueSBkYXRhIGZyb20gdGhlIGJhY2sgZW5kIGFuZCB0dXJuIGl0IGludG8gY29sb3JzIG9uIHRoZSBmcm9udC4gSSBcbi8vIHN0YXJ0ZWQgd2l0aCByZXR1cm5pbmcgYW4gYXJyYXkgb2YgdGhyZWUgcmFuZG9taXplZCBpbnRlZ2VycyBmcm9tIFwidHdlZXRBbmFseXplclwiXG4vLyBhbmQgZGlzcGxheWluZyB0aG9zZSBhcyBSR0IgY29sb3JzIGhlcmUuXG5mdW5jdGlvbiB1cGRhdGVNb29kQm94ZXMobW9vZCl7XG4gIC8vIFwiUkdCXCIgcmVwcmVzZW50cyB0aGUgYXZlcmFnZWQgbW9vZCBvZiB0aGUgY3VycmVudCBzZWFyY2guIFxuICB2YXIgUkdCID0gW107XG4gIC8vIFVwZGF0ZSB0aGUgY29sb3JzIGV2ZXJ5IHRpbWUgZGF0YSBmcm9tIHRoZSBzZXJ2ZXIncyByZXNwb25zZSBpcyBwYXJzZWQuXG4gIHVwZGF0ZVJHQigpO1xuICBjb2xvckJveChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbW9vZERpdicpLCBtb29kKTtcbiAgY29sb3JCb3goZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dsb2JhbE1vb2REaXYnKSwgUkdCKTtcbiAgLy8gVXNlZCBmb3IgYXZlcmFnaW5nIHRoZSBvdmVyYWxsIG1vb2Qgb2YgYWxsIHBhcnNlZCB0d2VldHMuXG4gIGdsb2JhbE1vb2QuY291bnQrKztcblxuICAvLyBUaGUgaGVscGVyIGZ1bmN0aW9uIHRvIHVwZGF0ZSB0aGUgbW9vZCBvZiB0aGUgc2Vzc2lvbi4gXG4gIGZ1bmN0aW9uIHVwZGF0ZVJHQigpe1xuICAgIG1vb2QuZm9yRWFjaChmdW5jdGlvbih2YWx1ZSwgaSl7XG4gICAgICBnbG9iYWxNb29kLm1vb2RbaV0gKz0gTnVtYmVyKHZhbHVlKTtcbiAgICAgIFJHQltpXSA9IChnbG9iYWxNb29kLm1vb2RbaV0gLyBnbG9iYWxNb29kLmNvdW50KS50b0ZpeGVkKDApO1xuICAgIH0pXG4gIH1cblxuICAvLyBTZXRzIGEgZ2l2ZW4gY29sb3IgYXMgdGhlIGJhY2tncm91bmQgb2YgYSBnaXZlbiBib3guIFxuICBmdW5jdGlvbiBjb2xvckJveChodG1sLCBtb29kKXtcbiAgICBtb29kID0gbW9vZC50b1N0cmluZygpO1xuICAgIGh0bWwuc3R5bGUgPSAnYmFja2dyb3VuZC1jb2xvcjogUkdCKCcgKyBtb29kICsgJyknOyAgXG4gIH1cbn0gIl19

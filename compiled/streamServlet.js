@@ -1,0 +1,80 @@
+'use strict';
+
+var util = require('util');
+var Oauth = require('oauth');
+var TweetAnalyzer = require('./tweetAnalyzer.js');
+// Initialize stream here to give it global scope. It can now trigger writes to the front end in "query",
+// and disconnect from Twitter in "kill". 
+var stream;
+
+/*
+	 Refer to Readme.md: "II.  Concerns About Twitter Stream Usage Limits" in the github repo for a consideration of
+ stream usage limits for this app.  	
+
+*/
+
+// Query the Twitter Public Stream API. Receive a sample of real-time tweets that match query parameters.
+// "data" came from the front end, contains the parameters to define the query to Twitter. "response", 
+// "request", are from the main server, so when "response.write" is used, JSON.stringified data go back to the client. 
+undefined.query = function (data, response, request, wordBank) {
+	// "octet-stream" alleviates a strange buffering issue I experienced when writing to Chrome. 
+	response.writeHead(200, { 'Content-Type': 'application/octet-stream' });
+	// I used an npm module for the oauth 1.0 authentication. See "env.js" for the keys. 
+	var oauth = new Oauth.OAuth('https://api.twitter.com/oauth/request_token', 'https://api.twitter.com/oauth/access_token', process.env.TWITTER_CONSUMER_KEY, process.env.TWITTER_CONSUMER_SECRET, '1.0A', null, 'HMAC-SHA1');
+	// Notice that the stream is a long-lived get request. Twitter holds it open and states, in their documentation,
+	// that they prefer a client keep this connection open for as long as possible. Frequently disconnecting and 
+	// reconnecting is more resource intensive for them than is holding open one request. 
+	stream = oauth.get('https://stream.twitter.com/1.1/statuses/filter.json?filter_level=none&track=' + data.subject, process.env.TWITTER_ACCESS_TOKEN_KEY, process.env.TWITTER_ACCESS_TOKEN_SECRET);
+	// Since the stream connection comes from a GET request, the request must be ended.  
+	stream.end();
+	// This response will contain the incoming tweet data. Unlike the RESTful query, no 'end' event is generated with 
+	// this response, so the code can't wait till all the data has reached the server before cutting it up.
+	stream.addListener('response', function (twitResponse) {
+		// The variables initialized here will delimit complete tweets. 		
+		var startInd;
+		var endInd;
+		var string = "";
+		var tweet;
+		var result;
+
+		/*
+  		Refer to Readme.md "III. Delimiting Stream Response" for expanded comments on the methodology I used 
+  	in the "twitResponse.addListener" code block.
+  	*/
+
+		// Data come in chunks, NOT complete tweets, so I use '\r\n{"created_at":"' to delimt the start and end 
+		// indices of tweets.
+		twitResponse.addListener('data', function (data) {
+			// Concatenate incoming chunks into one, long string. 
+			string += data;
+			startInd = string.indexOf('\r\n{"created_at":"');
+			endInd = string.lastIndexOf('\r\n{"created_at":"');
+			// Use startInd and endInd to pull out the entire tweet, pass it through tweetAnalyzer, reset the string 
+			// for the next incoming tweet, and write the result, in JSON, back to the front end.
+			if (endInd > startInd) {
+				tweet = string.substring(startInd, endInd);
+				// As a fail-safe, wrap this in a try-catch block. Heroku crashed and indicated the below statement may
+				// have been the cause.
+				try {
+					result = TweetAnalyzer.analyze(JSON.parse(tweet), wordBank);
+				} catch (error) {
+					console.log(error);
+				}
+				// Clear string to prepare it for the next chunk.
+				string = "";
+				response.write(JSON.stringify(result));
+			}
+		});
+	});
+};
+
+// Twitter will keep the responses flowing in until you manually abort the request from the front end.
+undefined.kill = function (response) {
+	// Wrap in an "if" check as a fail-safe.
+	if (stream) {
+		stream.abort();
+	}
+	response.writeHead(200, { 'Content-Type': 'text/plain; charset=UTF-8' });
+	response.end("Stream ended.");
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uL3N0cmVhbVNlcnZsZXQuanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSxJQUFJLE9BQWMsUUFBUSxNQUFSLENBQWxCO0FBQ0EsSUFBSSxRQUFlLFFBQVEsT0FBUixDQUFuQjtBQUNBLElBQUksZ0JBQWdCLFFBQVEsb0JBQVIsQ0FBcEI7QUFDQTtBQUNBO0FBQ0EsSUFBSSxNQUFKOztBQUVDOzs7Ozs7QUFPRDtBQUNBO0FBQ0E7QUFDQSxVQUFLLEtBQUwsR0FBYSxVQUFTLElBQVQsRUFBZSxRQUFmLEVBQXlCLE9BQXpCLEVBQWtDLFFBQWxDLEVBQTJDO0FBQ3ZEO0FBQ0EsVUFBUyxTQUFULENBQW1CLEdBQW5CLEVBQXVCLEVBQUMsZ0JBQWdCLDBCQUFqQixFQUF2QjtBQUNBO0FBQ0EsS0FBSSxRQUFRLElBQUksTUFBTSxLQUFWLENBQ1gsNkNBRFcsRUFFVCw0Q0FGUyxFQUdULFFBQVEsR0FBUixDQUFZLG9CQUhILEVBSVQsUUFBUSxHQUFSLENBQVksdUJBSkgsRUFLVCxNQUxTLEVBTVQsSUFOUyxFQU9ULFdBUFMsQ0FBWjtBQVNBO0FBQ0E7QUFDQTtBQUNBLFVBQVMsTUFBTSxHQUFOLENBQVUsaUZBQWlGLEtBQUssT0FBaEcsRUFDRCxRQUFRLEdBQVIsQ0FBWSx3QkFEWCxFQUVELFFBQVEsR0FBUixDQUFZLDJCQUZYLENBQVQ7QUFHQTtBQUNBLFFBQU8sR0FBUDtBQUNBO0FBQ0E7QUFDQSxRQUFPLFdBQVAsQ0FBbUIsVUFBbkIsRUFBK0IsVUFBVSxZQUFWLEVBQXVCO0FBQ3JEO0FBQ0EsTUFBSSxRQUFKO0FBQ0EsTUFBSSxNQUFKO0FBQ0EsTUFBSSxTQUFTLEVBQWI7QUFDQSxNQUFJLEtBQUo7QUFDQSxNQUFJLE1BQUo7O0FBRUE7Ozs7O0FBT0E7QUFDQTtBQUNBLGVBQWEsV0FBYixDQUF5QixNQUF6QixFQUFpQyxVQUFTLElBQVQsRUFBYztBQUM5QztBQUNBLGFBQVUsSUFBVjtBQUNBLGNBQVcsT0FBTyxPQUFQLENBQWUscUJBQWYsQ0FBWDtBQUNBLFlBQVMsT0FBTyxXQUFQLENBQW1CLHFCQUFuQixDQUFUO0FBQ0E7QUFDQTtBQUNBLE9BQUksU0FBUyxRQUFiLEVBQXNCO0FBQ3JCLFlBQVEsT0FBTyxTQUFQLENBQWlCLFFBQWpCLEVBQTJCLE1BQTNCLENBQVI7QUFDQTtBQUNBO0FBQ0EsUUFBSTtBQUNILGNBQVMsY0FBYyxPQUFkLENBQXNCLEtBQUssS0FBTCxDQUFXLEtBQVgsQ0FBdEIsRUFBeUMsUUFBekMsQ0FBVDtBQUNBLEtBRkQsQ0FFRSxPQUFPLEtBQVAsRUFBYztBQUNmLGFBQVEsR0FBUixDQUFZLEtBQVo7QUFDQTtBQUNEO0FBQ0EsYUFBUyxFQUFUO0FBQ0EsYUFBUyxLQUFULENBQWUsS0FBSyxTQUFMLENBQWUsTUFBZixDQUFmO0FBQ0E7QUFDRCxHQXBCRDtBQXFCQSxFQXRDRDtBQXVDQSxDQTlERDs7QUFnRUE7QUFDQSxVQUFLLElBQUwsR0FBWSxVQUFTLFFBQVQsRUFBa0I7QUFDN0I7QUFDQSxLQUFJLE1BQUosRUFBVztBQUNWLFNBQU8sS0FBUDtBQUNBO0FBQ0QsVUFBUyxTQUFULENBQW1CLEdBQW5CLEVBQXVCLEVBQUMsZ0JBQWdCLDJCQUFqQixFQUF2QjtBQUNBLFVBQVMsR0FBVCxDQUFhLGVBQWI7QUFDQSxDQVBEIiwiZmlsZSI6InN0cmVhbVNlcnZsZXQuanMiLCJzb3VyY2VzQ29udGVudCI6WyJ2YXIgdXRpbCBcdCAgICAgID0gcmVxdWlyZSgndXRpbCcpO1xudmFyIE9hdXRoIFx0ICAgICAgPSByZXF1aXJlKCdvYXV0aCcpO1xudmFyIFR3ZWV0QW5hbHl6ZXIgPSByZXF1aXJlKCcuL3R3ZWV0QW5hbHl6ZXIuanMnKTsgXG4vLyBJbml0aWFsaXplIHN0cmVhbSBoZXJlIHRvIGdpdmUgaXQgZ2xvYmFsIHNjb3BlLiBJdCBjYW4gbm93IHRyaWdnZXIgd3JpdGVzIHRvIHRoZSBmcm9udCBlbmQgaW4gXCJxdWVyeVwiLFxuLy8gYW5kIGRpc2Nvbm5lY3QgZnJvbSBUd2l0dGVyIGluIFwia2lsbFwiLiBcbnZhciBzdHJlYW07XG5cblx0LypcblxuXHQgUmVmZXIgdG8gUmVhZG1lLm1kOiBcIklJLiAgQ29uY2VybnMgQWJvdXQgVHdpdHRlciBTdHJlYW0gVXNhZ2UgTGltaXRzXCIgaW4gdGhlIGdpdGh1YiByZXBvIGZvciBhIGNvbnNpZGVyYXRpb24gb2Zcblx0IHN0cmVhbSB1c2FnZSBsaW1pdHMgZm9yIHRoaXMgYXBwLiAgXHRcblx0XG5cdCovXG5cbi8vIFF1ZXJ5IHRoZSBUd2l0dGVyIFB1YmxpYyBTdHJlYW0gQVBJLiBSZWNlaXZlIGEgc2FtcGxlIG9mIHJlYWwtdGltZSB0d2VldHMgdGhhdCBtYXRjaCBxdWVyeSBwYXJhbWV0ZXJzLlxuLy8gXCJkYXRhXCIgY2FtZSBmcm9tIHRoZSBmcm9udCBlbmQsIGNvbnRhaW5zIHRoZSBwYXJhbWV0ZXJzIHRvIGRlZmluZSB0aGUgcXVlcnkgdG8gVHdpdHRlci4gXCJyZXNwb25zZVwiLCBcbi8vIFwicmVxdWVzdFwiLCBhcmUgZnJvbSB0aGUgbWFpbiBzZXJ2ZXIsIHNvIHdoZW4gXCJyZXNwb25zZS53cml0ZVwiIGlzIHVzZWQsIEpTT04uc3RyaW5naWZpZWQgZGF0YSBnbyBiYWNrIHRvIHRoZSBjbGllbnQuIFxudGhpcy5xdWVyeSA9IGZ1bmN0aW9uKGRhdGEsIHJlc3BvbnNlLCByZXF1ZXN0LCB3b3JkQmFuayl7IFxuXHQvLyBcIm9jdGV0LXN0cmVhbVwiIGFsbGV2aWF0ZXMgYSBzdHJhbmdlIGJ1ZmZlcmluZyBpc3N1ZSBJIGV4cGVyaWVuY2VkIHdoZW4gd3JpdGluZyB0byBDaHJvbWUuIFxuXHRyZXNwb25zZS53cml0ZUhlYWQoMjAwLHsnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSd9KTtcblx0Ly8gSSB1c2VkIGFuIG5wbSBtb2R1bGUgZm9yIHRoZSBvYXV0aCAxLjAgYXV0aGVudGljYXRpb24uIFNlZSBcImVudi5qc1wiIGZvciB0aGUga2V5cy4gXG5cdHZhciBvYXV0aCA9IG5ldyBPYXV0aC5PQXV0aChcblx0XHQnaHR0cHM6Ly9hcGkudHdpdHRlci5jb20vb2F1dGgvcmVxdWVzdF90b2tlbicsIFxuXHQgIFx0J2h0dHBzOi8vYXBpLnR3aXR0ZXIuY29tL29hdXRoL2FjY2Vzc190b2tlbicsXG5cdCAgXHRwcm9jZXNzLmVudi5UV0lUVEVSX0NPTlNVTUVSX0tFWSwgXG5cdCAgXHRwcm9jZXNzLmVudi5UV0lUVEVSX0NPTlNVTUVSX1NFQ1JFVCwgXG5cdCAgXHQnMS4wQScsXG5cdCAgXHRudWxsLFxuXHQgIFx0J0hNQUMtU0hBMSdcblx0KTtcblx0Ly8gTm90aWNlIHRoYXQgdGhlIHN0cmVhbSBpcyBhIGxvbmctbGl2ZWQgZ2V0IHJlcXVlc3QuIFR3aXR0ZXIgaG9sZHMgaXQgb3BlbiBhbmQgc3RhdGVzLCBpbiB0aGVpciBkb2N1bWVudGF0aW9uLFxuXHQvLyB0aGF0IHRoZXkgcHJlZmVyIGEgY2xpZW50IGtlZXAgdGhpcyBjb25uZWN0aW9uIG9wZW4gZm9yIGFzIGxvbmcgYXMgcG9zc2libGUuIEZyZXF1ZW50bHkgZGlzY29ubmVjdGluZyBhbmQgXG5cdC8vIHJlY29ubmVjdGluZyBpcyBtb3JlIHJlc291cmNlIGludGVuc2l2ZSBmb3IgdGhlbSB0aGFuIGlzIGhvbGRpbmcgb3BlbiBvbmUgcmVxdWVzdC4gXG5cdHN0cmVhbSA9IG9hdXRoLmdldCgnaHR0cHM6Ly9zdHJlYW0udHdpdHRlci5jb20vMS4xL3N0YXR1c2VzL2ZpbHRlci5qc29uP2ZpbHRlcl9sZXZlbD1ub25lJnRyYWNrPScgKyBkYXRhLnN1YmplY3QsIFxuXHRcdFx0XHRcdFx0XHRcdCBwcm9jZXNzLmVudi5UV0lUVEVSX0FDQ0VTU19UT0tFTl9LRVksIFxuXHRcdFx0XHRcdFx0XHRcdCBwcm9jZXNzLmVudi5UV0lUVEVSX0FDQ0VTU19UT0tFTl9TRUNSRVQpO1xuXHQvLyBTaW5jZSB0aGUgc3RyZWFtIGNvbm5lY3Rpb24gY29tZXMgZnJvbSBhIEdFVCByZXF1ZXN0LCB0aGUgcmVxdWVzdCBtdXN0IGJlIGVuZGVkLiAgXG5cdHN0cmVhbS5lbmQoKTsgXG5cdC8vIFRoaXMgcmVzcG9uc2Ugd2lsbCBjb250YWluIHRoZSBpbmNvbWluZyB0d2VldCBkYXRhLiBVbmxpa2UgdGhlIFJFU1RmdWwgcXVlcnksIG5vICdlbmQnIGV2ZW50IGlzIGdlbmVyYXRlZCB3aXRoIFxuXHQvLyB0aGlzIHJlc3BvbnNlLCBzbyB0aGUgY29kZSBjYW4ndCB3YWl0IHRpbGwgYWxsIHRoZSBkYXRhIGhhcyByZWFjaGVkIHRoZSBzZXJ2ZXIgYmVmb3JlIGN1dHRpbmcgaXQgdXAuXG5cdHN0cmVhbS5hZGRMaXN0ZW5lcigncmVzcG9uc2UnLCBmdW5jdGlvbiAodHdpdFJlc3BvbnNlKXsgXG5cdFx0Ly8gVGhlIHZhcmlhYmxlcyBpbml0aWFsaXplZCBoZXJlIHdpbGwgZGVsaW1pdCBjb21wbGV0ZSB0d2VldHMuIFx0XHRcblx0XHR2YXIgc3RhcnRJbmQ7IFxuXHRcdHZhciBlbmRJbmQ7ICAgXG5cdFx0dmFyIHN0cmluZyA9IFwiXCI7XG5cdFx0dmFyIHR3ZWV0OyBcblx0XHR2YXIgcmVzdWx0OyBcblxuXHRcdC8qXG5cblx0XHRcdFJlZmVyIHRvIFJlYWRtZS5tZCBcIklJSS4gRGVsaW1pdGluZyBTdHJlYW0gUmVzcG9uc2VcIiBmb3IgZXhwYW5kZWQgY29tbWVudHMgb24gdGhlIG1ldGhvZG9sb2d5IEkgdXNlZCBcblx0XHRcdGluIHRoZSBcInR3aXRSZXNwb25zZS5hZGRMaXN0ZW5lclwiIGNvZGUgYmxvY2suXG5cblx0XHQqL1xuXG5cdFx0Ly8gRGF0YSBjb21lIGluIGNodW5rcywgTk9UIGNvbXBsZXRlIHR3ZWV0cywgc28gSSB1c2UgJ1xcclxcbntcImNyZWF0ZWRfYXRcIjpcIicgdG8gZGVsaW10IHRoZSBzdGFydCBhbmQgZW5kIFxuXHRcdC8vIGluZGljZXMgb2YgdHdlZXRzLlxuXHRcdHR3aXRSZXNwb25zZS5hZGRMaXN0ZW5lcignZGF0YScsIGZ1bmN0aW9uKGRhdGEpeyBcblx0XHRcdC8vIENvbmNhdGVuYXRlIGluY29taW5nIGNodW5rcyBpbnRvIG9uZSwgbG9uZyBzdHJpbmcuIFxuXHRcdFx0c3RyaW5nICs9IGRhdGE7IFxuXHRcdFx0c3RhcnRJbmQgPSBzdHJpbmcuaW5kZXhPZignXFxyXFxue1wiY3JlYXRlZF9hdFwiOlwiJyk7IFxuXHRcdFx0ZW5kSW5kID0gc3RyaW5nLmxhc3RJbmRleE9mKCdcXHJcXG57XCJjcmVhdGVkX2F0XCI6XCInKTtcblx0XHRcdC8vIFVzZSBzdGFydEluZCBhbmQgZW5kSW5kIHRvIHB1bGwgb3V0IHRoZSBlbnRpcmUgdHdlZXQsIHBhc3MgaXQgdGhyb3VnaCB0d2VldEFuYWx5emVyLCByZXNldCB0aGUgc3RyaW5nIFxuXHRcdFx0Ly8gZm9yIHRoZSBuZXh0IGluY29taW5nIHR3ZWV0LCBhbmQgd3JpdGUgdGhlIHJlc3VsdCwgaW4gSlNPTiwgYmFjayB0byB0aGUgZnJvbnQgZW5kLlxuXHRcdFx0aWYgKGVuZEluZCA+IHN0YXJ0SW5kKXsgXG5cdFx0XHRcdHR3ZWV0ID0gc3RyaW5nLnN1YnN0cmluZyhzdGFydEluZCwgZW5kSW5kKTsgXG5cdFx0XHRcdC8vIEFzIGEgZmFpbC1zYWZlLCB3cmFwIHRoaXMgaW4gYSB0cnktY2F0Y2ggYmxvY2suIEhlcm9rdSBjcmFzaGVkIGFuZCBpbmRpY2F0ZWQgdGhlIGJlbG93IHN0YXRlbWVudCBtYXlcblx0XHRcdFx0Ly8gaGF2ZSBiZWVuIHRoZSBjYXVzZS5cblx0XHRcdFx0dHJ5IHtcblx0XHRcdFx0XHRyZXN1bHQgPSBUd2VldEFuYWx5emVyLmFuYWx5emUoSlNPTi5wYXJzZSh0d2VldCksIHdvcmRCYW5rKTtcblx0XHRcdFx0fSBjYXRjaCAoZXJyb3IpIHtcblx0XHRcdFx0XHRjb25zb2xlLmxvZyhlcnJvcik7XG5cdFx0XHRcdH1cblx0XHRcdFx0Ly8gQ2xlYXIgc3RyaW5nIHRvIHByZXBhcmUgaXQgZm9yIHRoZSBuZXh0IGNodW5rLlxuXHRcdFx0XHRzdHJpbmcgPSBcIlwiO1x0XHRcdFx0XG5cdFx0XHRcdHJlc3BvbnNlLndyaXRlKEpTT04uc3RyaW5naWZ5KHJlc3VsdCkpO1xuXHRcdFx0fVxuXHRcdH0pXG5cdH0pXG59O1xuXG4vLyBUd2l0dGVyIHdpbGwga2VlcCB0aGUgcmVzcG9uc2VzIGZsb3dpbmcgaW4gdW50aWwgeW91IG1hbnVhbGx5IGFib3J0IHRoZSByZXF1ZXN0IGZyb20gdGhlIGZyb250IGVuZC5cbnRoaXMua2lsbCA9IGZ1bmN0aW9uKHJlc3BvbnNlKXtcblx0Ly8gV3JhcCBpbiBhbiBcImlmXCIgY2hlY2sgYXMgYSBmYWlsLXNhZmUuXG5cdGlmIChzdHJlYW0pe1xuXHRcdHN0cmVhbS5hYm9ydCgpO1xuXHR9XHRcblx0cmVzcG9uc2Uud3JpdGVIZWFkKDIwMCx7J0NvbnRlbnQtVHlwZSc6ICd0ZXh0L3BsYWluOyBjaGFyc2V0PVVURi04J30pO1xuXHRyZXNwb25zZS5lbmQoXCJTdHJlYW0gZW5kZWQuXCIpO1xufVxuXG4iXX0=

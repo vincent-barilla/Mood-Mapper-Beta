@@ -1,0 +1,58 @@
+'use strict';
+
+// Several DOM displays are best set programatically. Those are done here. 
+
+// This adjusts map height to the user's screen size, then takes off a bit to make room for the buttons to show beneath
+// the map. 
+(function onLoadSetMapHeight() {
+  var mapHeight = window.innerHeight - 55;
+  // Set the map-dependent DOM elements by this value in the three lines.  
+  document.getElementById('mainViewSection').style.height = mapHeight;
+  document.getElementById('map').style.height = mapHeight;
+  document.getElementById('text').style.height = mapHeight;
+})();
+
+(function onLoadSetInputDates() {
+  // Since Twitter will only search back a week or so, set the default values of the input 
+  // boxes to 6 (ish) days ago. 
+  var end = new Date();
+  var start = new Date(end - Week + 86400 * 1000); // That math at the end equals one day, in ms.
+  setDisplay('enddate', end);
+  setDisplay('startdate', start);
+
+  // Set default values in the iput boxes.
+  function setDisplay(html, date) {
+    date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+    document.getElementById(html).value = date;
+  }
+})();
+
+// Set these to strings here so that the toggling in "buttonHandler" in "buttonhandle.js" will be able to use them.
+(function onLoadSetBannerStyle() {
+  document.getElementById('bannerContentDiv').style.height = "60px";
+  document.getElementById('contentBtns').style.bottom = "5px";
+})();
+
+// All these follow the pattern used in "buttonDisp": set the "firstChild.data" of the element with "key" as its id to 
+// "key"'s value. Set as strings so that "buttonHandler" in "buttonhandle.js" will be able to use them.
+(function onLoadSetButtonText() {
+  var buttons = { 'pauseBtn': 'Pause',
+    'togCircVisBtn': 'Hide Circles',
+    'togTextVisBtn': 'Hide Text Crawl',
+    'instrBtn': 'See Map Tips',
+    'aboutBtn': 'What Does This App Do?'
+  };
+  buttonDisp(buttons);
+
+  function buttonDisp(htmls) {
+    var key;
+    for (key in htmls) {
+      document.getElementById(key).firstChild.data = htmls[key];
+    }
+  }
+})();
+
+// This gives a y-coordinate which allows "scrollTo" calls to jump the user to the form. Defined here instead of 
+// "initGlobals.js" to ensure the map's height is up-to-date.
+var yOffsetForm = document.getElementById('bannerContentDiv').getBoundingClientRect().height + document.getElementById('map').getBoundingClientRect().height;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3B1YmxpYy9qcy9pbml0RGlzcGxheXMuanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQTs7QUFFQTtBQUNBO0FBQ0EsQ0FBQyxTQUFTLGtCQUFULEdBQTZCO0FBQzVCLE1BQUksWUFBWSxPQUFPLFdBQVAsR0FBcUIsRUFBckM7QUFDQTtBQUNBLFdBQVMsY0FBVCxDQUF3QixpQkFBeEIsRUFBMkMsS0FBM0MsQ0FBaUQsTUFBakQsR0FBMEQsU0FBMUQ7QUFDQSxXQUFTLGNBQVQsQ0FBd0IsS0FBeEIsRUFBK0IsS0FBL0IsQ0FBcUMsTUFBckMsR0FBOEMsU0FBOUM7QUFDQSxXQUFTLGNBQVQsQ0FBd0IsTUFBeEIsRUFBZ0MsS0FBaEMsQ0FBc0MsTUFBdEMsR0FBK0MsU0FBL0M7QUFDRCxDQU5EOztBQVFBLENBQUMsU0FBUyxtQkFBVCxHQUE4QjtBQUM3QjtBQUNBO0FBQ0EsTUFBSSxNQUFNLElBQUksSUFBSixFQUFWO0FBQ0EsTUFBSSxRQUFRLElBQUksSUFBSixDQUFTLE1BQU0sSUFBTixHQUFhLFFBQVEsSUFBOUIsQ0FBWixDQUo2QixDQUlvQjtBQUNqRCxhQUFXLFNBQVgsRUFBc0IsR0FBdEI7QUFDQSxhQUFXLFdBQVgsRUFBd0IsS0FBeEI7O0FBRUE7QUFDQSxXQUFTLFVBQVQsQ0FBb0IsSUFBcEIsRUFBMEIsSUFBMUIsRUFBK0I7QUFDN0IsV0FBUSxLQUFLLFFBQUwsS0FBa0IsQ0FBbkIsR0FBd0IsR0FBeEIsR0FBOEIsS0FBSyxPQUFMLEVBQTlCLEdBQStDLEdBQS9DLEdBQXFELEtBQUssV0FBTCxFQUE1RDtBQUNBLGFBQVMsY0FBVCxDQUF3QixJQUF4QixFQUE4QixLQUE5QixHQUFzQyxJQUF0QztBQUNEO0FBQ0YsQ0FiRDs7QUFlQTtBQUNBLENBQUMsU0FBUyxvQkFBVCxHQUErQjtBQUM5QixXQUFTLGNBQVQsQ0FBd0Isa0JBQXhCLEVBQTRDLEtBQTVDLENBQWtELE1BQWxELEdBQTJELE1BQTNEO0FBQ0EsV0FBUyxjQUFULENBQXdCLGFBQXhCLEVBQXVDLEtBQXZDLENBQTZDLE1BQTdDLEdBQXNELEtBQXREO0FBQ0QsQ0FIRDs7QUFLQTtBQUNBO0FBQ0EsQ0FBQyxTQUFTLG1CQUFULEdBQThCO0FBQzdCLE1BQUksVUFBVSxFQUFDLFlBQVksT0FBYjtBQUNDLHFCQUFpQixjQURsQjtBQUVDLHFCQUFpQixpQkFGbEI7QUFHQyxnQkFBWSxjQUhiO0FBSUMsZ0JBQVk7QUFKYixHQUFkO0FBTUEsYUFBVyxPQUFYOztBQUVBLFdBQVMsVUFBVCxDQUFvQixLQUFwQixFQUEwQjtBQUN4QixRQUFJLEdBQUo7QUFDQSxTQUFLLEdBQUwsSUFBWSxLQUFaLEVBQWtCO0FBQ2hCLGVBQVMsY0FBVCxDQUF3QixHQUF4QixFQUE2QixVQUE3QixDQUF3QyxJQUF4QyxHQUErQyxNQUFNLEdBQU4sQ0FBL0M7QUFDRDtBQUNGO0FBQ0YsQ0FmRDs7QUFpQkE7QUFDQTtBQUNBLElBQU0sY0FBYyxTQUFTLGNBQVQsQ0FBd0Isa0JBQXhCLEVBQTRDLHFCQUE1QyxHQUFvRSxNQUFwRSxHQUNBLFNBQVMsY0FBVCxDQUF3QixLQUF4QixFQUErQixxQkFBL0IsR0FBdUQsTUFEM0UiLCJmaWxlIjoiaW5pdERpc3BsYXlzLmpzIiwic291cmNlc0NvbnRlbnQiOlsiLy8gU2V2ZXJhbCBET00gZGlzcGxheXMgYXJlIGJlc3Qgc2V0IHByb2dyYW1hdGljYWxseS4gVGhvc2UgYXJlIGRvbmUgaGVyZS4gXG4gIFxuLy8gVGhpcyBhZGp1c3RzIG1hcCBoZWlnaHQgdG8gdGhlIHVzZXIncyBzY3JlZW4gc2l6ZSwgdGhlbiB0YWtlcyBvZmYgYSBiaXQgdG8gbWFrZSByb29tIGZvciB0aGUgYnV0dG9ucyB0byBzaG93IGJlbmVhdGhcbi8vIHRoZSBtYXAuIFxuKGZ1bmN0aW9uIG9uTG9hZFNldE1hcEhlaWdodCgpe1xuICB2YXIgbWFwSGVpZ2h0ID0gd2luZG93LmlubmVySGVpZ2h0IC0gNTU7XG4gIC8vIFNldCB0aGUgbWFwLWRlcGVuZGVudCBET00gZWxlbWVudHMgYnkgdGhpcyB2YWx1ZSBpbiB0aGUgdGhyZWUgbGluZXMuICBcbiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ21haW5WaWV3U2VjdGlvbicpLnN0eWxlLmhlaWdodCA9IG1hcEhlaWdodDtcbiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ21hcCcpLnN0eWxlLmhlaWdodCA9IG1hcEhlaWdodDtcbiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RleHQnKS5zdHlsZS5oZWlnaHQgPSBtYXBIZWlnaHQ7XG59KSgpO1xuXG4oZnVuY3Rpb24gb25Mb2FkU2V0SW5wdXREYXRlcygpe1xuICAvLyBTaW5jZSBUd2l0dGVyIHdpbGwgb25seSBzZWFyY2ggYmFjayBhIHdlZWsgb3Igc28sIHNldCB0aGUgZGVmYXVsdCB2YWx1ZXMgb2YgdGhlIGlucHV0IFxuICAvLyBib3hlcyB0byA2IChpc2gpIGRheXMgYWdvLiBcbiAgdmFyIGVuZCA9IG5ldyBEYXRlKCk7XG4gIHZhciBzdGFydCA9IG5ldyBEYXRlKGVuZCAtIFdlZWsgKyA4NjQwMCAqIDEwMDApOyAvLyBUaGF0IG1hdGggYXQgdGhlIGVuZCBlcXVhbHMgb25lIGRheSwgaW4gbXMuXG4gIHNldERpc3BsYXkoJ2VuZGRhdGUnLCBlbmQpO1xuICBzZXREaXNwbGF5KCdzdGFydGRhdGUnLCBzdGFydCk7XG5cbiAgLy8gU2V0IGRlZmF1bHQgdmFsdWVzIGluIHRoZSBpcHV0IGJveGVzLlxuICBmdW5jdGlvbiBzZXREaXNwbGF5KGh0bWwsIGRhdGUpe1xuICAgIGRhdGUgPSAoZGF0ZS5nZXRNb250aCgpICsgMSkgKyAnLycgKyBkYXRlLmdldERhdGUoKSArICcvJyArIGRhdGUuZ2V0RnVsbFllYXIoKTtcbiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChodG1sKS52YWx1ZSA9IGRhdGU7XG4gIH1cbn0pKCk7XG5cbi8vIFNldCB0aGVzZSB0byBzdHJpbmdzIGhlcmUgc28gdGhhdCB0aGUgdG9nZ2xpbmcgaW4gXCJidXR0b25IYW5kbGVyXCIgaW4gXCJidXR0b25oYW5kbGUuanNcIiB3aWxsIGJlIGFibGUgdG8gdXNlIHRoZW0uXG4oZnVuY3Rpb24gb25Mb2FkU2V0QmFubmVyU3R5bGUoKXtcbiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2Jhbm5lckNvbnRlbnREaXYnKS5zdHlsZS5oZWlnaHQgPSBcIjYwcHhcIjtcbiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NvbnRlbnRCdG5zJykuc3R5bGUuYm90dG9tID0gXCI1cHhcIjtcbn0pKCk7XG5cbi8vIEFsbCB0aGVzZSBmb2xsb3cgdGhlIHBhdHRlcm4gdXNlZCBpbiBcImJ1dHRvbkRpc3BcIjogc2V0IHRoZSBcImZpcnN0Q2hpbGQuZGF0YVwiIG9mIHRoZSBlbGVtZW50IHdpdGggXCJrZXlcIiBhcyBpdHMgaWQgdG8gXG4vLyBcImtleVwiJ3MgdmFsdWUuIFNldCBhcyBzdHJpbmdzIHNvIHRoYXQgXCJidXR0b25IYW5kbGVyXCIgaW4gXCJidXR0b25oYW5kbGUuanNcIiB3aWxsIGJlIGFibGUgdG8gdXNlIHRoZW0uXG4oZnVuY3Rpb24gb25Mb2FkU2V0QnV0dG9uVGV4dCgpe1xuICB2YXIgYnV0dG9ucyA9IHsncGF1c2VCdG4nOiAnUGF1c2UnLFxuICAgICAgICAgICAgICAgICAndG9nQ2lyY1Zpc0J0bic6ICdIaWRlIENpcmNsZXMnLFxuICAgICAgICAgICAgICAgICAndG9nVGV4dFZpc0J0bic6ICdIaWRlIFRleHQgQ3Jhd2wnLFxuICAgICAgICAgICAgICAgICAnaW5zdHJCdG4nOiAnU2VlIE1hcCBUaXBzJyxcbiAgICAgICAgICAgICAgICAgJ2Fib3V0QnRuJzogJ1doYXQgRG9lcyBUaGlzIEFwcCBEbz8nLFxuICAgICAgICAgICAgICAgfTtcbiAgYnV0dG9uRGlzcChidXR0b25zKTtcblxuICBmdW5jdGlvbiBidXR0b25EaXNwKGh0bWxzKXtcbiAgICB2YXIga2V5O1xuICAgIGZvciAoa2V5IGluIGh0bWxzKXtcbiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKGtleSkuZmlyc3RDaGlsZC5kYXRhID0gaHRtbHNba2V5XTtcbiAgICB9XG4gIH1cbn0pKCk7XG5cbi8vIFRoaXMgZ2l2ZXMgYSB5LWNvb3JkaW5hdGUgd2hpY2ggYWxsb3dzIFwic2Nyb2xsVG9cIiBjYWxscyB0byBqdW1wIHRoZSB1c2VyIHRvIHRoZSBmb3JtLiBEZWZpbmVkIGhlcmUgaW5zdGVhZCBvZiBcbi8vIFwiaW5pdEdsb2JhbHMuanNcIiB0byBlbnN1cmUgdGhlIG1hcCdzIGhlaWdodCBpcyB1cC10by1kYXRlLlxuY29uc3QgeU9mZnNldEZvcm0gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmFubmVyQ29udGVudERpdicpLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpLmhlaWdodCArIFxuICAgICAgICAgICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbWFwJykuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCkuaGVpZ2h0OyJdfQ==

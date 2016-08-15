@@ -1,0 +1,47 @@
+'use strict';
+
+// This sets all the global variables that will be used in subsequent functions. 
+
+// Because so many tweets don't have a location, I use a default latLng position on the map for 
+// the non-locatable tweets. This is outlined with a gray box, just south of Hawaii.
+var DefaultCenter = { 'lat': -3.8963, 'lng': -146.4255 };
+// "tweetDump" is the box that surrounds "DefaultCenter". Made global so that it can later be
+// used in "drawTweetCircle".  
+var tweetDump;
+
+// Make a week that will be accurate across all browsers. 
+var Week = function () {
+  var pointA = new Date('3/3/2016');
+  var pointB = new Date('3/10/2016');
+  return pointB - pointA;
+}();
+
+// These functions need to be global, to be set asynchronously/dynamically in "createCircle" and "geoCodeTweet".
+var bingCallback = function bingCallback() {};
+var panToCircle = function panToCircle() {};
+
+// Making this global allows for aborting it outside of the function in which it is used to send its first query.
+// See "pauseStream" for where this is aborted, "formSubmit" for where it sends a query to the server. 
+var xhr = new XMLHttpRequest();
+
+// Used to show the current text color and average text color in the boxes below the map.
+var globalMood = { "mood": [0, 0, 0], "count": 1 };
+
+// The googleGeocoder, set in "initMap", used in "geoCodeTweet".
+var geoCoder;
+
+// Determines which geocoder to use in "geoCodeTweet", out of a group of 4.
+var turnstileCount = 0;
+
+// The Google Map.
+var map;
+
+// Error messages to be set in "formvalidate", used in "buttonhandler".
+var startErrMsg;
+var endErrMsg;
+var subjectErrMsg;
+
+// Two toggle buttons act on the same DOM element in "buttonHandler". This array stores the 
+// sources of the toggle, to make sure one toggler doesn't untoggle the other's states.
+var togSources = [];
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3B1YmxpYy9qcy9pbml0R2xvYmFscy5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBOztBQUVBO0FBQ0E7QUFDQSxJQUFNLGdCQUFnQixFQUFDLE9BQU8sQ0FBQyxNQUFULEVBQWlCLE9BQU8sQ0FBQyxRQUF6QixFQUF0QjtBQUNBO0FBQ0E7QUFDQSxJQUFJLFNBQUo7O0FBRUE7QUFDQSxJQUFNLE9BQU8sWUFBVztBQUN0QixNQUFJLFNBQVMsSUFBSSxJQUFKLENBQVMsVUFBVCxDQUFiO0FBQ0EsTUFBSSxTQUFTLElBQUksSUFBSixDQUFTLFdBQVQsQ0FBYjtBQUNBLFNBQU8sU0FBUyxNQUFoQjtBQUNELENBSlksRUFBYjs7QUFNQTtBQUNBLElBQUksZUFBZSxTQUFmLFlBQWUsR0FBVSxDQUFFLENBQS9CO0FBQ0EsSUFBSSxjQUFjLFNBQWQsV0FBYyxHQUFVLENBQUUsQ0FBOUI7O0FBRUE7QUFDQTtBQUNBLElBQUksTUFBTSxJQUFJLGNBQUosRUFBVjs7QUFFQTtBQUNBLElBQUksYUFBYSxFQUFDLFFBQVMsQ0FBQyxDQUFELEVBQUcsQ0FBSCxFQUFLLENBQUwsQ0FBVixFQUFtQixTQUFVLENBQTdCLEVBQWpCOztBQUVBO0FBQ0EsSUFBSSxRQUFKOztBQUVBO0FBQ0EsSUFBSSxpQkFBaUIsQ0FBckI7O0FBRUE7QUFDQSxJQUFJLEdBQUo7O0FBRUE7QUFDQSxJQUFJLFdBQUo7QUFDQSxJQUFJLFNBQUo7QUFDQSxJQUFJLGFBQUo7O0FBRUE7QUFDQTtBQUNBLElBQUksYUFBYSxFQUFqQiIsImZpbGUiOiJpbml0R2xvYmFscy5qcyIsInNvdXJjZXNDb250ZW50IjpbIi8vIFRoaXMgc2V0cyBhbGwgdGhlIGdsb2JhbCB2YXJpYWJsZXMgdGhhdCB3aWxsIGJlIHVzZWQgaW4gc3Vic2VxdWVudCBmdW5jdGlvbnMuIFxuXG4vLyBCZWNhdXNlIHNvIG1hbnkgdHdlZXRzIGRvbid0IGhhdmUgYSBsb2NhdGlvbiwgSSB1c2UgYSBkZWZhdWx0IGxhdExuZyBwb3NpdGlvbiBvbiB0aGUgbWFwIGZvciBcbi8vIHRoZSBub24tbG9jYXRhYmxlIHR3ZWV0cy4gVGhpcyBpcyBvdXRsaW5lZCB3aXRoIGEgZ3JheSBib3gsIGp1c3Qgc291dGggb2YgSGF3YWlpLlxuY29uc3QgRGVmYXVsdENlbnRlciA9IHsnbGF0JzogLTMuODk2MywgJ2xuZyc6IC0xNDYuNDI1NX07XG4vLyBcInR3ZWV0RHVtcFwiIGlzIHRoZSBib3ggdGhhdCBzdXJyb3VuZHMgXCJEZWZhdWx0Q2VudGVyXCIuIE1hZGUgZ2xvYmFsIHNvIHRoYXQgaXQgY2FuIGxhdGVyIGJlXG4vLyB1c2VkIGluIFwiZHJhd1R3ZWV0Q2lyY2xlXCIuICBcbnZhciB0d2VldER1bXA7XG5cbi8vIE1ha2UgYSB3ZWVrIHRoYXQgd2lsbCBiZSBhY2N1cmF0ZSBhY3Jvc3MgYWxsIGJyb3dzZXJzLiBcbmNvbnN0IFdlZWsgPSBmdW5jdGlvbiAoKXtcbiAgdmFyIHBvaW50QSA9IG5ldyBEYXRlKCczLzMvMjAxNicpO1xuICB2YXIgcG9pbnRCID0gbmV3IERhdGUoJzMvMTAvMjAxNicpOyBcbiAgcmV0dXJuIHBvaW50QiAtIHBvaW50QTtcbn0oKTtcblxuLy8gVGhlc2UgZnVuY3Rpb25zIG5lZWQgdG8gYmUgZ2xvYmFsLCB0byBiZSBzZXQgYXN5bmNocm9ub3VzbHkvZHluYW1pY2FsbHkgaW4gXCJjcmVhdGVDaXJjbGVcIiBhbmQgXCJnZW9Db2RlVHdlZXRcIi5cbnZhciBiaW5nQ2FsbGJhY2sgPSBmdW5jdGlvbigpe307XG52YXIgcGFuVG9DaXJjbGUgPSBmdW5jdGlvbigpe307XG5cbi8vIE1ha2luZyB0aGlzIGdsb2JhbCBhbGxvd3MgZm9yIGFib3J0aW5nIGl0IG91dHNpZGUgb2YgdGhlIGZ1bmN0aW9uIGluIHdoaWNoIGl0IGlzIHVzZWQgdG8gc2VuZCBpdHMgZmlyc3QgcXVlcnkuXG4vLyBTZWUgXCJwYXVzZVN0cmVhbVwiIGZvciB3aGVyZSB0aGlzIGlzIGFib3J0ZWQsIFwiZm9ybVN1Ym1pdFwiIGZvciB3aGVyZSBpdCBzZW5kcyBhIHF1ZXJ5IHRvIHRoZSBzZXJ2ZXIuIFxudmFyIHhociA9IG5ldyBYTUxIdHRwUmVxdWVzdCgpO1xuXG4vLyBVc2VkIHRvIHNob3cgdGhlIGN1cnJlbnQgdGV4dCBjb2xvciBhbmQgYXZlcmFnZSB0ZXh0IGNvbG9yIGluIHRoZSBib3hlcyBiZWxvdyB0aGUgbWFwLlxudmFyIGdsb2JhbE1vb2QgPSB7XCJtb29kXCIgOiBbMCwwLDBdLCBcImNvdW50XCIgOiAxIH07XG5cbi8vIFRoZSBnb29nbGVHZW9jb2Rlciwgc2V0IGluIFwiaW5pdE1hcFwiLCB1c2VkIGluIFwiZ2VvQ29kZVR3ZWV0XCIuXG52YXIgZ2VvQ29kZXI7XG5cbi8vIERldGVybWluZXMgd2hpY2ggZ2VvY29kZXIgdG8gdXNlIGluIFwiZ2VvQ29kZVR3ZWV0XCIsIG91dCBvZiBhIGdyb3VwIG9mIDQuXG52YXIgdHVybnN0aWxlQ291bnQgPSAwO1xuXG4vLyBUaGUgR29vZ2xlIE1hcC5cbnZhciBtYXA7ICBcblxuLy8gRXJyb3IgbWVzc2FnZXMgdG8gYmUgc2V0IGluIFwiZm9ybXZhbGlkYXRlXCIsIHVzZWQgaW4gXCJidXR0b25oYW5kbGVyXCIuXG52YXIgc3RhcnRFcnJNc2c7XG52YXIgZW5kRXJyTXNnO1xudmFyIHN1YmplY3RFcnJNc2c7XG5cbi8vIFR3byB0b2dnbGUgYnV0dG9ucyBhY3Qgb24gdGhlIHNhbWUgRE9NIGVsZW1lbnQgaW4gXCJidXR0b25IYW5kbGVyXCIuIFRoaXMgYXJyYXkgc3RvcmVzIHRoZSBcbi8vIHNvdXJjZXMgb2YgdGhlIHRvZ2dsZSwgdG8gbWFrZSBzdXJlIG9uZSB0b2dnbGVyIGRvZXNuJ3QgdW50b2dnbGUgdGhlIG90aGVyJ3Mgc3RhdGVzLlxudmFyIHRvZ1NvdXJjZXMgPSBbXTtcblxuIl19
